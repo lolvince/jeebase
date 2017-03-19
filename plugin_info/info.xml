@@ -1,0 +1,14 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<info>
+    <id>jeebase</id>
+    <name>Jeebase</name>
+    <description>Plugin pour récuperer les données de Zibase</description>
+    <icon>fa fa-umbrella</icon>
+    <licence>AGPL</licence>
+    <author>ZygOm4t1k</author>
+    <installation>En dessous de la version 1.2 , il faut effacer les sondes et les recréer</installation>
+    <require>2.2</require>
+    <category>weather</category>
+    <hasOwnDeamon>1</hasOwnDeamon>
+</info>
+

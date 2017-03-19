@@ -1,0 +1,193 @@
+<!--<div class="eqLogic-widget eqLogic" style="width: 200px;background-color: #background_color#;" data-eqLogic_id="#id#" data-version="dashboard" >
+    <center><strong><a href="#eqLink#" style="font-size : 1.1em;margin-top:10px;"> #name# </a></strong></center>
+  		<div class="row">
+        		<div class="col-md-2 col-md-offset-3"><p style="font-size: 1.2em;text-align: center;font-weight:bold;margin-top:10px;"><i class="icon divers-thermometer31"></i></p></div>
+                <div class="col-md-7"><p class="pull-left" style="font-size: 1.2em;font-weight:bold;margin-top:10px;">&nbsp;#temperature# °C</p></div>
+		</div>
+        <div class="row">
+    			<div class="col-md-2 col-md-offset-3"><p style="font-size: 1.2em;text-align: center;font-weight:bold;"><i class="fa fa-tint"></i></p></div>
+                <div class="col-md-7"><p class="pull-left" style="font-size: 1.2em;font-weight:bold;">&nbsp;#humidity# %</p></div>
+        </div>
+        <div style="margin-top:10px;">
+           <center><strong>#date#</strong></center>  
+        </div>	
+</div>-->
+
+<div class="eqLogic-widget eqLogic" style="width: 250px; max-height:166px;background-color: #background_color#;" data-eqLogic_id="#id#" data-version="dashboard" >
+<center><strong><a href="#eqLink#" style="font-size : 0.9em;margin-top:10px;"> #name# </a></strong></center>
+<div style="width:115px;height:90px;position: relative; top : -7px;" class="cmd #history# tooltips cmd-widget" data-type="info" data-subtype="numeric" data-cmd_id="#id_temperature#" >
+
+<div style="width:100px;height : 90px;" class="gauge" ></div>
+<script>
+if (is_numeric('#temperature#')) {
+// The speed gauge
+$('.cmd[data-cmd_id=#id_temperature#] .gauge').highcharts({
+chart: {
+type: 'solidgauge',
+height : 95,
+plotBackgroundColor: null,
+plotBackgroundImage: null,
+backgroundColor: null,
+plotBorderWidth: 0,
+plotShadow: false,
+spacingTop: 0,
+spacingLeft: 0,
+spacingRight: 0,
+spacingBottom: 0,
+borderWidth : 0
+},
+title: null,
+pane: {
+center: ['50%', '85%'],
+size: '100%',
+startAngle: - 90,
+endAngle: 90,
+background: {
+backgroundColor: (Highcharts.theme && Highcharts.theme.background2) || '#EEE',
+innerRadius: '60%',
+outerRadius: '100%',
+shape: 'arc'
+}
+},
+tooltip: {
+enabled: false
+},
+// the value axis
+yAxis: {
+stops: [
+[0, '#cmdColor#']
+],
+lineWidth: 0,
+minorTickInterval: null,
+tickPixelInterval: 400,
+labels : {enabled: false},
+tickWidth: 0,
+title: {
+y: - 70
+},
+min: 0,
+max: 50
+},
+labels : {enabled: false},
+plotOptions: {
+solidgauge: {
+dataLabels: {
+y: 5,
+borderWidth: 0,
+useHTML: true
+}
+}
+},
+credits: {
+enabled: false
+},
+series: [{
+name: '',
+data: [Math.round(parseFloat('#temperature#')*10)/10],
+dataLabels: {
+format: '<span style="color : white;">{y}</span> <span style="font-size:10px;color:white">°C</span>'
+},
+}]
+});
+} else {
+$('.cmd[data-cmd_id=#id#] .gauge').append('<center><span class="label label-danger" style="margin-top : 5px;">#temperature#</span></center>');
+}
+</script>
+</div>
+<div style="width:115px;height:90px;position: relative; top : -7px;" class="#history# tooltips cmd cmd-widget" data-type="info" data-subtype="numeric" data-cmd_id="#id_humidity#" >
+
+<div style="width:100px;height : 90px;" class="gauge" ></div>
+<script>
+if (is_numeric('#humidity#')) {
+// The speed gauge
+$('.cmd[data-cmd_id=#id_humidity#] .gauge').highcharts({
+chart: {
+type: 'solidgauge',
+height : 95,
+plotBackgroundColor: null,
+plotBackgroundImage: null,
+backgroundColor: null,
+plotBorderWidth: 0,
+plotShadow: false,
+spacingTop: 0,
+spacingLeft: 0,
+spacingRight: 0,
+spacingBottom: 0,
+borderWidth : 0
+},
+title: null,
+pane: {
+center: ['50%', '85%'],
+size: '100%',
+startAngle: - 90,
+endAngle: 90,
+background: {
+backgroundColor: (Highcharts.theme && Highcharts.theme.background2) || '#EEE',
+innerRadius: '60%',
+outerRadius: '100%',
+shape: 'arc'
+}
+},
+tooltip: {
+enabled: false
+},
+// the value axis
+yAxis: {
+stops: [
+[0, '#cmdColor#']
+],
+lineWidth: 0,
+minorTickInterval: null,
+tickPixelInterval: 400,
+labels : {enabled: false},
+tickWidth: 0,
+title: {
+y: - 70
+},
+min: 30,
+max: 100
+},
+labels : {enabled: false},
+plotOptions: {
+solidgauge: {
+dataLabels: {
+y: 5,
+borderWidth: 0,
+useHTML: true
+}
+}
+},
+credits: {
+enabled: false
+},
+series: [{
+name: '',
+data: [Math.round(parseFloat('#humidity#')*10)/10],
+dataLabels: {
+format: '<span style="color : white;">{y}</span> <span style="font-size:10px;color:white">%</span>'
+},
+}]
+});
+} else {
+$('.cmd[data-cmd_id=#id#] .gauge').append('<center><span class="label label-danger" style="margin-top : 5px;">#humidity#</span></center>');
+}
+</script>
+</div>
+        <div id='#id_reception#' style="position: relative;float:right;font-size: 4em; top:15px;right:15px">
+        </div>
+        <script>
+              if ('#etat#' == 1) {
+                 $('.eqLogic ##id_reception#').append('<i class="fa  fa-check"></i>');	
+			  } else {
+                 $('.eqLogic ##id_reception#').append('<i class="fa fa-times"></i>');	
+			  }
+			     
+        </script>
+        
+          <div style="margin-top:10px;">
+           <center><strong>#date#</strong></center>  
+         </div>
+</div>
+
+
+
