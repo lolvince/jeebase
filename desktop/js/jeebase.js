@@ -74,9 +74,7 @@ $('.eqLogicAction[data-action=deleteDataZibase]').on('click', function () {
 
 
 
-
-
-
+ 
 function addCmdToTable(_cmd) {
     if (!isset(_cmd)) {
         var _cmd = {};
@@ -100,13 +98,13 @@ function addCmdToTable(_cmd) {
 			tr += '<td>' + _cmd.name + '</td>'; 
 			tr += '<td>';
 		
-			tr += '<span><input type="checkbox" class="cmdAttr bootstrapSwitch" data-l1key="isHistorized" /> {{Historiser}}<br/></span>';
+			tr += '<span><input type="checkbox" class="cmdAttr" data-l1key="isHistorized" /> {{Historiser}}<br/></span>';
 				
 			
 			tr += '</td>';
 			tr += '<td>';
 		
-			tr += '<span><input type="checkbox" class="cmdAttr bootstrapSwitch" data-l1key="isVisible" /> {{Afficher}}<br/></span>';
+			tr += '<span><input type="checkbox" class="cmdAttr" data-l1key="isVisible" /> {{Afficher}}<br/></span>';
 				
 			
 			tr += '</td>';
@@ -131,13 +129,10 @@ function addCmdToTable(_cmd) {
 		tr += '</td>';
 		tr += '<td class="type" type="' + init(_cmd.type) + '">' + jeedom.cmd.availableType();
 		tr += '<span class="subType" subType="' + init(_cmd.subType) + '"></span></td>';
-		tr += '<td ><input style="margin-bottom : 5px;width : 70%; display : inline-block;" placeholder="Nom information" data-l2key="infoName" data-l1key="configuration" class="cmdAttr form-control input-sm">';
-		tr += '<input style="margin-bottom : 5px;width : 50%; display : inline-block;" placeholder="Valeur" data-l2key="value" data-l1key="configuration" class="cmdAttr form-control input-sm">';
-		tr += '</td>';
 		tr += '<td>';
-		tr += '<span><input type="checkbox" class="cmdAttr bootstrapSwitch" data-l1key="isVisible" checked/> {{Afficher}}<br/></span>';
-		tr += '<span class="expertModeVisible"><input type="checkbox" class="cmdAttr bootstrapSwitch" data-l1key="display" data-l2key="invertBinary" /> {{Inverser}}<br/></span>';	
-		tr += '<span><input type="checkbox" class="cmdAttr bootstrapSwitch" data-l1key="isHistorized" /> {{Historiser}}<br/></span>';	
+		tr += '<span><input type="checkbox" class="cmdAttr " data-l1key="isVisible" checked/> {{Afficher}}<br/></span>';
+		tr += '<span class="expertModeVisible"><input type="checkbox" class="cmdAttr" data-l1key="display" data-l2key="invertBinary" /> {{Inverser}}<br/></span>';	
+		tr += '<span><input type="checkbox" class="cmdAttr " data-l1key="isHistorized" /> {{Historiser}}<br/></span>';	
 		tr += '</td>';
 		tr += '<td>';
 		if (is_numeric(_cmd.id)) {
@@ -188,6 +183,5 @@ function printEqLogic(_eqLogic)  {
         }
     });
 }
-
 
 

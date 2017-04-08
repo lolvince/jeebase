@@ -1,0 +1,4 @@
+﻿[horizontal]
+1.0:: Version compatible 2.4
+
+0.5:: Mise à disposition du plugin sur le market

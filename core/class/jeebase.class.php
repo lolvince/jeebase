@@ -29,6 +29,8 @@ class jeebase extends eqLogic {
     /*     * ***********************Methode static*************************** */
 	
 	
+	
+	
 	public function syncWithZibase($_options) {
         if( config::byKey('zibase_url', 'jeebase') != ''){
         	$url=config::byKey('zibase_url', 'jeebase');
@@ -784,6 +786,12 @@ class jeebase extends eqLogic {
         return true;
     }
 	
+	public static function cron() {
+		if (!self::deamon_info()) {
+			self::deamon_start();
+		}
+	}
+		
 	public static function deamon_info() {
 		$return = array();
 		$return['log'] = 'jeebase_php';
@@ -868,7 +876,7 @@ class jeebase extends eqLogic {
 				$data->event($_options['etat']);
 			}
 		} else {
-			log::add('jeebase', 'debug', 'No object');
+		//	log::add('jeebase', 'debug', 'No object');
 		}
 		
 	}
@@ -877,19 +885,22 @@ class jeebase extends eqLogic {
 }
 
 class jeebaseCmd extends cmd {
-
+	
     public function dontRemoveCmd() {
         return true;
     }
 	
 	public function execute($_options = array()) {
+		log::add('jeebase', 'debug', 'execute');
 		$zibase = new ZiBase(config::byKey('zibase_ip', 'jeebase'));
 		if ($this->getName() == 'ON') {
-			return $zibase->sendCommand($this->getConfiguration('id'), ZbAction::ON, $this->getConfiguration('protocole'));
+			log::add('jeebase', 'debug', 'on ' . $this->getConfiguration('id') . ' ' . ' ' .$this->getConfiguration('protocole') );
+			
+			$zibase->sendCommand($this->getConfiguration('id'), ZbAction::ON, $this->getConfiguration('protocole'));
 		} elseif ($this->getName() == 'OFF') {
-			return $zibase->sendCommand($this->getConfiguration('id'), ZbAction::OFF, $this->getConfiguration('protocole'));
+			$zibase->sendCommand($this->getConfiguration('id'), ZbAction::OFF, $this->getConfiguration('protocole'));
 		} elseif ($this->getName() == 'Slider') {
-			return $zibase->sendCommand($this->getConfiguration('id'), ZbAction::ON, $this->getConfiguration('protocole'), $_options['slider']);
+			 $zibase->sendCommand($this->getConfiguration('id'), ZbAction::ON, $this->getConfiguration('protocole'), $_options['slider']);
 		}		
     }
 

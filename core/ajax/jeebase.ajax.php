@@ -42,11 +42,13 @@ try {
         $return = utils::o2a($sonde);
         $return['cmd'] = array();
             foreach ($sonde->getCmd() as $cmd) {
+				log::add('jeebase','debug','cmd : ' . print_r($cmd,true));
                 $cmd_info = utils::o2a($cmd);
-                $cmd_info['value'] = $cmd->execCmd(null, 0);
+				if ($cmd->getType() == 'info') {
+					 $cmd_info['value'] = $cmd->execCmd(null, 0);
+				}
                 $return['cmd'][] = $cmd_info;
             }
-        log::add('jeebase','debug',print_r($return,true));
         ajax::success($return);
     } 
 

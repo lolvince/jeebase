@@ -4,6 +4,24 @@ if (!isConnect('admin')) {
 }
 sendVarToJS('eqType', 'jeebase');
 $eqLogics = eqLogic::byType('jeebase');
+
+$eqLogicsSorted['sonde'] = array();
+$eqLogicsSorted['module'] = array();
+$eqLogicsSorted['sensor'] = array();
+
+
+foreach ($eqLogics as $eqLogic) {
+	
+	if ($eqLogic->getConfiguration('type') == 'sonde') {
+		array_push($eqLogicsSorted['sonde'], $eqLogic);
+	} elseif ($eqLogic->getConfiguration('type') == 'module') {
+		array_push($eqLogicsSorted['module'], $eqLogic);	
+	} elseif ($eqLogic->getConfiguration('type') == 'sensor') {
+		array_push($eqLogicsSorted['sensor'], $eqLogic);	
+	}
+	
+}
+
 ?>
 
 <div class="row row-overflow">
@@ -23,31 +41,73 @@ $eqLogics = eqLogic::byType('jeebase');
     </div>
     
        <div class="col-lg-10 col-md-9 col-sm-8 eqLogicThumbnailDisplay" style="border-left: solid 1px #EEE; padding-left: 25px;">
-        <legend>{{Mes Sondes}}
-        </legend>
+
         <?php
         if (count($eqLogics) == 0) {
             echo "<br/><br/><br/><center><span style='color:#767676;font-size:1.2em;font-weight: bold;'>{{Vous n'avez pas encore d'équipements Zibase, cliquez sur synchroniser dans la configuration générale du plugin}}</span></center>";
         } else {
             ?>
-            <div class="eqLogicThumbnailContainer">
+
                 <?php
-                foreach ($eqLogics as $eqLogic) {
-                    echo '<div class="eqLogicDisplayCard cursor" data-eqLogic_id="' . $eqLogic->getId() . '" style="background-color : #ffffff; height : 200px;margin-bottom : 10px;padding : 5px;border-radius: 2px;width : 160px;margin-left : 10px;" >';
-                    echo "<center>";
-                    echo '<img src="plugins/jeebase/doc/images/jeebase_icon.png" height="105" width="95" />';
-                    echo "</center>";
-                    echo '<span style="font-size : 1.1em;position:relative; top : 15px;word-break: break-all;white-space: pre-wrap;word-wrap: break-word;"><center>' . $eqLogic->getHumanName(true, true) . '</center></span>';
-                    echo '</div>';
-                }
-                ?>
-            </div>
-            <?php } ?>
+					foreach ($eqLogicsSorted as $state => $eqLogicList) {
+						
+					if (count($eqLogicList) == 0) {
+						echo "<legend>{{" .$state . "}}</legend>";
+						echo "<span style='color:#767676;font-size:1.2em;font-weight: bold;'>{{Vous n'avez pas encore d'équipements type " . $state . "}}</span>";
+					} else {						
+						
+							echo '<div class="eqLogicThumbnailContainer">';
+							echo "<legend>{{" .$state . "}}</legend>";
+							foreach ($eqLogicList as $equipement) {
+							$opacity = '';
+								if ($equipement->getIsEnable() != 1) {
+								$opacity = '
+								-webkit-filter: grayscale(100%);
+								-moz-filter: grayscale(100);
+								-o-filter: grayscale(100%);
+								-ms-filter: grayscale(100%);
+								filter: grayscale(100%); opacity: 0.35;';
+								}								
+
+							echo '<div class="eqLogicDisplayCard cursor" data-eqLogic_id="' . $equipement->getId() . '" style="background-color : #ffffff; height : 200px;margin-bottom : 10px;padding : 5px;border-radius: 2px;width : 160px;margin-left : 10px; ' . $opacity . ' " >';
+							echo "<center>";
+							echo '<img src="plugins/jeebase/doc/images/jeebase_icon.png" height="105" width="95" />';
+							echo "</center>";
+							echo '<span style="font-size : 1.1em;position:relative; top : 15px;word-break: break-all;white-space: pre-wrap;word-wrap: break-word;" ><center>' . $equipement->getHumanName(true, true) . '</center></span>';
+							echo '</div>';	
+														
+								
+							}
+							echo '</div>';	
+					}
+
+					}
+				
+				
+				
+
+			}			?>
+
+            
         </div> 
          <div class="col-md-10 eqLogic" style="border-left: solid 1px #EEE; padding-left: 25px;display: none;">
+         
+          <a class="btn btn-success eqLogicAction pull-right" data-action="save"><i class="fa fa-check-circle"></i> {{Sauvegarder}}</a>
+          <a class="btn btn-danger eqLogicAction pull-right" data-action="remove"><i class="fa fa-minus-circle"></i> {{Supprimer}}</a>
+        
+         <ul class="nav nav-tabs" role="tablist">
+          <li role="presentation"><a href="#" class="eqLogicAction" aria-controls="home" role="tab" data-toggle="tab" data-action="returnToThumbnailDisplay"><i class="fa fa-arrow-circle-left"></i></a></li>
+          <li role="presentation" class="active"><a href="#eqlogictab" aria-controls="home" role="tab" data-toggle="tab"><i class="fa fa-tachometer"></i> {{Equipement}}</a></li>
+          <li role="presentation"><a href="#infotab" aria-controls="profile" role="tab" data-toggle="tab"><i class="fa fa-list-alt"></i> {{Informations}}</a></li>
+          <i class='fa fa-cogs eqLogicAction pull-right cursor expertModeVisible' data-action='configure'></i>
+        </ul>    
+        
+		<div class="tab-content" style="height:calc(100% - 50px);overflow:auto;overflow-x: hidden;">
+		<div role="tabpanel" class="tab-pane active" id="eqlogictab"> 
+        <br/>          
+         
         <form class="form-horizontal">
             <fieldset>
-                <legend><i class="fa fa-arrow-circle-left eqLogicAction cursor" data-action="returnToThumbnailDisplay"></i> {{Général}}  <i class='fa fa-cogs eqLogicAction pull-right cursor expertModeVisible' data-action='configure'></i></legend>
                 <div class="form-group">
                     <label class="col-md-2 control-label">{{Nom}}</label>
                     <div class="col-md-3">
@@ -80,18 +140,25 @@ $eqLogics = eqLogic::byType('jeebase');
                         ?>
 
                     </div>
-                </div>                 <div class="form-group">
-                 <label class="col-sm-2 control-label" ></label>
-                <div class="col-sm-9">
-                 <input type="checkbox" class="eqLogicAttr bootstrapSwitch" data-label-text="{{Activer}}" data-l1key="isEnable" checked/>
-                  <input type="checkbox" class="eqLogicAttr bootstrapSwitch" data-label-text="{{Visible}}" data-l1key="isVisible" checked/>
-                </div>              
+                </div>                 
+                <div class="form-group">
+                  <label class="col-md-2 control-label" >{{Activer}}</label>
+                  <div class="col-md-1">
+                    <input type="checkbox" class="eqLogicAttr checkbox-inline checkbox_active" data-label-text="{{Activer}}" data-l1key="isEnable" checked/>
+                  </div>
+                  <label class="col-md-2 control-label prog_visible" >{{Visible}}</label>
+                  <div class="col-md-1 prog_visible">
+                    <input type="checkbox" class="eqLogicAttr checkbox-inline" data-label-text="{{Visible}}" data-l1key="isVisible" checked/>
+                  </div>
                 </div>
                 
             </fieldset> 
         </form>
-
-        <legend>{{Donnèes de Zibase}}</legend>
+        
+        </div>
+        
+         <div role="tabpanel" class="tab-pane" id="infotab">  
+         <br/> 
         
          <div id="table_sonde" class="form-group">
            <label class="col-md-2 control-label">{{Identifiant Sonde}}</label>
@@ -110,7 +177,6 @@ $eqLogics = eqLogic::byType('jeebase');
                 <tr>
                     <th >{{Nom}}</th>
                     <th >{{Type}}</th>
-                    <th>{{Parametre(s)}}</th>
                     <th>Options</th>
                     <th>Actions</th>
                 </tr>
@@ -142,16 +208,9 @@ $eqLogics = eqLogic::byType('jeebase');
             </tbody>
         </table>
 
-        <form class="form-horizontal">
-            <fieldset>
-                <div class="form-actions">
-                    <a class="btn btn-danger eqLogicAction" data-action="remove"><i class="fa fa-minus-circle"></i> {{Supprimer}}</a>
-                    <a class="btn btn-success eqLogicAction" data-action="save"><i class="fa fa-check-circle"></i> {{Sauvegarder}}</a>
-                </div>
-            </fieldset>
-        </form>
 
-    </div>
+   		</div>
+        </div>
 </div>
 
 <?php include_file('desktop', 'jeebase', 'js', 'jeebase'); ?>

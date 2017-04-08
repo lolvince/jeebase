@@ -1,0 +1,10 @@
+{
+	"id" : "jeebase",
+	"name" : "Jeebase",
+	"description" : "Plugin pour récuperer et utiliser les données de Zibase",
+	"licence" : "AGPL",
+	"author" : "zyg0m4t1k",
+	"require" : "2.4",
+	"category" : "monitoring",
+	"hasOwnDeamon" : true
+}
