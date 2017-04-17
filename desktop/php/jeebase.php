@@ -28,7 +28,6 @@ foreach ($eqLogics as $eqLogic) {
     <div class="col-md-2">
         <div class="bs-sidebar">
             <ul id="ul_eqLogic" class="nav nav-list bs-sidenav">
-                <a class="btn btn-default eqLogicAction" style="width : 100%;margin-top : 5px;margin-bottom: 5px;" data-action="updateDataZibase"><i class="fa fa-plus-circle"></i> {{Mettre à jour les équipements}}</a>
 				<a class="btn btn-alert eqLogicAction" style="width : 100%;margin-top : 5px;margin-bottom: 5px;" data-action="deleteDataZibase"><i class="fa fa-plus-circle"></i> {{Effacer tous les équipements}}</a>                
                 <li class="filter" style="margin-bottom: 5px;"><input class="filter form-control input-sm" placeholder="{{Rechercher}}" style="width: 100%"/></li>
                 <?php
@@ -40,7 +39,20 @@ foreach ($eqLogics as $eqLogic) {
         </div>
     </div>
     
-       <div class="col-lg-10 col-md-9 col-sm-8 eqLogicThumbnailDisplay" style="border-left: solid 1px #EEE; padding-left: 25px;">
+   <div class="col-lg-10 col-md-9 col-sm-8 eqLogicThumbnailDisplay" style="border-left: solid 1px #EEE; padding-left: 25px;">
+
+
+		<div class="eqLogicThumbnailContainer">           
+            
+			<div class="cursor eqLogicAction" data-action="gotoPluginConf" style="background-color : #ffffff; height : 120px;margin-bottom : 10px;padding : 5px;border-radius: 2px;width : 160px;margin-left : 10px;">
+            <center>
+            <i class="fa fa-wrench" style="font-size : 5em;color:#767676;"></i>
+            </center>
+    		<span style="font-size : 1.1em;position:relative; top : 15px;word-break: break-all;white-space: pre-wrap;word-wrap: break-word;color:#767676"><center>{{Configuration}}</center></span>
+			</div>        
+            
+		</div>         
+       
 
         <?php
         if (count($eqLogics) == 0) {

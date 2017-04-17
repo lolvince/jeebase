@@ -63,7 +63,14 @@ if (!isConnect()) {
             <div class="col-lg-2">
             <a class="btn btn-warning" id="bt_syncWithZibase"><i class='fa fa-refresh'></i> {{Synchroniser mes équipements}}</a>
             </div>
-        </div>        
+        </div>
+        <div class="form-group">
+            <label class="col-lg-4 control-label">{{Update}}</label>
+            <div class="col-lg-2">
+            <a class="btn btn-danger" id="bt_syncJeebase"><i class='fa fa-refresh'></i> {{Update}}</a><label style='color:red;'>{{A faire seulement en cas de passage à la nouvelle version}}</label>
+            </div>
+            
+        </div>                  
         
                      
     </fieldset>
@@ -73,7 +80,34 @@ if (!isConnect()) {
 </form>
 
 <script>
+    $('#bt_syncJeebase').on('click', function () {
+		bootbox.confirm('Ok seulement pour mettre les données à jour depuis l\'ancienne version sinon synchroniser', function (result) {
+		 if (result) {		
+			$.ajax({// fonction permettant de faire de l'ajax
+				type: "POST", // methode de transmission des données au fichier php
+				url: "plugins/jeebase/core/ajax/jeebase.ajax.php", // url du fichier php
+				data: {
+					action: "updateDataZibase",
+				},
+				dataType: 'json',
+				error: function (request, status, error) {
+					handleAjaxError(request, status, error);
+				},
+				success: function (data) { // si l'appel a bien fonctionné
+					if (data.state != 'ok') {
+						$('#div_alert').showAlert({message: data.result, level: 'danger'});
+						return;
+					}
+					$('#div_alert').showAlert({message: '{{Mise à jour réussie}}', level: 'success'});
+				}
+			});
+		 }
+		});
+    });
+	
+	
     $('#bt_syncWithZibase').on('click', function () {
+
         $.ajax({// fonction permettant de faire de l'ajax
             type: "POST", // methode de transmission des données au fichier php
             url: "plugins/jeebase/core/ajax/jeebase.ajax.php", // url du fichier php
@@ -92,5 +126,5 @@ if (!isConnect()) {
                 $('#div_alert').showAlert({message: '{{Synchronisation réussie}}', level: 'success'});
             }
         });
-    });
+    });	
 </script>

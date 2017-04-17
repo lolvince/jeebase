@@ -57,8 +57,27 @@ while (true) {
 				};
 				if(preg_match_all( '#<uvl>(.*?)</uvl>#', $m[0][0] ,$uvl )) {
 					$data['uvl'] = $uvl[1][0];
-				};				
-				
+				};
+				if(preg_match_all( '#<kwh>(.*?)</kwh>#', $m[0][0] ,$kwh )) {
+					$data['kwh'] = $kwh[1][0];
+				};
+				if(preg_match_all( '#<w>(.*?)</w>#', $m[0][0] ,$w )) {
+					$data['w'] = $w[1][0];
+				};
+				if(preg_match_all( '#<awi>(.*?)</awi>#', $m[0][0] ,$awi)) {
+					$data['awi'] = $awi[1][0];
+				};	
+				if(preg_match_all( '#<drt>(.*?)</drt>#', $m[0][0] ,$drt )) {
+					$data['drt'] = $drt[1][0];
+				};
+				if(preg_match_all( '#<tra>(.*?)</tra>#', $m[0][0] ,$tra )) {
+					$data['tra'] = $tra[1][0];
+				};	
+				if(preg_match_all( '#<cra>(.*?)</cra>#', $m[0][0] ,$cra )) {
+					$data['cra'] = $cra[1][0];
+				};					
+																	
+								
 				$exp = explode(": ", $zbData->message);
 				if(preg_match_all( '#<id>(.*?)(_OFF|_ON)?</id>#', $exp[1] ,$id )) {
 					$data['id'] = $id[1][0];
