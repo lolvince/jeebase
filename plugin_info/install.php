@@ -19,6 +19,7 @@
 require_once dirname(__FILE__) . '/../../../core/php/core.inc.php';
 
 function jeebase_update() {
+	log::add('jeebase', 'error', '!!! Voir le changelog !!!');
     $cron = cron::byClassAndFunction('jeebase', 'pull');
     if (is_object($cron)) {
         $cron->remove();
@@ -31,6 +32,8 @@ function jeebase_remove() {
         $cron->remove();
     }
 }
+
+
 
 
 ?>
