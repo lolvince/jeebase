@@ -587,10 +587,10 @@ class jeebase extends eqLogic {
 
 
     public function setInfoToJeedom($_options) {
-		$jeebase = jeebase::byLogicalId( $_options['id'],  'jeebase') ;
-		$time = $jeebase->getCmd(null,'time');
-		$time->event(date('Y-m-d H:i:s'));			
+		$jeebase = jeebase::byLogicalId( $_options['id'],  'jeebase') ;		
 		if ( is_object($jeebase) ) {
+			$time = $jeebase->getCmd(null,'time');
+			$time->event(date('Y-m-d H:i:s'));				
 			foreach ($_options as $key => $val) {
 				switch ($key) {
 					case "tem": $info = "temperature";break;
@@ -616,7 +616,7 @@ class jeebase extends eqLogic {
 				}					
 			}
 		} else {
-			log::add('jeebase', 'debug', 'No object');
+			log::add('jeebase', 'debug', 'Sondes non reconnues');
 		}
 	}
 
