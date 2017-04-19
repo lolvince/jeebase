@@ -593,45 +593,25 @@ class jeebase extends eqLogic {
 			$time->event(date('Y-m-d H:i:s'));				
 			foreach ($_options as $key => $val) {
 				switch ($key) {
-					case "tem": $info = "temperature";break;
-					case "hum": $info = "humidity";break;
-					case "uvl": $info = "luminosite";break;
-					case "kwh": $info = "powerTotal";break;
-					case "w":   $info = "powerInstant";break;
-					case "awi": $info = "vitesse";break;
-					case "drt": $info = "orientation";break;
-					case "cra": $info = "PluieInstant";break;
-					case "tra": $info = "PluieTotale";break;					
-					
-					default: $info = "other";
-					
-				}
-				if ($info == 'other') {
-					continue;
-				}
-				$data = $data->getCmd(null,$info);
-				if (is_object($data) && $data->execCmd() != $val ) {
-					$data->setCollectDate('');
-					$data->event($val);								
+					case "tem": $changed = $jeebase->checkAndUpdateCmd("temperature", $val) || $changed; break;
+					case "hum": $changed = $jeebase->checkAndUpdateCmd("humidity", $val) || $changed; break;
+					case "uvl": $changed = $jeebase->checkAndUpdateCmd("luminosite", $val) || $changed; break;
+					case "kwh": $changed = $jeebase->checkAndUpdateCmd("powerTotal", $val) || $changed; break;
+					case "w":   $changed = $jeebase->checkAndUpdateCmd("powerInstant", $val) || $changed; break;
+					case "awi": $changed = $jeebase->checkAndUpdateCmd("vitesse", $val) || $changed; break; 
+					case "drt": $changed = $jeebase->checkAndUpdateCmd("orientation", $val) || $changed; break;
+					case "cra": $changed = $jeebase->checkAndUpdateCmd("PluieInstant", $val) || $changed; break;
+					case "tra": $changed = $jeebase->checkAndUpdateCmd("PluieTotale", $val) || $changed; break; 				
 				}
 			}
-		} else {
-			log::add('jeebase', 'debug', 'Sondes non reconnues');
-		}
+		} 
 	}
 
 	public function setStateToJeedom($_options) {
 		$jeebase = jeebase::byLogicalId( $_options['id'],  'jeebase') ;
 	 	if ( is_object($jeebase) ) {
-			$data = $jeebase->getCmd(null,'etat');
-			if ($data->execCmd() != $_options['etat'] ) {
-				$data->setCollectDate('');
-				$data->event($_options['etat']);
-			}
-		} else {
-		//	log::add('jeebase', 'debug', 'No object');
+			$changed = $jeebase->checkAndUpdateCmd('etat', $_options['etat']) || $changed;
 		}
-		
 	}
 
 	
