@@ -589,8 +589,7 @@ class jeebase extends eqLogic {
     public function setInfoToJeedom($_options) {
 		$jeebase = jeebase::byLogicalId( $_options['id'],  'jeebase') ;		
 		if ( is_object($jeebase) ) {
-			$time = $jeebase->getCmd(null,'time');
-			$time->event(date('Y-m-d H:i:s'));				
+			$changed = $jeebase->checkAndUpdateCmd("time", date('Y-m-d H:i:s')) || $changed;			
 			foreach ($_options as $key => $val) {
 				switch ($key) {
 					case "tem": $changed = $jeebase->checkAndUpdateCmd("temperature", $val) || $changed; break;
