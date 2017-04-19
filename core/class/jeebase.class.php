@@ -597,7 +597,7 @@ class jeebase extends eqLogic {
 					case "hum": $info = "humidity";break;
 					case "uvl": $info = "luminosite";break;
 					case "kwh": $info = "powerTotal";break;
-					case "w": $info = "powerInstant";break;
+					case "w":   $info = "powerInstant";break;
 					case "awi": $info = "vitesse";break;
 					case "drt": $info = "orientation";break;
 					case "cra": $info = "PluieInstant";break;
@@ -609,11 +609,11 @@ class jeebase extends eqLogic {
 				if ($info == 'other') {
 					continue;
 				}
-				$data = $jeebase->getCmd(null,$info);
-				if ($data->execCmd() != $val ) {					
+				$data = $data->getCmd(null,$info);
+				if (is_object($data) && $data->execCmd() != $val ) {
 					$data->setCollectDate('');
-					$data->event($val);			
-				}					
+					$data->event($val);								
+				}
 			}
 		} else {
 			log::add('jeebase', 'debug', 'Sondes non reconnues');
