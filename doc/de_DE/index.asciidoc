@@ -1,15 +1,15 @@
 ﻿== Jeebase
 
-=== Présentation
-Ce plugin permet de récupérer toutes les sondes , actionneurs et sensors de votre zibase. Il est ensuite possible d'utiliser ces informations dans Jeedom
+=== Präsentation
+Dieses Plugin erlaubt es, alle Sonden, Aktoren und Sensoren von Ihrem Zibase abzurufen. Es ist dann möglich, diese Informationen in Jeedom zu verwenden.
 
 '''
-=== Installation/Configuration
+=== Installation/Konfiguration
 include::configuration.asciidoc[]
 
 '''
 === FAQ
 include::faq.asciidoc[]
 '''
-=== Changelog
+=== Änderungsprotokoll
 include::changelog.asciidoc[]
