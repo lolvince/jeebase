@@ -164,6 +164,13 @@ foreach ($eqLogics as $eqLogic) {
                   </div>
                 </div>
                 
+                 <div class="form-group ident">
+                   <label class="col-md-2 control-label">{{Identifiant}}</label>
+                    <div class="col-md-1">
+                        <input type="text" class="eqLogicAttr configuration form-control" data-l1key="configuration" data-l2key="id" placeholder="id" disabled/>
+                    </div>        
+                    
+                </div>                 
             </fieldset> 
         </form>
         
@@ -171,7 +178,8 @@ foreach ($eqLogics as $eqLogic) {
         
          <div role="tabpanel" class="tab-pane" id="infotab">  
          <br/> 
-        
+         
+                
          <div id="table_sonde" class="form-group">
            <label class="col-md-2 control-label">{{Identifiant Sonde}}</label>
             <div class="col-md-3">

@@ -1,7 +1,7 @@
 ﻿[panel,primary]
-.Que peut-on faire une fois les équipements créent ?
+.Was kann gemacht werden, sobald das Gerät erschaffen wurde ?
 --
-Il est possible d'utiliser ensuite toutes les informations dans les scénarios Jeedom 
+Es ist danach möglich, alle Informationen in den Jeedom-Szenarien zu benutzen 
 --
 
 

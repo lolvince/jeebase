@@ -97,13 +97,12 @@ function addCmdToTable(_cmd) {
 			tr += '</td>';
 			tr += '<td>' + _cmd.name + '</td>'; 
 			tr += '<td>';
-		
 			tr += '<span><input type="checkbox" class="cmdAttr" data-l1key="isHistorized" /> {{Historiser}}<br/></span>';
 				
 			
 			tr += '</td>';
 			tr += '<td>';
-		
+			tr += '<a class="btn btn-default btn-xs cmdAction expertModeVisible" data-action="configure"><i class="fa fa-cogs"></i></a> ';
 			tr += '<span><input type="checkbox" class="cmdAttr" data-l1key="isVisible" /> {{Afficher}}<br/></span>';
 				
 			
@@ -149,6 +148,27 @@ function addCmdToTable(_cmd) {
 }
 
 function printEqLogic(_eqLogic)  {
+    $('.ident').hide();
+	
+	
+	if (!isset(_eqLogic)) {
+		var _eqLogic = {configuration: {}};
+	}
+	
+	if (!isset(_eqLogic.configuration)) {
+	   _eqLogic.configuration = {};
+	}
+	
+	if (_eqLogic.configuration.type == 'module' || _eqLogic.configuration.type == 'sensor') {
+		$('.ident').show();
+			
+	}
+	
+	if (_eqLogic.configuration.type == 'devices') {
+		$('.ident').hide();		
+	}
+			
+	
     $.ajax({// fonction permettant de faire de l'ajax
         type: "POST", // methode de transmission des données au fichier php
         url: "plugins/jeebase/core/ajax/jeebase.ajax.php", // url du fichier php

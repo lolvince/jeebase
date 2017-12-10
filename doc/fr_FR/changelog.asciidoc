@@ -1,5 +1,7 @@
 ﻿[horizontal]
 
+10.12.2017:: Amélioration du daemon . Ajout de l'id de la commande pour les modules/sensors
+
 1.1:: Fix pour récupérer les infos.Pour ceux qui ont déjà  le plugin et qui ont déjà synchronisé il suffit juste de re-synchroniser dans la configuration du plugin. Ceux qui avaient l'ancienne version il faut cliquer sur le bouton update dans la configuration du plugin et si besoin re-synchroniser.
 
 1.0:: Version compatible 2.4

@@ -537,35 +537,59 @@ class jeebase extends eqLogic {
 	}
 		
 	public static function deamon_info() {
+		log::add('jeebase', 'debug', '-----------------------------------------');
+		
+		log::add('jeebase', 'debug', 'deamon_info');
 		$return = array();
 		$return['log'] = 'jeebase_php';
 		$return['state'] = 'nok';
 		$pid = trim( shell_exec ('ps ax | grep "jeebase/3rdparty/listen.php" | grep -v "grep" | wc -l') );
 		if ($pid != '' && $pid != '0') {
+		 log::add('jeebase', 'debug', 'state ok');
 		  $return['state'] = 'ok';
+		  
+		} else {
+			log::add('jeebase', 'debug', 'state no ok');
 		}
 		$return['launchable'] = 'ok';
 		if (config::byKey('locale_ip', 'jeebase') == '' || config::byKey('zibase_ip', 'jeebase') == '') {
 		  $return['launchable'] = 'nok';
 		  $return['launchable_message'] = __('Erreur de configuration', __FILE__);
 		}		
+		log::add('jeebase', 'debug', 'return deamon info');
+		log::add('jeebase', 'debug', '-----------------------------------------');
 		return $return;		
 	}
 	
-	public static function deamon_start($_debug = false) {
+	public static function deamon_start() {
+		log::add('jeebase', 'debug', '-----------------------------------------');
+		
+		log::add('jeebase', 'debug', 'deamon_start');		
 		self::deamon_stop();
-		$deamon_info = self::deamon_info();	
-		if ($_debug = true) {
-		  $log = "1";
-		} else {
-		  $log = "0";
-		}		
 		$file_path = realpath(dirname(__FILE__) . '/../../3rdparty');	
 		$ip_locale = config::byKey('locale_ip', 'jeebase');
 		$ip_zibase = config::byKey('zibase_ip', 'jeebase');
-		$cmd = 'php ' . $file_path . '/listen.php -a ' . $ip_zibase . ' -b ' . $ip_locale  . ' 1 ' . $log;
-		$result = exec('nohup ' . $cmd . ' >> ' . log::getPathToLog('jeebase_php') . ' 2>&1 &');		
+		$cmd = 'php ' . $file_path . '/listen.php -a ' . $ip_zibase . ' -b ' . $ip_locale;
+		$result = exec('nohup ' . $cmd . ' >> ' . log::getPathToLog('jeebase_php') . ' 2>&1 &');
+				
+		$deamon_info = self::deamon_info();	
+		$i = 0;
+		while ($i < 30) {
+		  $deamon_info = self::deamon_info();
+		  if ($deamon_info['state'] == 'ok') {
+			break;
+		  }
+		  sleep(1);
+		  $i++;
+		}
+		if ($i >= 30) {
+		  log::add('jeebase', 'error', 'Impossible de lancer le démon de jeebase');
+		  return false;
+		}
+
+   		log::add('jeebase', 'debug', 'Démon jeebase lancé aprés ' . $i . ' lancement');		
 		
+		log::add('jeebase', 'debug', '-----------------------------------------');
 		
 	}
 	
@@ -587,7 +611,8 @@ class jeebase extends eqLogic {
 
 
     public function setInfoToJeedom($_options) {
-		$jeebase = jeebase::byLogicalId( $_options['id'],  'jeebase') ;		
+		$jeebase = jeebase::byLogicalId( $_options['id'],  'jeebase') ;	
+		$changed = false;	
 		if ( is_object($jeebase) ) {
 			$changed = $jeebase->checkAndUpdateCmd("time", date('Y-m-d H:i:s')) || $changed;			
 			foreach ($_options as $key => $val) {
@@ -604,13 +629,20 @@ class jeebase extends eqLogic {
 				}
 			}
 		} 
+		if ($changed) {
+			$jeebase->refreshWidget();
+		}
 	}
 
 	public function setStateToJeedom($_options) {
 		$jeebase = jeebase::byLogicalId( $_options['id'],  'jeebase') ;
+		$changed = false;
 	 	if ( is_object($jeebase) ) {
 			$changed = $jeebase->checkAndUpdateCmd('etat', $_options['etat']) || $changed;
 		}
+		if ($changed) {
+			$jeebase->refreshWidget();
+		}	
 	}
 
 	
