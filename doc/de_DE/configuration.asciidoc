@@ -2,7 +2,7 @@
 
 image::../images/jeebase_icone.png[align="center"]
 
--Activer le Plugin puis remplir les champs de configuration
+-Aktivieren Sie das Plugin und dann füllen Sie die Felder der Konfiguration aus
 
 image::../images/jeebase1.png[align="center"]
 
