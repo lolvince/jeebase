@@ -483,6 +483,7 @@ class jeebase extends eqLogic {
 		$eqLogics = eqLogic::byType('jeebase');
 		foreach ( $eqLogics as $eqLogic) {
 			$eqLogic->remove();
+			
 		}
 	}
 	public function updateDataZibase() {
