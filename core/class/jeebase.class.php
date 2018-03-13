@@ -427,6 +427,13 @@ class jeebase extends eqLogic {
 
 	}
 	
+	 public function preRemove() {
+		$cron = cron::byClassAndFunction('jeebase', 'launchAction', array('eq_id' => intval($this->getId())));
+		if (is_object($cron)) {
+			$cron->remove();
+		}	
+	 }	
+	
 	public function postUpdate() {
 		if($this->getConfiguration("type_eq") == "custom") {
 			
@@ -660,6 +667,8 @@ class jeebase extends eqLogic {
 
 	}
 
+
+	
     public function setInfoToJeedom($_options) {
 		$jeebase = jeebase::byTypeAndSearhConfiguration( 'jeebase', $_options['id']);
 		if ( is_object($jeebase[0])) {
@@ -667,7 +676,7 @@ class jeebase extends eqLogic {
 			if ( is_object($cmd)) {
 				$cmd->execCmd();	
 				if ($jeebase[0]->getConfiguration('off') == '' && $jeebase[0]->getConfiguration('raz') != '') {
-					log::add('jeebase', 'debug', 'RAZ sera exécutée à '.date("Y-m-d H:i", time() + 120));
+					log::add('jeebase', 'debug', 'RAZ sera exécutée à '.strtotime("now") + 60 * $jeebase[0]->getConfiguration('raz'));
 					$cron = cron::byClassAndFunction('jeebase', 'launchAction', array('eq_id' => intval($jeebase[0]->getId()))); 
 					if (!is_object($cron)) {
 						$cron = new cron();
@@ -676,12 +685,14 @@ class jeebase extends eqLogic {
 						$cron->setOption(array('eq_id' => intval($jeebase[0]->getId())));
 					}
 					$cron->setEnable(1);
-					$cron->setSchedule(cron::convertDateToCron(strtotime("now") + 120));
+					$cron->setSchedule(cron::convertDateToCron(strtotime("now") + 60 * $jeebase[0]->getConfiguration('raz')));
 					$cron->setOnce(1);
 					$cron->save();
 				}					
 				return;
-			} 
+			} else {
+				log::add('jeebase', 'debug', 'no utu ' .$_options['id']);
+			}
 		}
 		
 		$jeebase = jeebase::byLogicalId( $_options['id'],  'jeebase') ;	
