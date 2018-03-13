@@ -4,23 +4,8 @@ if (!isConnect('admin')) {
 }
 sendVarToJS('eqType', 'jeebase');
 $eqLogics = eqLogic::byType('jeebase');
+$plugin = plugin::byId('jeebase');
 
-$eqLogicsSorted['sonde'] = array();
-$eqLogicsSorted['module'] = array();
-$eqLogicsSorted['sensor'] = array();
-
-
-foreach ($eqLogics as $eqLogic) {
-	
-	if ($eqLogic->getConfiguration('type') == 'sonde') {
-		array_push($eqLogicsSorted['sonde'], $eqLogic);
-	} elseif ($eqLogic->getConfiguration('type') == 'module') {
-		array_push($eqLogicsSorted['module'], $eqLogic);	
-	} elseif ($eqLogic->getConfiguration('type') == 'sensor') {
-		array_push($eqLogicsSorted['sensor'], $eqLogic);	
-	}
-	
-}
 
 ?>
 
@@ -40,39 +25,32 @@ foreach ($eqLogics as $eqLogic) {
     </div>
     
    <div class="col-lg-10 col-md-9 col-sm-8 eqLogicThumbnailDisplay" style="border-left: solid 1px #EEE; padding-left: 25px;">
-
-
-		<div class="eqLogicThumbnailContainer">           
+		<div class="eqLogicThumbnailContainer">                    
             
 			<div class="cursor eqLogicAction" data-action="gotoPluginConf" style="background-color : #ffffff; height : 120px;margin-bottom : 10px;padding : 5px;border-radius: 2px;width : 160px;margin-left : 10px;">
             <center>
             <i class="fa fa-wrench" style="font-size : 5em;color:#767676;"></i>
             </center>
     		<span style="font-size : 1.1em;position:relative; top : 15px;word-break: break-all;white-space: pre-wrap;word-wrap: break-word;color:#767676"><center>{{Configuration}}</center></span>
-			</div>        
+			</div> 
+                 <div class="cursor eqLogicAction" data-action="addEquipement" style="text-align: center; background-color : #ffffff; height : 120px;margin-bottom : 10px;padding : 5px;border-radius: 2px;width : 160px;margin-left : 10px;" >
+                    <i class="fa fa-plus-circle" style="font-size : 6em;color:#00A9EC;"></i>
+                    <br>
+                     <span style="font-size : 1.1em;position:relative; top : 23px;word-break: break-all;white-space: pre-wrap;word-wrap: break-word;color:#00A9EC">{{Ajouter}}</span>
+                </div>                       
             
-		</div>         
-       
-
+		</div>  
+        
         <?php
-        if (count($eqLogics) == 0) {
-            echo "<br/><br/><br/><center><span style='color:#767676;font-size:1.2em;font-weight: bold;'>{{Vous n'avez pas encore d'équipements Zibase, cliquez sur synchroniser dans la configuration générale du plugin}}</span></center>";
-        } else {
-            ?>
+					echo "<legend>{{Modules}}</legend>";
+					echo '<div class="eqLogicThumbnailContainer">';
+					foreach ($eqLogics as $eqLogic) {
+					if($eqLogic->getConfiguration('type') == 'module') {
+					
+					
 
-                <?php
-					foreach ($eqLogicsSorted as $state => $eqLogicList) {
-						
-					if (count($eqLogicList) == 0) {
-						echo "<legend>{{" .$state . "}}</legend>";
-						echo "<span style='color:#767676;font-size:1.2em;font-weight: bold;'>{{Vous n'avez pas encore d'équipements type " . $state . "}}</span>";
-					} else {						
-						
-							echo '<div class="eqLogicThumbnailContainer">';
-							echo "<legend>{{" .$state . "}}</legend>";
-							foreach ($eqLogicList as $equipement) {
 							$opacity = '';
-								if ($equipement->getIsEnable() != 1) {
+								if ($eqLogic->getIsEnable() != 1) {
 								$opacity = '
 								-webkit-filter: grayscale(100%);
 								-moz-filter: grayscale(100);
@@ -80,35 +58,94 @@ foreach ($eqLogics as $eqLogic) {
 								-ms-filter: grayscale(100%);
 								filter: grayscale(100%); opacity: 0.35;';
 								}								
-
-							echo '<div class="eqLogicDisplayCard cursor" data-eqLogic_id="' . $equipement->getId() . '" style="background-color : #ffffff; height : 200px;margin-bottom : 10px;padding : 5px;border-radius: 2px;width : 160px;margin-left : 10px; ' . $opacity . ' " >';
+		
+							echo '<div class="eqLogicDisplayCard cursor" data-eqLogic_id="' . $eqLogic->getId() . '" style="background-color : #ffffff; height : 200px;margin-bottom : 10px;padding : 5px;border-radius: 2px;width : 160px;margin-left : 10px; ' . $opacity . ' " >';
 							echo "<center>";
-							echo '<img src="plugins/jeebase/doc/images/jeebase_icon.png" height="105" width="95" />';
+							echo '<img src="' . $plugin->getPathImgIcon() . '" height="105" width="95" />';
 							echo "</center>";
-							echo '<span style="font-size : 1.1em;position:relative; top : 15px;word-break: break-all;white-space: pre-wrap;word-wrap: break-word;" ><center>' . $equipement->getHumanName(true, true) . '</center></span>';
+							echo '<span style="font-size : 1.1em;position:relative; top : 15px;word-break: break-all;white-space: pre-wrap;word-wrap: break-word;" ><center>' . $eqLogic->getHumanName(true, true) . '</center></span>';
 							echo '</div>';	
 														
 								
 							}
+					}
+					echo '</div>';
+      
+               
+       
+
+					echo "<legend>{{Sondes}}</legend>";
+					echo '<div class="eqLogicThumbnailContainer">';
+					foreach ($eqLogics as $eqLogic) {
+					if($eqLogic->getConfiguration('type') == 'sonde') {
+					
+					
+
+							$opacity = '';
+								if ($eqLogic->getIsEnable() != 1) {
+								$opacity = '
+								-webkit-filter: grayscale(100%);
+								-moz-filter: grayscale(100);
+								-o-filter: grayscale(100%);
+								-ms-filter: grayscale(100%);
+								filter: grayscale(100%); opacity: 0.35;';
+								}								
+		
+							echo '<div class="eqLogicDisplayCard cursor" data-eqLogic_id="' . $eqLogic->getId() . '" style="background-color : #ffffff; height : 200px;margin-bottom : 10px;padding : 5px;border-radius: 2px;width : 160px;margin-left : 10px; ' . $opacity . ' " >';
+							echo "<center>";
+							echo '<img src="' . $plugin->getPathImgIcon() . '" height="105" width="95" />';
+							echo "</center>";
+							echo '<span style="font-size : 1.1em;position:relative; top : 15px;word-break: break-all;white-space: pre-wrap;word-wrap: break-word;" ><center>' . $eqLogic->getHumanName(true, true) . '</center></span>';
 							echo '</div>';	
+														
+								
+							}
 					}
+					echo '</div>';
+					
+					echo "<legend>{{Sensors}}</legend>";
+					echo '<div class="eqLogicThumbnailContainer">';
+					foreach ($eqLogics as $eqLogic) {
+					if($eqLogic->getConfiguration('type') == 'sensor') {
+					
+					
 
+							$opacity = '';
+								if ($eqLogic->getIsEnable() != 1) {
+								$opacity = '
+								-webkit-filter: grayscale(100%);
+								-moz-filter: grayscale(100);
+								-o-filter: grayscale(100%);
+								-ms-filter: grayscale(100%);
+								filter: grayscale(100%); opacity: 0.35;';
+								}								
+		
+							echo '<div class="eqLogicDisplayCard cursor" data-eqLogic_id="' . $eqLogic->getId() . '" style="background-color : #ffffff; height : 200px;margin-bottom : 10px;padding : 5px;border-radius: 2px;width : 160px;margin-left : 10px; ' . $opacity . ' " >';
+							echo "<center>";
+							echo '<img src="' . $plugin->getPathImgIcon() . '" height="105" width="95" />';
+							echo "</center>";
+							echo '<span style="font-size : 1.1em;position:relative; top : 15px;word-break: break-all;white-space: pre-wrap;word-wrap: break-word;" ><center>' . $eqLogic->getHumanName(true, true) . '</center></span>';
+							echo '</div>';	
+														
+								
+							}
 					}
-				
-				
-				
-
-			}			?>
+					echo '</div>';					
+					
+			?>
+            
+            
 
             
         </div> 
+        
          <div class="col-md-10 eqLogic" style="border-left: solid 1px #EEE; padding-left: 25px;display: none;">
          
           <a class="btn btn-success eqLogicAction pull-right" data-action="save"><i class="fa fa-check-circle"></i> {{Sauvegarder}}</a>
           <a class="btn btn-danger eqLogicAction pull-right" data-action="remove"><i class="fa fa-minus-circle"></i> {{Supprimer}}</a>
         
          <ul class="nav nav-tabs" role="tablist">
-          <li role="presentation"><a href="#" class="eqLogicAction" aria-controls="home" role="tab" data-toggle="tab" data-action="returnToThumbnailDisplay"><i class="fa fa-arrow-circle-left"></i></a></li>
+          <li role="presentation"><a href="" class="eqLogicAction" aria-controls="home" role="tab" data-toggle="tab" data-action="returnToThumbnailDisplay"><i class="fa fa-arrow-circle-left"></i></a></li>
           <li role="presentation" class="active"><a href="#eqlogictab" aria-controls="home" role="tab" data-toggle="tab"><i class="fa fa-tachometer"></i> {{Equipement}}</a></li>
           <li role="presentation"><a href="#infotab" aria-controls="profile" role="tab" data-toggle="tab"><i class="fa fa-list-alt"></i> {{Informations}}</a></li>
           <i class='fa fa-cogs eqLogicAction pull-right cursor expertModeVisible' data-action='configure'></i>
@@ -170,7 +207,28 @@ foreach ($eqLogics as $eqLogic) {
                         <input type="text" class="eqLogicAttr configuration form-control" data-l1key="configuration" data-l2key="id" placeholder="id" disabled/>
                     </div>        
                     
-                </div>                 
+                </div> 
+                <div id="custom">
+                     <div class="form-group ">
+                       <label class="col-md-2 control-label">{{Identifiant Actif}}</label>
+                        <div class="col-md-2">
+                            <input type="text" class="eqLogicAttr configuration form-control" data-l1key="configuration" data-l2key="on" placeholder="id" />
+                        </div>        
+                        
+                    </div> 
+                     <div class="form-group ">
+                       <label class="col-md-2 control-label">{{Identifiant inactif}}</label>
+                        <div class="col-md-2">
+                            <input type="text" class="eqLogicAttr configuration form-control" data-l1key="configuration" data-l2key="off" placeholder="id" />
+                        </div>        
+                    </div> 
+                     <div class="form-group ">
+                       <label class="col-md-2 control-label">{{Temps RAZ (minutes)}}</label>
+                        <div class="col-md-1">
+                            <input type="text" class="eqLogicAttr configuration form-control" data-l1key="configuration" data-l2key="raz" placeholder="time" />
+                        </div>        
+                    </div>                  
+                </div>                               
             </fieldset> 
         </form>
         
