@@ -76,8 +76,13 @@ while (true) {
 				};	
 				if(preg_match_all( '#<cra>(.*?)</cra>#', $m[0][0] ,$cra )) {
 					$data['cra'] = $cra[1][0];
-				};					
-																	
+				};
+				if(preg_match_all( '#<dev>(.*?)</dev>#', $m[0][0] ,$dev )) {
+					$data['dev'] = $dev[1][0];
+				};	
+				if(preg_match_all( '#<rf>(.*?)</rf>#', $m[0][0] ,$rf )) {
+					$data['rf'] = $rf[1][0];
+				};																						
 								
 				$exp = explode(": ", $zbData->message);
 				if(preg_match_all( '#<id>(.*?)(_OFF|_ON)?</id>#', $exp[1] ,$id )) {

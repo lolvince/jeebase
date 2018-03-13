@@ -16,7 +16,51 @@
 */
 
 
-
+$('.eqLogicAction[data-action=addEquipement]').on('click', function () {	
+    bootbox.confirm("<form id='infos' class='form-horizontal'><fieldset>\
+        <div class='form-group'>\
+          <label >Nom de l'équipement</label>\
+          <input type='text' class='form-control' id='name' placeholder='Nom' ></input>\
+        </div>\
+        <div class='form-group'>\
+		<select id='sel_type' class='form-control'>\
+		  <option  value='sensor'>{{Sensors}}</option>\
+		</select>\
+		</div>\
+      </fieldset></form>", 
+	
+	
+	 function (result) {
+		 if (result == false) {
+			 return;
+		 }
+		if( !$('#name').val() ) {
+			return;
+		}
+			console.log($('#sel_type').value())
+			console.log($('#name').val())
+			jeedom.eqLogic.save({
+				type: eqType,
+				
+				eqLogics: [{name: $('#name').val(),configuration: {'type':$('#sel_type').value(),'type_eq':'custom'}}],
+				error: function (error) {
+					$('#div_alert').showAlert({message: error.message, level: 'danger'});
+				},
+				success: function (_data) {
+					  console.log(_data)
+					var vars = getUrlVars();
+					var url = 'index.php?';
+					for (var i in vars) {
+						if (i != 'id' && i != 'saveSuccessFull' && i != 'removeSuccessFull') {
+							url += i + '=' + vars[i].replace('#', '') + '&';
+						}
+					}
+					modifyWithoutSave = false;
+					window.location.href = url;;
+				}
+			});			  
+    });
+});
 
 
 
@@ -85,11 +129,6 @@ function addCmdToTable(_cmd) {
 
             
 	if (_cmd.logicalId == 'humidity' || _cmd.name == 'Température' || _cmd.name == 'Vent' || _cmd.name == 'Pluie Tot' || _cmd.name == 'Pluie' || _cmd.name == 'Consommation Instantanée' || _cmd.name == 'Consommation Totale' || _cmd.name == 'Luminosité' ) {
-			$('#table_Z1base').show();
-			$('#table_Z1bas3').show();
-			$('#table_sonde').show();
-			$('#div_Z1bas3').show();
-			$('#table_cmd').hide();
 			
 		var tr = '<tr class="cmd" data-cmd_id="' + init(_cmd.id) + '">';
 			tr += '<td>';
@@ -112,11 +151,6 @@ function addCmdToTable(_cmd) {
 			$('#table_Z1bas3 tbody tr:last').setValues(_cmd, '.cmdAttr');
     }
 	if (_cmd.name == 'ON' || _cmd.name == 'OFF' || _cmd.name == 'Etat' || _cmd.name == 'Slider' || _cmd.name == 'Etat Sensor') {
-			$('#table_Z1base').hide();
-			$('#table_Z1bas3').hide();
-			$('#div_Z1bas3').hide();
-			$('#table_cmd').show();
-			$('#table_sonde').hide();
 			
 		var tr = '<tr class="cmd" data-cmd_id="' + init(_cmd.id) + '">';
 		tr += '<td class="name">';
@@ -159,13 +193,40 @@ function printEqLogic(_eqLogic)  {
 	   _eqLogic.configuration = {};
 	}
 	
-	if (_eqLogic.configuration.type == 'module' || _eqLogic.configuration.type == 'sensor') {
-		$('.ident').show();
-			
+	if (_eqLogic.configuration.type == 'module') {
+			$('#table_Z1base').hide();
+			$('#table_Z1bas3').hide();
+			$('#div_Z1bas3').hide();
+			$('#table_cmd').show();
+			$('#table_sonde').hide();	
+			$('#custom').hide();
 	}
 	
-	if (_eqLogic.configuration.type == 'devices') {
-		$('.ident').hide();		
+	if (_eqLogic.configuration.type == 'sensor') {
+			$('#table_Z1base').hide();
+			$('#table_Z1bas3').hide();
+			$('#div_Z1bas3').hide();
+			$('#table_cmd').show();
+			$('#table_sonde').hide();	
+			$('#custom').hide();
+			if (_eqLogic.configuration.type_eq == "custom") {
+				$('#custom').show();
+				
+			} else {
+				$('#custom').hide();
+			}
+	}	
+	
+	
+	
+	
+	if (_eqLogic.configuration.type == 'sonde') {
+			$('#table_Z1base').show();
+			$('#table_Z1bas3').show();
+			$('#table_sonde').show();
+			$('#div_Z1bas3').show();
+			$('#table_cmd').hide();	
+			$('#custom').hide();	
 	}
 			
 	
