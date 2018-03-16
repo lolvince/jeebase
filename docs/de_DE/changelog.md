@@ -15,6 +15,19 @@ UPDATE
 >
 > Merci pour votre compréhension
 
+12.03.2018
+===
+
+* Correction des dépendances pour PHP7
+* Possibilité de changer l'ordre des commandes dans la configuration des télécommandes (Pas sur le widget)
+* Correction du bug pour la touche 5 des télécommandes
+
+
+25.02.2018
+===
+
+* Otimisation
+* Ajouts d'icône (Il faut enregistrer les chaînes concernées)
 
 25.02.2018
 ===
