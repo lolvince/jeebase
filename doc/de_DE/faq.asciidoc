@@ -1,9 +1,0 @@
-﻿[panel,primary]
-.Was kann gemacht werden, sobald das Gerät erschaffen wurde ?
---
-Es ist danach möglich, alle Informationen in den Jeedom-Szenarien zu benutzen 
---
-
-
-
-
