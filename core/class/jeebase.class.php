@@ -674,8 +674,11 @@ class jeebase extends eqLogic {
 						if($cmd->getConfiguration('id') == $_options['id']) {
 							log::add('jeebase', 'debug', 'name ' . $cmd->getName());
 							$cmd->execCmd();
+							log::add('jeebase', 'debug', 'Off: ' . $eq->getConfiguration('off'));
+							log::add('jeebase', 'debug', 'RAZ: ' . $eq->getConfiguration('raz'));
+							
 							if ($eq->getConfiguration('off') == '' && $eq->getConfiguration('raz') != '') {
-								log::add('jeebase', 'debug', 'RAZ sera exécutée à '.strtotime("now") + 60 * $eq->getConfiguration('raz'));
+								log::add('jeebase', 'debug', 'RAZ sera exécutée à '.strtotime("now") + 60 * $eq->getConfiguration('raz') + 60);
 								$cron = cron::byClassAndFunction('jeebase', 'launchAction', array('eq_id' => intval($eq->getId()))); 
 								if (!is_object($cron)) {
 									$cron = new cron();
@@ -684,7 +687,7 @@ class jeebase extends eqLogic {
 									$cron->setOption(array('eq_id' => intval($eq->getId())));
 								}
 								$cron->setEnable(1);
-								$cron->setSchedule(cron::convertDateToCron(strtotime("now") + 60 * $eq->getConfiguration('raz')));
+								$cron->setSchedule(cron::convertDateToCron(strtotime("now") + 60 * $eq->getConfiguration('raz') + 60));
 								$cron->setOnce(1);
 								$cron->save();
 							}							
