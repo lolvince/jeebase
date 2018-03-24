@@ -35,7 +35,7 @@ class jeebase extends eqLogic {
 		if(count($eqs) > 0){
 			foreach ($eqs as $jeebase) {
 				$autorefresh = $jeebase->getConfiguration('refresh');
-				log::add('jeebase', 'debug',' Cron ');
+				log::add('jeebase', 'debug',' Cron pour ' . $jeebase->getName());
 				if ($jeebase->getIsEnable() == 1 && $jeebase->getConfiguration('type_eq') == 'custom') {
 					try {
 						$c = new Cron\CronExpression($autorefresh, new Cron\FieldFactory);
@@ -48,11 +48,11 @@ class jeebase extends eqLogic {
 								 }							
 								
 							} catch (Exception $exc) {
-								log::add('jeebase', 'error', __('Erreur pour ', __FILE__) . $networks->getHumanName() . ' : ' . $exc->getMessage());
+								log::add('jeebase', 'error', __('Erreur pour ', __FILE__) . $jeebase->getHumanName() . ' : ' . $exc->getMessage());
 							}
 						}
 					} catch (Exception $exc) {
-						log::add('ioscloud', 'error', __('Expression cron non valide pour ', __FILE__) . $cloud->getHumanName() . ' : ' . $autorefresh);
+						log::add('jeebase', 'error', __('Expression cron non valide pour ', __FILE__) . $jeebase->getHumanName() . ' : ' . $autorefresh);
 					}
 				}
 			}
