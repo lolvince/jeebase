@@ -227,7 +227,13 @@ $plugin = plugin::byId('jeebase');
                         <div class="col-md-1">
                             <input type="text" class="eqLogicAttr configuration form-control" data-l1key="configuration" data-l2key="raz" placeholder="time" />
                         </div>        
-                    </div>                  
+                    </div>  
+                     <div class="form-group ">
+                       <label class="col-md-2 control-label">{{Refresh}}</label>
+                        <div class="col-md-2">
+                            <input type="text" class="eqLogicAttr configuration form-control" data-l1key="configuration" data-l2key="refresh" placeholder="cron" disabled/>
+                        </div>        
+                    </div>                                     
                 </div>                               
             </fieldset> 
         </form>

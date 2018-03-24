@@ -30,6 +30,34 @@ class jeebase extends eqLogic {
 	
 	
 	
+	public static function cron() {
+		$eqs = jeebase::byTypeAndSearhConfiguration( 'jeebase', 'custom');
+		if(count($eqs) > 0){
+			foreach ($eqs as $jeebase) {
+				$autorefresh = $jeebase->getConfiguration('refresh');
+				log::add('jeebase', 'debug',' Cron ');
+				if ($jeebase->getIsEnable() == 1 && $jeebase->getConfiguration('type_eq') == 'custom') {
+					try {
+						$c = new Cron\CronExpression($autorefresh, new Cron\FieldFactory);
+						if ($c->isDue()) {
+							log::add('jeebase', 'debug',' launch refresh ');
+							try {
+								 $cmd = $jeebase->getCmd(null , 'off');
+								 if (is_object($cmd)) {
+									 $cmd->execCmd();
+								 }							
+								
+							} catch (Exception $exc) {
+								log::add('jeebase', 'error', __('Erreur pour ', __FILE__) . $networks->getHumanName() . ' : ' . $exc->getMessage());
+							}
+						}
+					} catch (Exception $exc) {
+						log::add('ioscloud', 'error', __('Expression cron non valide pour ', __FILE__) . $cloud->getHumanName() . ' : ' . $autorefresh);
+					}
+				}
+			}
+		}
+	}	
 	
 	public function syncWithZibase($_options) {
         if( config::byKey('zibase_url', 'jeebase') != ''){
@@ -686,17 +714,19 @@ class jeebase extends eqLogic {
 							
 							if ($eq->getConfiguration('off') == '' && $eq->getConfiguration('raz') != '') {
 								log::add('jeebase', 'debug', 'Creation du cron');
-								$cron = cron::byClassAndFunction('jeebase', 'launchAction', array('eq_id' => intval($eq->getId()))); 
-								if (!is_object($cron)) {
-									$cron = new cron();
-									$cron->setClass('jeebase');
-									$cron->setFunction('launchAction');
-									$cron->setOption(array('eq_id' => intval($eq->getId())));
-								}
-								$cron->setEnable(1);
-								$cron->setSchedule(cron::convertDateToCron(strtotime("now") + 60 * $eq->getConfiguration('raz') + 60));
-								$cron->setOnce(1);
-								$cron->save();
+								$eq->setConfiguration('refresh',cron::convertDateToCron(strtotime("now") + 60 * $eq->getConfiguration('raz')));
+								$eq->save();
+//								$cron = cron::byClassAndFunction('jeebase', 'launchAction', array('eq_id' => intval($eq->getId()))); 
+//								if (!is_object($cron)) {
+//									$cron = new cron();
+//									$cron->setClass('jeebase');
+//									$cron->setFunction('launchAction');
+//									$cron->setOption(array('eq_id' => intval($eq->getId())));
+//								}
+//								$cron->setEnable(1);
+//								$cron->setSchedule(cron::convertDateToCron(strtotime("now") + 60 * $eq->getConfiguration('raz') + 60));
+//								$cron->setOnce(1);
+//								$cron->save();
 							}							
 							return;
 						}
