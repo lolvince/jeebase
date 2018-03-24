@@ -647,15 +647,22 @@ class jeebase extends eqLogic {
 	}
 
 	public static function launchAction($_options) {
+		log::add('jeebase', 'debug', 'launchAction Cron');
 		if ($_options['eq_id'] != '') { 
 				$eq = jeebase::byId($_options['eq_id']);
+		} else {
+			log::add('jeebase', 'debug', 'Erreur pour Id');
 		}
+		
 		 if (is_object($eq)) {
-			log::add('jeebase', 'debug', 'launchAction ');
-			$eq->checkAndUpdateCmd('etat',0);
-			
+			 $cmd = $eq->getCmd(null , 'off');
+			 if (is_object($cmd)) {
+				 $cmd->execCmd();
+			 }
+			//$eq->checkAndUpdateCmd('etat',0);
+		 } else {
+			 log::add('jeebase', 'debug', 'Equipement n\'existe pas');
 		 }
-
 	}
 
 
@@ -678,7 +685,7 @@ class jeebase extends eqLogic {
 							log::add('jeebase', 'debug', 'RAZ: ' . $eq->getConfiguration('raz'));
 							
 							if ($eq->getConfiguration('off') == '' && $eq->getConfiguration('raz') != '') {
-								log::add('jeebase', 'debug', 'RAZ sera exécutée à '.strtotime("now") + 60 * $eq->getConfiguration('raz') + 60);
+								log::add('jeebase', 'debug', 'Creation du cron');
 								$cron = cron::byClassAndFunction('jeebase', 'launchAction', array('eq_id' => intval($eq->getId()))); 
 								if (!is_object($cron)) {
 									$cron = new cron();
@@ -691,8 +698,6 @@ class jeebase extends eqLogic {
 								$cron->setOnce(1);
 								$cron->save();
 							}							
-							
-							
 							return;
 						}
 					}
@@ -784,7 +789,9 @@ class jeebaseCmd extends cmd {
 				case 'On' : 
 					$eqLogic->checkAndUpdateCmd('etat',1);
 					break;
-				case 'Off' : $eqLogic->checkAndUpdateCmd('etat',0);break;
+				case 'Off' : 
+					$eqLogic->checkAndUpdateCmd('etat',0);
+					break;
 			}
 			return;			
 			
