@@ -741,7 +741,7 @@ class jeebaseCmd extends cmd {
 		} elseif ($this->getName() == 'OFF') {
 			$zibase->sendCommand($this->getConfiguration('id'), ZbAction::OFF, $this->getConfiguration('protocole'));
 		} elseif ($this->getName() == 'Slider') {
-			 $zibase->sendCommand($this->getConfiguration('id'), ZbAction::ON, $this->getConfiguration('protocole'), $_options['slider']);
+			 $zibase->sendCommand($this->getConfiguration('id'), ZbAction::DIM_BRIGHT, $this->getConfiguration('protocole'), $_options['slider']);
 		}		
     }
 
