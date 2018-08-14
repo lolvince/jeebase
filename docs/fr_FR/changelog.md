@@ -6,6 +6,10 @@ UPDATE
 > Nouvelle fonction en beta pour créer une commande. Aucune incidence sur le fonctionnement du plugin
 
 
+24.03.2018
+===
+
+* Docs
 
 18.03.2018
 ===
