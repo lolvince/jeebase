@@ -2,10 +2,10 @@
 
 
 if (!class_exists('ZiBase')) {
-	require_once dirname(__FILE__) . '/zibase.php';
+	require_once __DIR__ . '/zibase.php';
 }
 
-require_once dirname(__FILE__) . '/../../../core/php/core.inc.php';
+require_once __DIR__ . '/../../../core/php/core.inc.php';
 
 $arguments = getopt("a:b:c:");
 

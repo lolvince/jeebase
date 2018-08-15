@@ -17,9 +17,9 @@
  */
 
 /* * ***************************Includes********************************* */
-require_once dirname(__FILE__) . '/../../../../core/php/core.inc.php';
+require_once __DIR__ . '/../../../../core/php/core.inc.php';
 if (!class_exists('ZiBase')) {
-	require_once dirname(__FILE__) . '/../../3rdparty/zibase.php';
+	require_once __DIR__ . '/../../3rdparty/zibase.php';
 }
 
 class jeebase extends eqLogic {
@@ -30,21 +30,6 @@ class jeebase extends eqLogic {
 	
 	public static $_widgetPossibility = array('custom' => true);
 	
-	public static function deamon_changeAutoMode($_mode) {
-		$cron = cron::byClassAndFunction('jeebase', 'pull');
-		if (!is_object($cron)) {
-			throw new Exception(__('Tâche cron introuvable', __FILE__));
-		}
-		$cron->setEnable($_mode);
-		$cron->save();
-	}
-	
-	public static function cron() {
-		$deamon_info = self::deamon_info();
-		if ($deamon_info['state'] == 'nok') {
-			self::deamon_start();
-		}
-	}
 		
 	public static function deamon_info() {
 		$return = array();
@@ -66,7 +51,7 @@ class jeebase extends eqLogic {
 	
 	public static function deamon_start() {
 	    self::deamon_stop();
-		$file_path = realpath(dirname(__FILE__) . '/../../3rdparty');	
+		$file_path = realpath(__DIR__ . '/../../3rdparty');	
 		$ip_locale = config::byKey('locale_ip', 'jeebase');
 		$ip_zibase = config::byKey('zibase_ip', 'jeebase');
 		$cmd = 'php ' . $file_path . '/listen.php -a ' . $ip_zibase . ' -b ' . $ip_locale;
