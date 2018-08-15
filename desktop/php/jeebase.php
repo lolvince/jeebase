@@ -11,10 +11,10 @@ $plugin = plugin::byId('jeebase');
 
 <div class="row row-overflow">
     <div class="col-md-2">
+    	<a class="btn btn-danger eqLogicAction" style="width : 100%;margin-top : 5px;margin-bottom: 5px;" data-action="deleteDataZibase"><i class="fa fa-minus-circle"></i> {{Effacer tous les équipements}}</a>                
         <div class="bs-sidebar">
-        	<legend>{{test}}</legend>
+        	
             <ul id="ul_eqLogic" class="nav nav-list bs-sidenav">
-				<a class="btn btn-alert eqLogicAction" style="width : 100%;margin-top : 5px;margin-bottom: 5px;" data-action="deleteDataZibase"><i class="fa fa-plus-circle"></i> {{Effacer tous les équipements}}</a>                
                 <li class="filter" style="margin-bottom: 5px;"><input class="filter form-control input-sm" placeholder="{{Rechercher}}" style="width: 100%"/></li>
                 <?php
                 foreach (eqLogic::byType('jeebase') as $eqLogic) {
@@ -39,6 +39,8 @@ $plugin = plugin::byId('jeebase');
           </div>                                
             
 		</div>  
+        <legend>{{Equipements}}</legend>
+        <input class="form-control" placeholder="{{Rechercher}}" style="margin-bottom:4px;" id="in_searchEqlogic" />
         
         <?php
 					echo "<legend>{{Modules}}</legend>";
@@ -49,7 +51,7 @@ $plugin = plugin::byId('jeebase');
                             echo '<div class="eqLogicDisplayCard cursor" data-eqLogic_id="' . $eqLogic->getId() . '" style="display:inline-block;text-align: center; background-color : #ffffff; height : 200px;margin-bottom : 10px;padding : 5px;border-radius: 2px;width : 160px;margin-left : 10px;' . $opacity . '" >';
                             echo '<img src="' . $plugin->getPathImgIcon() . '" height="105" width="95" />';
                             echo "<br>";
-                            echo '<span style="font-size : 1.1em;position:relative; top : 15px;word-break: break-all;white-space: pre-wrap;word-wrap: break-word;">' . $eqLogic->getHumanName(true, true) . '</span>';
+                            echo '<span class="name" style="font-size : 1.1em;position:relative; top : 15px;word-break: break-all;white-space: pre-wrap;word-wrap: break-word;">' . $eqLogic->getHumanName(true, true) . '</span>';
                             echo '</div>';
 						}
 					}
@@ -66,7 +68,7 @@ $plugin = plugin::byId('jeebase');
 							echo '<div class="eqLogicDisplayCard cursor" data-eqLogic_id="' . $eqLogic->getId() . '" style="display:inline-block;text-align: center; background-color : #ffffff; height : 200px;margin-bottom : 10px;padding : 5px;border-radius: 2px;width : 160px;margin-left : 10px;' . $opacity . '" >';
 							echo '<img src="' . $plugin->getPathImgIcon() . '" height="105" width="95" />';
 							echo "<br>";
-							echo '<span style="font-size : 1.1em;position:relative; top : 15px;word-break: break-all;white-space: pre-wrap;word-wrap: break-word;">' . $eqLogic->getHumanName(true, true) . '</span>';
+							echo '<span class="name" style="font-size : 1.1em;position:relative; top : 15px;word-break: break-all;white-space: pre-wrap;word-wrap: break-word;">' . $eqLogic->getHumanName(true, true) . '</span>';
 							echo '</div>';
 						}
 					}
@@ -80,7 +82,7 @@ $plugin = plugin::byId('jeebase');
 							echo '<div class="eqLogicDisplayCard cursor" data-eqLogic_id="' . $eqLogic->getId() . '" style="display:inline-block;text-align: center; background-color : #ffffff; height : 200px;margin-bottom : 10px;padding : 5px;border-radius: 2px;width : 160px;margin-left : 10px;' . $opacity . '" >';
 							echo '<img src="' . $plugin->getPathImgIcon() . '" height="105" width="95" />';
 							echo "<br>";
-							echo '<span style="font-size : 1.1em;position:relative; top : 15px;word-break: break-all;white-space: pre-wrap;word-wrap: break-word;">' . $eqLogic->getHumanName(true, true) . '</span>';
+							echo '<span class="name" style="font-size : 1.1em;position:relative; top : 15px;word-break: break-all;white-space: pre-wrap;word-wrap: break-word;">' . $eqLogic->getHumanName(true, true) . '</span>';
 							echo '</div>';
 							}
 					}
@@ -94,7 +96,7 @@ $plugin = plugin::byId('jeebase');
 							echo '<div class="eqLogicDisplayCard cursor" data-eqLogic_id="' . $eqLogic->getId() . '" style="display:inline-block;text-align: center; background-color : #ffffff; height : 200px;margin-bottom : 10px;padding : 5px;border-radius: 2px;width : 160px;margin-left : 10px;' . $opacity . '" >';
 							echo '<img src="' . $plugin->getPathImgIcon() . '" height="105" width="95" />';
 							echo "<br>";
-							echo '<span style="font-size : 1.1em;position:relative; top : 15px;word-break: break-all;white-space: pre-wrap;word-wrap: break-word;">' . $eqLogic->getHumanName(true, true) . '</span>';
+							echo '<span class="name" style="font-size : 1.1em;position:relative; top : 15px;word-break: break-all;white-space: pre-wrap;word-wrap: break-word;">' . $eqLogic->getHumanName(true, true) . '</span>';
 							echo '</div>';
 							}
 					}
@@ -107,16 +109,15 @@ $plugin = plugin::byId('jeebase');
             
         </div> 
         
-         <div class="col-md-10 eqLogic" style="border-left: solid 1px #EEE; padding-left: 25px;display: none;">
-         
-          <a class="btn btn-success eqLogicAction pull-right" data-action="save"><i class="fa fa-check-circle"></i> {{Sauvegarder}}</a>
-          <a class="btn btn-danger eqLogicAction pull-right" data-action="remove"><i class="fa fa-minus-circle"></i> {{Supprimer}}</a>
+        <div class="col-md-10 eqLogic" style="border-left: solid 1px #EEE; padding-left: 25px;display: none;">
+        <a class="btn btn-success eqLogicAction pull-right" data-action="save"><i class="fa fa-check-circle"></i> {{Sauvegarder}}</a>
+        <a class="btn btn-danger eqLogicAction pull-right" data-action="remove"><i class="fa fa-minus-circle"></i> {{Supprimer}}</a>
+        <a class="btn btn-default eqLogicAction pull-right" data-action="configure"><i class="fa fa-cogs"></i> {{Configuration avancée}}</a>
         
          <ul class="nav nav-tabs" role="tablist">
           <li role="presentation"><a href="" class="eqLogicAction" aria-controls="home" role="tab" data-toggle="tab" data-action="returnToThumbnailDisplay"><i class="fa fa-arrow-circle-left"></i></a></li>
           <li role="presentation" class="active"><a href="#eqlogictab" aria-controls="home" role="tab" data-toggle="tab"><i class="fa fa-tachometer"></i> {{Equipement}}</a></li>
           <li role="presentation"><a href="#infotab" aria-controls="profile" role="tab" data-toggle="tab"><i class="fa fa-list-alt"></i> {{Informations}}</a></li>
-          <i class='fa fa-cogs eqLogicAction pull-right cursor expertModeVisible' data-action='configure'></i>
         </ul>    
         
 		<div class="tab-content" style="height:calc(100% - 50px);overflow:auto;overflow-x: hidden;">
@@ -214,15 +215,16 @@ $plugin = plugin::byId('jeebase');
                 
          <div id="table_sonde" class="form-group">
            <label class="col-md-2 control-label">{{Identifiant Sonde}}</label>
-            <div class="col-md-3">
+            <div class="col-md-2">
                 <input type="text" id="sonde_os" class="eqLogicAttr configuration form-control" data-l1key="configuration" data-l2key="sonde_os" placeholder="sonde_os"/>
             </div>
            <label class="col-md-2 control-label">{{Type de sonde}}</label>
-            <div class="col-md-3">
-                <input type="text" id="type" class="eqLogicAttr configuration form-control" data-l1key="configuration" data-l2key="type_sonde" placeholder="type de sonde"/>
+            <div class="col-md-2">
+                <input type="text" id="type" class="eqLogicAttr configuration form-control" data-l1key="configuration" data-l2key="type_sonde" placeholder="type de sonde" disabled/>
             </div>            
             
         </div>  
+        <br />
         <br />
         <table id="table_cmd" class="table table-bordered table-condensed">
             <thead>

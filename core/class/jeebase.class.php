@@ -30,39 +30,6 @@ class jeebase extends eqLogic {
 	
 	public static $_widgetPossibility = array('custom' => true);
 	
-	public static function deamon_info() {
-		$return = array();
-		$return['log'] = '';
-		$return['state'] = 'nok';
-		$cron = cron::byClassAndFunction('jeebase', 'pull');
-		if (is_object($cron) && $cron->running()) {
-			$return['state'] = 'ok';
-		}
-		$return['launchable'] = 'ok';
-		return $return;
-	}
-
-	public static function deamon_start($_debug = false) {
-		self::deamon_stop();
-		$deamon_info = self::deamon_info();
-		if ($deamon_info['launchable'] != 'ok') {
-			throw new Exception(__('Veuillez vérifier la configuration', __FILE__));
-		}
-		$cron = cron::byClassAndFunction('jeebase', 'pull');
-		if (!is_object($cron)) {
-			throw new Exception(__('Tâche cron introuvable', __FILE__));
-		}
-		$cron->run();
-	}
-
-	public static function deamon_stop() {
-		$cron = cron::byClassAndFunction('jeebase', 'pull');
-		if (!is_object($cron)) {
-			throw new Exception(__('Tâche cron introuvable', __FILE__));
-		}
-		$cron->halt();
-	}
-
 	public static function deamon_changeAutoMode($_mode) {
 		$cron = cron::byClassAndFunction('jeebase', 'pull');
 		if (!is_object($cron)) {
@@ -70,11 +37,139 @@ class jeebase extends eqLogic {
 		}
 		$cron->setEnable($_mode);
 		$cron->save();
+	}
+	
+	public static function cron() {
+		$deamon_info = self::deamon_info();
+		if ($deamon_info['state'] == 'nok') {
+			self::deamon_start();
+		}
+	}
+		
+	public static function deamon_info() {
+		$return = array();
+		$return['log'] = 'jeebase_php';
+		$return['state'] = 'nok';
+		$pid = trim( shell_exec ('ps ax | grep "jeebase/3rdparty/listen.php" | grep -v "grep" | wc -l') );
+		if ($pid != '' && $pid != '0') {
+		  $return['state'] = 'ok';
+		  
+		} else {
+		}
+		$return['launchable'] = 'ok';
+		if (config::byKey('locale_ip', 'jeebase') == '' || config::byKey('zibase_ip', 'jeebase') == '') {
+		  $return['launchable'] = 'nok';
+		  $return['launchable_message'] = __('Erreur de configuration', __FILE__);
+		}		
+		return $return;		
+	}
+	
+	public static function deamon_start() {
+	    self::deamon_stop();
+		$file_path = realpath(dirname(__FILE__) . '/../../3rdparty');	
+		$ip_locale = config::byKey('locale_ip', 'jeebase');
+		$ip_zibase = config::byKey('zibase_ip', 'jeebase');
+		$cmd = 'php ' . $file_path . '/listen.php -a ' . $ip_zibase . ' -b ' . $ip_locale;
+		$result = exec('nohup ' . $cmd . ' >> ' . log::getPathToLog('jeebase_php') . ' 2>&1 &');
+				
+		$deamon_info = self::deamon_info();	
+		$i = 0;
+		while ($i < 30) {
+		  $deamon_info = self::deamon_info();
+		  if ($deamon_info['state'] == 'ok') {
+			break;
+		  }
+		  sleep(1);
+		  $i++;
+		}
+		if ($i >= 30) {
+		  log::add('jeebase', 'error', 'Impossible de lancer le démon de jeebase');
+		  return false;
+		}
+	}
+	
+	public static function deamon_stop() {
+		exec('kill $(ps aux | grep "jeebase/3rdparty/listen.php" | awk \'{print $2}\')');
+		$deamon_info = self::deamon_info();
+		if ($deamon_info['state'] == 'ok') {
+		  sleep(1);
+		  exec('kill -9 $(ps aux | grep "jeebase/3rdparty/listen.php" | awk \'{print $2}\')');
+		}
+		$deamon_info = self::deamon_info();
+		if ($deamon_info['state'] == 'ok') {
+		  sleep(1);
+		  exec('sudo kill -9 $(ps aux | grep "jeebase/3rdparty/listen.php" | awk \'{print $2}\')');
+		}		
 	}	
 	
-	public static function cronDaily() {
-		self::deamon_start();
+    public function setInfoToJeedom($_options) {
+		log::add('jeebase', 'debug',' setInfoToJeedom ');
+//		$jeebase = jeebase::byTypeAndSearhConfiguration( 'jeebase', $_options['id']);
+//		if ( count($jeebase) > 0) {
+//			foreach ($jeebase as $eq) {
+//				if($eq->getConfiguration("type_eq") == "custom") {
+//					log::add('jeebase', 'debug', 'name ' . $eq->getName());
+//					$cmds = $eq->getCmd();
+//					foreach($cmds as $cmd) {
+//						if($cmd->getConfiguration('id') == $_options['id']) {
+//							$cmd->execCmd();
+//							log::add('jeebase', 'debug', 'Cmd Name ' . $cmd->getName() . ' lancee. Off: ' . $eq->getConfiguration('off') . ' RAZ: ' . $eq->getConfiguration('raz'));							
+//							if ($eq->getConfiguration('off') == '' && $eq->getConfiguration('raz') != '') {
+//								log::add('jeebase', 'debug', 'Creation du cron');
+//								$eq->setConfiguration('refresh',cron::convertDateToCron(strtotime("now") + 60 * $eq->getConfiguration('raz') +60));
+//								$eq->save();
+//							}							
+//							return;
+//						}
+//					}
+//				}
+//			}
+//		}
+		
+		
+		$eqLogic = jeebase::byLogicalId( $_options['id'],  'jeebase') ;	
+		$changed = false;	
+		if ( is_object($eqLogic) ) {
+			$id = $_options['id'];
+			$zibase = new ZiBase(config::byKey('zibase_ip', 'jeebase'));
+			$info = $zibase->getSensorInfo($id);
+			$eqLogic->checkAndUpdateCmd("time", $info[0]->format("d/m/Y H:i:s"));
+			log::add('jeebase', 'debug',' Info sonde pour ' . $eqLogic->getName() . ' ' . print_r($info,true));
+			if ($eqLogic->getConfiguration('type_sonde') == 'temperature') { 
+				$eqLogic->checkAndUpdateCmd("temperature", $info[1]/10);
+				$eqLogic->checkAndUpdateCmd("humidity", $info[2]); 						
+			} elseif ($eqLogic->getConfiguration('type_sonde') == 'light') { 
+				$eqLogic->checkAndUpdateCmd("luminosite", $info[1]);
+			} elseif ($eqLogic->getConfiguration('type_sonde') == 'power') { 
+				$eqLogic->checkAndUpdateCmd("powerTotal", $info[1]);
+				$eqLogic->checkAndUpdateCmd("powerInstant", $info[2]);
+			} elseif ($eqLogic->getConfiguration('type_sonde') == 'rain') { 
+				$eqLogic->checkAndUpdateCmd("PluieInstant", $info[1]);
+				$eqLogic->checkAndUpdateCmd("PluieTotale", $info[2]);
+			} elseif ($eqLogic->getConfiguration('type_sonde') == 'wind') { 
+				$eqLogic->checkAndUpdateCmd("vitesse", $info[1]);
+				$eqLogic->checkAndUpdateCmd("orientation", $info[2]);
+			}			
+		} 
+	}
+
+	public function setStateToJeedom($_options) {
+		$jeebase = jeebase::byLogicalId( $_options['id'],  'jeebase') ;
+		$changed = false;
+	 	if ( is_object($jeebase) ) {
+			$id = $_options['id'];
+			$zibase = new ZiBase(config::byKey('zibase_ip', 'jeebase'));
+			if (preg_match('#^Z[A-Z][0-9]*#',$id)) {
+				$id = substr($id, 1);
+				$etat = $zibase->getState($id,true);
+			} else {
+				log::add('jeebase', 'debug',' Info module pour ' . $jeebase->getName() . ' ' . $etat);
+				$etat = $zibase->getState($id);	
+			}				
+			$jeebase->checkAndUpdateCmd('etat',$etat);			
+		}
 	}	
+	
 	
 	public static function pull($_eqLogic_id = null) {
 		if(config::byKey('zibase_ip', 'jeebase') == "" || count(self::byType('jeebase')) == 0) {
@@ -93,6 +188,7 @@ class jeebase extends eqLogic {
 						$id = substr($id, 1);
 						$etat = $zibase->getState($id,true);
 					} else {
+						log::add('jeebase', 'debug',' Info module pour ' . $eqLogic->getName() . ' ' . $etat);
 						$etat = $zibase->getState($id);	
 					}				
 					$eqLogic->checkAndUpdateCmd('etat',$etat);
@@ -200,8 +296,9 @@ class jeebase extends eqLogic {
 				$jeebaseCmd = new jeebaseCmd();
 				$jeebaseCmd->setLogicalId('launch');
 				$jeebaseCmd->setName(__('Lancer', __FILE__));
+				$jeebaseCmd->setEqLogic_id($eqLogic->id);
 			}		
-			$jeebaseCmd->setEqLogic_id($eqLogic->id);
+			
 			$jeebaseCmd->setType('action');
 			$jeebaseCmd->setSubType('other');
 			$jeebaseCmd->save();				
@@ -650,68 +747,6 @@ class jeebase extends eqLogic {
 			
 		}
 	}
-
-	
-    public function setInfoToJeedom($_options) {
-		$jeebase = jeebase::byTypeAndSearhConfiguration( 'jeebase', $_options['id']);
-		if ( count($jeebase) > 0) {
-			foreach ($jeebase as $eq) {
-				if($eq->getConfiguration("type_eq") == "custom") {
-					log::add('jeebase', 'debug', 'name ' . $eq->getName());
-					$cmds = $eq->getCmd();
-					foreach($cmds as $cmd) {
-						if($cmd->getConfiguration('id') == $_options['id']) {
-							$cmd->execCmd();
-							log::add('jeebase', 'debug', 'Cmd Name ' . $cmd->getName() . ' lancee. Off: ' . $eq->getConfiguration('off') . ' RAZ: ' . $eq->getConfiguration('raz'));							
-							if ($eq->getConfiguration('off') == '' && $eq->getConfiguration('raz') != '') {
-								log::add('jeebase', 'debug', 'Creation du cron');
-								$eq->setConfiguration('refresh',cron::convertDateToCron(strtotime("now") + 60 * $eq->getConfiguration('raz') +60));
-								$eq->save();
-							}							
-							return;
-						}
-					}
-				}
-			}
-		}
-		
-		
-		
-		$jeebase = jeebase::byLogicalId( $_options['id'],  'jeebase') ;	
-		$changed = false;	
-		if ( is_object($jeebase) ) {
-			$changed = $jeebase->checkAndUpdateCmd("time", date('Y-m-d H:i:s')) || $changed;			
-			foreach ($_options as $key => $val) {
-				switch ($key) {
-					case "tem": $changed = $jeebase->checkAndUpdateCmd("temperature", $val) || $changed; break;
-					case "hum": $changed = $jeebase->checkAndUpdateCmd("humidity", $val) || $changed; break;
-					case "uvl": $changed = $jeebase->checkAndUpdateCmd("luminosite", $val) || $changed; break;
-					case "kwh": $changed = $jeebase->checkAndUpdateCmd("powerTotal", $val) || $changed; break;
-					case "w":   $changed = $jeebase->checkAndUpdateCmd("powerInstant", $val) || $changed; break;
-					case "awi": $changed = $jeebase->checkAndUpdateCmd("vitesse", $val) || $changed; break; 
-					case "drt": $changed = $jeebase->checkAndUpdateCmd("orientation", $val) || $changed; break;
-					case "cra": $changed = $jeebase->checkAndUpdateCmd("PluieInstant", $val) || $changed; break;
-					case "tra": $changed = $jeebase->checkAndUpdateCmd("PluieTotale", $val) || $changed; break; 				
-				}
-			}
-		} 
-		if ($changed) {
-			$jeebase->refreshWidget();
-		}
-	}
-
-	public function setStateToJeedom($_options) {
-		$jeebase = jeebase::byLogicalId( $_options['id'],  'jeebase') ;
-		$changed = false;
-	 	if ( is_object($jeebase) ) {
-			$changed = $jeebase->checkAndUpdateCmd('etat', $_options['etat']) || $changed;
-		}
-		if ($changed) {
-			$jeebase->refreshWidget();
-		}	
-	}
-
-	
 }
 
 class jeebaseCmd extends cmd {
@@ -721,7 +756,9 @@ class jeebaseCmd extends cmd {
     }
 	
 	public function execute($_options = array()) {
-		log::add('jeebase', 'debug', 'execute');
+		if ($this->getType() != 'action') {
+			return;
+		}		
 		$eqLogic = $this->getEqLogic();
 		if($eqLogic->getConfiguration("type_eq") == "custom") {
 			switch ($this->getName()) {
@@ -736,6 +773,16 @@ class jeebaseCmd extends cmd {
 			
 		}
 		$zibase = new ZiBase(config::byKey('zibase_ip', 'jeebase'));
+		if($eqLogic->getConfiguration("type") == "scenario") {
+			switch ($this->getLogicalId()) {
+				case "launch":
+					$zibase->runScenario(intval($eqLogic->getConfiguration('id')));	
+					break;
+				
+			}
+			return;			
+			
+		}		
 		if ($this->getName() == 'ON') {
 			$zibase->sendCommand($this->getConfiguration('id'), ZbAction::ON, $this->getConfiguration('protocole'));
 		} elseif ($this->getName() == 'OFF') {

@@ -27,9 +27,9 @@ try {
 	if (init('action') == 'syncWithZibase') {
 		jeebase::syncWithZibase();
 		ajax::success();
-	} else if (init('action') == 'updateDataZibase') {
-        $zibase = jeebase::updateDataZibase();
-        ajax::success($return);
+	} else if (init('action') == 'refreshDataZibase') {
+        jeebase::pull();
+        ajax::success();
     } else if (init('action') == 'deleteDataZibase') {
         $zibase = jeebase::deleteDataZibase();
         ajax::success($return);

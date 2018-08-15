@@ -32,7 +32,9 @@
         "Historiser": "Historiser",
         "Afficher": "Afficher",
         "test": "test",
-        "Scenarios": "Scenarios"
+        "Scenarios": "Scenarios",
+        "Equipements": "Equipements",
+        "Configuration avancée": "Configuration avancée"
     },
     "plugins\/jeebase\/desktop\/js\/jeebase.js": {
         "Sensors": "Sensors",
@@ -55,7 +57,12 @@
         "Update": "Update",
         "A faire seulement en cas de passage à la nouvelle version": "A faire seulement en cas de passage à la nouvelle version",
         "Mise à jour réussie": "Mise à jour réussie",
-        "Synchronisation réussie": "Synchronisation réussie"
+        "Synchronisation réussie": "Synchronisation réussie",
+        "ip locale (Jeedom)": "ip locale (Jeedom)",
+        "Rafraîchir": "Rafraîchir",
+        " MAJ": " MAJ",
+        " Permet de mettre à jour toutes les informations des équipements (utile en cas de panne du démon) ": " Permet de mettre à jour toutes les informations des équipements (utile en cas de panne du démon) ",
+        " Êtes-vous sûr d\\'effectuer cette opération ": " Êtes-vous sûr d\\'effectuer cette opération "
     },
     "plugins\/jeebase\/core\/class\/jeebase.class.php": {
         "Etat": "Etat",
@@ -71,5 +78,8 @@
         "Batterie": "Batterie",
         "Luminosité": "Luminosité",
         "Lancer": "Lancer"
+    },
+    "plugins\/jeebase\/core\/ajax\/jeebase.ajax.php": {
+        "Aucune methode correspondante à : ": "Aucune methode correspondante à : "
     }
 }

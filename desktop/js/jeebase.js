@@ -128,13 +128,13 @@ function addCmdToTable(_cmd) {
     }           
 
             
-	if (_cmd.logicalId == 'humidity' || _cmd.name == 'Température' || _cmd.name == 'Vent' || _cmd.name == 'Pluie Tot' || _cmd.name == 'Pluie' || _cmd.name == 'Consommation Instantanée' || _cmd.name == 'Consommation Totale' || _cmd.name == 'Luminosité' ) {
+	if (_cmd.type == 'info' &&  _cmd.subType != 'binary') {
 			
 		var tr = '<tr class="cmd" data-cmd_id="' + init(_cmd.id) + '">';
 			tr += '<td>';
 			tr += '<span class="cmdAttr" data-l1key="id" ></span>';
 			tr += '</td>';
-			tr += '<td>' + _cmd.name + '</td>'; 
+			tr += '<td>' + _cmd.logicalId + '</td>'; 
 			tr += '<td>';
 			tr += '<span><input type="checkbox" class="cmdAttr" data-l1key="isHistorized" /> {{Historiser}}<br/></span>';
 				
@@ -149,8 +149,7 @@ function addCmdToTable(_cmd) {
 			tr += '</tr>';
 			$('#table_Z1bas3 tbody').append(tr);
 			$('#table_Z1bas3 tbody tr:last').setValues(_cmd, '.cmdAttr');
-    }
-	if (_cmd.name == 'ON' || _cmd.name == 'OFF' || _cmd.name == 'Etat' || _cmd.name == 'Slider' || _cmd.name == 'Etat Sensor') {
+    } else  {
 			
 		var tr = '<tr class="cmd" data-cmd_id="' + init(_cmd.id) + '">';
 		tr += '<td class="name">';
@@ -202,6 +201,15 @@ function printEqLogic(_eqLogic)  {
 			$('#custom').hide();
 	}
 	
+	if (_eqLogic.configuration.type == 'scenario') {
+			$('#table_Z1base').hide();
+			$('#table_Z1bas3').hide();
+			$('#div_Z1bas3').hide();
+			$('#table_cmd').show();
+			$('#table_sonde').hide();	
+			$('#custom').hide();
+	}
+		
 	if (_eqLogic.configuration.type == 'sensor') {
 			$('#table_Z1base').hide();
 			$('#table_Z1bas3').hide();

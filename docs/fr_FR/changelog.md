@@ -1,10 +1,11 @@
-UPDATE
+15.08.2018
 ===
 
-> <span style="color:red">**UPDATE**</span>
->
-> Nouvelle fonction en beta pour créer une commande. Aucune incidence sur le fonctionnement du plugin
-
+* Barre de recherche pour les équipements
+* Ajout d'un bouton dans la configuration générale du plugin pour mettre à jour les données de tous les équipements. (Utile en cas d'arrêt du démon)
+* Amélioration graphique
+* Changement de la récupération des informations.
+* Ajout des scénarios
 
 24.03.2018
 ===
