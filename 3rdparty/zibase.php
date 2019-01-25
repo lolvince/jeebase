@@ -50,6 +50,7 @@
   	const ALL_LIGHTS_OFF = 5;
   	const ALL_OFF = 6;
   	const ASSOC = 7;
+	const UNASSOC = 8;
   }
  
  /**
@@ -295,8 +296,31 @@
 	      $request->param4 = ord($address[0]) - 0x41;
 	      
 	      $this->sendRequest($request);
- 		}
+ 		} else {
+	   	  $request = new ZbRequest();
+	      $request->command = 11;
+	      $request->param2 = $action;
+	      $request->param2 |= ($protocol & 0xFF) << 0x08;
+	      $this->sendRequest($request);				
+		}
  	}
+	
+ 	public function Inclusion() { 
+		 $request = new ZbRequest();
+		 $request->command = 11;
+		 $request->param2 = 7;
+		 $request->param2 |= ($protocol & 0xFF) << 0x08;
+		 $this->sendRequest($request);	
+		  
+	}
+ 	public function Exclusion() { 
+		 $request = new ZbRequest();
+		 $request->command = 11;
+		 $request->param2 = 8;
+		 $request->param2 |= (6 & 0xFF) << 0x08;		 
+		 $this->sendRequest($request);	
+		  
+	}	
  	
  	/**
  	 * Lance le scenario spécifié par son numéro.

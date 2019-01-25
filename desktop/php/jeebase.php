@@ -88,10 +88,10 @@ $plugin = plugin::byId('jeebase');
 					}
 					echo '</div>';
 					
-					echo "<legend>{{Scenarios}}</legend>";
+					echo "<legend>{{Autres}}</legend>";
 					echo '<div class="eqLogicThumbnailContainer">';
 					foreach ($eqLogics as $eqLogic) {
-					if($eqLogic->getConfiguration('type') == 'scenario') {
+					if($eqLogic->getConfiguration('type') == 'other') {
 							$opacity = ($eqLogic->getIsEnable()) ? '' : jeedom::getConfiguration('eqLogic:style:noactive');
 							echo '<div class="eqLogicDisplayCard cursor" data-eqLogic_id="' . $eqLogic->getId() . '" style="display:inline-block;text-align: center; background-color : #ffffff; height : 200px;margin-bottom : 10px;padding : 5px;border-radius: 2px;width : 160px;margin-left : 10px;' . $opacity . '" >';
 							echo '<img src="' . $plugin->getPathImgIcon() . '" height="105" width="95" />';
@@ -117,7 +117,8 @@ $plugin = plugin::byId('jeebase');
          <ul class="nav nav-tabs" role="tablist">
           <li role="presentation"><a href="" class="eqLogicAction" aria-controls="home" role="tab" data-toggle="tab" data-action="returnToThumbnailDisplay"><i class="fa fa-arrow-circle-left"></i></a></li>
           <li role="presentation" class="active"><a href="#eqlogictab" aria-controls="home" role="tab" data-toggle="tab"><i class="fa fa-tachometer"></i> {{Equipement}}</a></li>
-          <li role="presentation"><a href="#infotab" aria-controls="profile" role="tab" data-toggle="tab"><i class="fa fa-list-alt"></i> {{Informations}}</a></li>
+          <li role="presentation" ><a href="#infotab" aria-controls="tab" role="tab" data-toggle="tab"><i class="fa fa-tachometer"></i> {{Informations}}</a></li>
+          <li role="presentation"><a href="#cmdtab" aria-controls="profile" role="tab" data-toggle="tab"><i class="fa fa-list-alt"></i> {{Commandes}}</a></li>
         </ul>    
         
 		<div class="tab-content" style="height:calc(100% - 50px);overflow:auto;overflow-x: hidden;">
@@ -169,61 +170,26 @@ $plugin = plugin::byId('jeebase');
                     <input type="checkbox" class="eqLogicAttr checkbox-inline" data-label-text="{{Visible}}" data-l1key="isVisible" checked/>
                   </div>
                 </div>
-                
-                 <div class="form-group ident">
-                   <label class="col-md-2 control-label">{{Identifiant}}</label>
-                    <div class="col-md-1">
-                        <input type="text" class="eqLogicAttr configuration form-control" data-l1key="configuration" data-l2key="id" placeholder="id" disabled/>
-                    </div>        
-                    
-                </div> 
-                <div id="custom">
-                     <div class="form-group ">
-                       <label class="col-md-2 control-label">{{Identifiant Actif}}</label>
-                        <div class="col-md-2">
-                            <input type="text" class="eqLogicAttr configuration form-control" data-l1key="configuration" data-l2key="on" placeholder="id" />
-                        </div>        
-                        
-                    </div> 
-                     <div class="form-group ">
-                       <label class="col-md-2 control-label">{{Identifiant inactif}}</label>
-                        <div class="col-md-2">
-                            <input type="text" class="eqLogicAttr configuration form-control" data-l1key="configuration" data-l2key="off" placeholder="id" />
-                        </div>        
-                    </div> 
-                     <div class="form-group ">
-                       <label class="col-md-2 control-label">{{Temps RAZ (minutes)}}</label>
-                        <div class="col-md-1">
-                            <input type="text" class="eqLogicAttr configuration form-control" data-l1key="configuration" data-l2key="raz" placeholder="time" />
-                        </div>        
-                    </div>  
-                     <div class="form-group ">
-                       <label class="col-md-2 control-label">{{Refresh}}</label>
-                        <div class="col-md-2">
-                            <input type="text" class="eqLogicAttr configuration form-control" data-l1key="configuration" data-l2key="refresh" placeholder="cron" disabled/>
-                        </div>        
-                    </div>                                     
-                </div>                               
+                                             
             </fieldset> 
         </form>
         
         </div>
-        
-         <div role="tabpanel" class="tab-pane" id="infotab">  
+        <div role="tabpanel" class="tab-pane" id="infotab"> 
          <br/> 
-         
-                
-         <div id="table_sonde" class="form-group">
-           <label class="col-md-2 control-label">{{Identifiant Sonde}}</label>
-            <div class="col-md-2">
-                <input type="text" id="sonde_os" class="eqLogicAttr configuration form-control" data-l1key="configuration" data-l2key="sonde_os" placeholder="sonde_os"/>
-            </div>
-           <label class="col-md-2 control-label">{{Type de sonde}}</label>
-            <div class="col-md-2">
-                <input type="text" id="type" class="eqLogicAttr configuration form-control" data-l1key="configuration" data-l2key="type_sonde" placeholder="type de sonde" disabled/>
-            </div>            
-            
-        </div>  
+        <br />        
+             <div id="table_sonde" class="form-group">
+            	<form class="form-horizontal">
+                	<fieldset>
+                    	<div class="item-conf"></div>             
+                	</fieldset>
+                </form>        
+            </div> 
+
+        </div>
+        <br/>
+         <div role="tabpanel" class="tab-pane" id="cmdtab">  
+         <br/> 
         <br />
         <br />
         <table id="table_cmd" class="table table-bordered table-condensed">

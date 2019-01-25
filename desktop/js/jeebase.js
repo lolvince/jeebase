@@ -24,7 +24,10 @@ $('.eqLogicAction[data-action=addEquipement]').on('click', function () {
         </div>\
         <div class='form-group'>\
 		<select id='sel_type' class='form-control'>\
-		  <option  value='sensor'>{{Sensors}}</option>\
+		  <option  value='module'>{{Modules}}</option>\
+		   <option  value='sonde'>{{Sondes}}</option>\
+		  <option  value='sensor'>{{Détecteurs}}</option>\
+		  <option  value='other'>{{Autres}}</option>\
 		</select>\
 		</div>\
       </fieldset></form>", 
@@ -35,14 +38,13 @@ $('.eqLogicAction[data-action=addEquipement]').on('click', function () {
 			 return;
 		 }
 		if( !$('#name').val() ) {
+			$('#div_alert').showAlert({message: '{{Il faut donner un nom à l\'équipement.}}', level: 'danger'});
 			return;
 		}
-			console.log($('#sel_type').value())
-			console.log($('#name').val())
+
 			jeedom.eqLogic.save({
 				type: eqType,
-				
-				eqLogics: [{name: $('#name').val(),configuration: {'type':$('#sel_type').value(),'type_eq':'custom'}}],
+				eqLogics: [{name: $('#name').val(),configuration: {'type':$('#sel_type').value(),'type_eq':'other'}}],
 				error: function (error) {
 					$('#div_alert').showAlert({message: error.message, level: 'danger'});
 				},
@@ -181,8 +183,6 @@ function addCmdToTable(_cmd) {
 }
 
 function printEqLogic(_eqLogic)  {
-    $('.ident').hide();
-	
 	
 	if (!isset(_eqLogic)) {
 		var _eqLogic = {configuration: {}};
@@ -192,49 +192,43 @@ function printEqLogic(_eqLogic)  {
 	   _eqLogic.configuration = {};
 	}
 	
+    if (isset(_eqLogic.configuration) && isset(_eqLogic.configuration.type) && _eqLogic.configuration.type != '') {
+        $('.item-conf').load('index.php?v=d&plugin=jeebase&modal=' + _eqLogic.configuration.type + '.configuration', function () {
+            $('body').setValues(_eqLogic, '.eqLogicAttr');
+           // $('#typeCal').prop('disabled', true);
+            initCheckBox();
+            modifyWithoutSave = false;
+        });
+    } else {
+        $('#typeCal').prop('disabled', false);
+        $('.item-conf').empty();
+        $('.eqLogicAttr[data-l1key=configuration][data-l2key=type]').on('change', function () {
+            $('.item-conf').load('index.php?v=d&plugin=jeebase&modal=' + $(this).val() + '.configuration', function() {
+                initCheckBox();
+            });
+        });
+    }	
+	
 	if (_eqLogic.configuration.type == 'module') {
-			$('#table_Z1base').hide();
-			$('#table_Z1bas3').hide();
-			$('#div_Z1bas3').hide();
+			$('#table_Z1base,#table_Z1bas3,#div_Z1bas3').hide();
 			$('#table_cmd').show();
-			$('#table_sonde').hide();	
-			$('#custom').hide();
 	}
 	
-	if (_eqLogic.configuration.type == 'scenario') {
-			$('#table_Z1base').hide();
-			$('#table_Z1bas3').hide();
-			$('#div_Z1bas3').hide();
+	if (_eqLogic.configuration.type == 'other') {
+			$('#table_Z1base,#table_Z1bas3,#div_Z1bas3').hide();
 			$('#table_cmd').show();
-			$('#table_sonde').hide();	
-			$('#custom').hide();
+
 	}
 		
 	if (_eqLogic.configuration.type == 'sensor') {
-			$('#table_Z1base').hide();
-			$('#table_Z1bas3').hide();
-			$('#div_Z1bas3').hide();
+			$('#table_Z1base,#table_Z1bas3,#div_Z1bas3').hide();
 			$('#table_cmd').show();
-			$('#table_sonde').hide();	
-			$('#custom').hide();
-			if (_eqLogic.configuration.type_eq == "custom") {
-				$('#custom').show();
-				
-			} else {
-				$('#custom').hide();
-			}
+
 	}	
 	
-	
-	
-	
 	if (_eqLogic.configuration.type == 'sonde') {
-			$('#table_Z1base').show();
-			$('#table_Z1bas3').show();
-			$('#table_sonde').show();
-			$('#div_Z1bas3').show();
+			$('#table_Z1base,#table_Z1bas3,#div_Z1bas3').show();
 			$('#table_cmd').hide();	
-			$('#custom').hide();	
 	}
 			
 	

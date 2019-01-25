@@ -22,6 +22,10 @@ function jeebase_update() {
     if (is_object($cron)) {
         $cron->remove();
     }
+	$cron = cron::byClassAndFunction('jeebase', 'launchAction', array('eq_id' => intval($this->getId())));
+	if (is_object($cron)) {
+		$cron->remove();
+	}		
 }
 
 function jeebase_remove() {
@@ -29,6 +33,10 @@ function jeebase_remove() {
     if (is_object($cron)) {
         $cron->remove();
     }
+	$cron = cron::byClassAndFunction('jeebase', 'launchAction', array('eq_id' => intval($this->getId())));
+	if (is_object($cron)) {
+		$cron->remove();
+	}		
 }
 
 

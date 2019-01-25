@@ -23,7 +23,9 @@ socket_bind($socket, "0.0.0.0" , 49999);
 while (true) {
         socket_recvfrom($socket, $data, 512, 0, $remote_ip, $remote_port);
         $zbData = new ZbResponse($data);
-		log::add('jeebase','debug', 'message :' .  $zbData->message);
+		if(config::byKey('log::level::jeebase')['100'] == 1) {
+			echo $zbData->message;
+		}
 
 		if( preg_match_all('#Received radio ID \(.*<rf>(.*?)</rf>.*CMD\/INTER</dev>.*<id>(.*?)(_OFF)?</id>.*#',$zbData->message,$results,PREG_SET_ORDER)) { 
 			$data = array();
@@ -88,7 +90,7 @@ while (true) {
 				if(preg_match_all( '#<id>(.*?)(_OFF|_ON)?</id>#', $exp[1] ,$id )) {
 					$data['id'] = $id[1][0];
 				};
-
+				
 				jeebase::setInfoToJeedom($data);
 								
 			}
@@ -101,8 +103,6 @@ while (true) {
 					jeebase::setStateToJeedom($data);				
 
 		}
-		
-
  }
 
 
