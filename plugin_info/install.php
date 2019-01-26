@@ -25,7 +25,14 @@ function jeebase_update() {
 	$cron = cron::byClassAndFunction('jeebase', 'launchAction', array('eq_id' => intval($this->getId())));
 	if (is_object($cron)) {
 		$cron->remove();
-	}		
+	}
+	foreach (jeebase::byType('jeebase', true) as $jeebase) {
+		try {
+			$jeebase->save();
+		} catch (Exception $e) {
+
+		}
+	}	
 }
 
 function jeebase_remove() {
