@@ -1,11 +1,13 @@
-15.08.2018
+XX.08.2018
 ===
 
+* Ajout d'une option pour être alerté si batterie déclarée faible par Zibase
 * Barre de recherche pour les équipements
 * Ajout d'un bouton dans la configuration générale du plugin pour mettre à jour les données de tous les équipements. (Utile en cas d'arrêt du démon)
 * Amélioration graphique
 * Changement de la récupération des informations.
 * Ajout des scénarios
+* Possibilité d'ajouter un sensor manuellement et de paramétrer un id qui l'active et un autre qui le désactive ( avec ou sans timer)
 
 24.03.2018
 ===
