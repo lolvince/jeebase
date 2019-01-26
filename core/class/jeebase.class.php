@@ -178,15 +178,17 @@ class jeebase extends eqLogic {
 						$id = substr($id, 1);
 						$etat = $zibase->getState($id,true);
 					} else {
-						log::add('jeebase', 'debug',' Info module pour ' . $eqLogic->getName() . ' ' . $etat);
 						$etat = $zibase->getState($id);	
+						log::add('jeebase', 'debug',' Info module pour ' . $eqLogic->getName() . ' ' . $etat);
 					}				
 					$eqLogic->checkAndUpdateCmd('etat',$etat);
 					break;
 				case 'sonde':
 					$id = $eqLogic->getConfiguration('sonde_os');
 					$info = $zibase->getSensorInfo($id);
-					$eqLogic->checkAndUpdateCmd("time", $info[0]->format("d/m/Y H:i:s"));
+					if(is_numeric($info[0]) && (int)$info[0] == $info[0]) {
+						$eqLogic->checkAndUpdateCmd("time", $info[0]->format("d/m/Y H:i:s"));
+					}
 					log::add('jeebase', 'debug',' Info sonde pour ' . $eqLogic->getName() . ' ' . print_r($info,true));
 					if ($eqLogic->getConfiguration('type_sonde') == 'temperature') { 
 						$eqLogic->checkAndUpdateCmd("temperature", $info[1]/10);
