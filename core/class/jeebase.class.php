@@ -156,10 +156,14 @@ class jeebase extends eqLogic {
 		}
 	}	
 	
+//	public static function deregislistener() {
+//		$zibase = new ZiBase(config::byKey('zibase_ip', 'jeebase'));
+//		$zibase->deregisterListener(config::byKey('locale_ip', 'jeebase'));			
+//	}
 	
 	public static function pull($_eqLogic_id = null) {
 		if(config::byKey('zibase_ip', 'jeebase') == "" || count(self::byType('jeebase')) == 0) {
-			log::add('jeebase', 'debug',' Veuillez configurer les options. IP de la Zibase vide ou non correcte? Avez-vous synchroniser?');
+			log::add('jeebase', 'debug',' Veuillez configurer les options. IP de la Zibase vide ou non correcte? Avez-vous synchronisé?');
 			return;
 		}
 		$zibase = new ZiBase(config::byKey('zibase_ip', 'jeebase'));

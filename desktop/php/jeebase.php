@@ -26,11 +26,19 @@ $plugin = plugin::byId('jeebase');
     </div>
     
    <div class="col-lg-10 col-md-9 col-sm-8 eqLogicThumbnailDisplay" style="border-left: solid 1px #EEE; padding-left: 25px;">
-		<div class="eqLogicThumbnailContainer">  
-              <div class="cursor eqLogicAction" data-action="addEquipement" style="text-align: center; background-color : #ffffff; height : 120px;margin-bottom : 10px;padding : 5px;border-radius: 2px;width : 160px;margin-left : 10px;" >
-                <i class="fa fa-plus-circle" style="font-size : 5em;color:#00A9EC;"></i>
-                <br>
-                <span style="font-size : 1.1em;position:relative; top : 23px;word-break: break-all;white-space: pre-wrap;word-wrap: break-word;color:#00A9EC">{{Ajouter}}</span>
+	<div class="eqLogicThumbnailContainer">  
+     <!--	       <div class="cursor  IncludeState" style="background-color : #8000FF; height : 140px;margin-bottom : 10px;padding : 5px;border-radius: 2px;width : 160px;margin-left : 10px;" >
+            <center>
+            <i class="fa fa-sign-in fa-rotate-90" style="font-size : 6em;color:#94ca02;"></i>
+            </center>
+            <span style="font-size : 1.1em;position:relative; top : 23px;word-break: break-all;white-space: pre-wrap;word-wrap: break-word;color:#94ca02"><center>{{Inclusion}}</center></span>
+            </div>     -->   
+        
+        
+            <div class="cursor eqLogicAction" data-action="addEquipement" style="text-align: center; background-color : #ffffff; height : 120px;margin-bottom : 10px;padding : 5px;border-radius: 2px;width : 160px;margin-left : 10px;" >
+              <i class="fa fa-plus-circle" style="font-size : 5em;color:#00A9EC;"></i>
+              <br>
+              <span style="font-size : 1.1em;position:relative; top : 23px;word-break: break-all;white-space: pre-wrap;word-wrap: break-word;color:#00A9EC">{{Ajouter}}</span>
             </div>        
               <div class="cursor eqLogicAction" data-action="gotoPluginConf" style="text-align: center; background-color : #ffffff; height : 120px;margin-bottom : 10px;padding : 5px;border-radius: 2px;width : 160px;margin-left : 10px;">
               <i class="fa fa-wrench" style="font-size : 5em;color:#767676;"></i>
@@ -123,7 +131,8 @@ $plugin = plugin::byId('jeebase');
         
 		<div class="tab-content" style="height:calc(100% - 50px);overflow:auto;overflow-x: hidden;">
 		<div role="tabpanel" class="tab-pane active" id="eqlogictab"> 
-        <br/>          
+        <br/> 
+        <div id="modal_task" ></div>        
          
         <form class="form-horizontal">
             <fieldset>

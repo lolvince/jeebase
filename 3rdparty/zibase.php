@@ -305,22 +305,6 @@
 		}
  	}
 	
- 	public function Inclusion() { 
-		 $request = new ZbRequest();
-		 $request->command = 11;
-		 $request->param2 = 7;
-		 $request->param2 |= ($protocol & 0xFF) << 0x08;
-		 $this->sendRequest($request);	
-		  
-	}
- 	public function Exclusion() { 
-		 $request = new ZbRequest();
-		 $request->command = 11;
-		 $request->param2 = 8;
-		 $request->param2 |= (6 & 0xFF) << 0x08;		 
-		 $this->sendRequest($request);	
-		  
-	}	
  	
  	/**
  	 * Lance le scenario spécifié par son numéro.
