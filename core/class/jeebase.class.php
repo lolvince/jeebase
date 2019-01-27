@@ -685,9 +685,26 @@ class jeebase extends eqLogic {
 		  
 	  }
 	  
-	 public function postSave() {
-		 if($this->getConfiguration("type") == "sensor") {
+	public function loadCmdFromConf($_update = false) {
+		if (!is_file(dirname(__FILE__) . '/../config/devices/' . $this->getConfiguration("type") .'.json')) {
+			return;
+		}
+		$content = file_get_contents(dirname(__FILE__) . '/../config/devices/' . $this->getConfiguration("type") .'.json');
+		if (!is_json($content)) {
+			return;
+		}
+		$device = json_decode($content, true);
+		if (!is_array($device) || !isset($device['commands'])) {
+			return true;
+		}
 
+		$this->import($device);
+	}	  
+	  
+	  
+	 public function postSave() {
+
+		if($this->getConfiguration("type") == "sensor") {
 			$jeebaseCmd = $this->getCmd(null, 'etat');
 			if ( !is_object($jeebaseCmd) ) {
 				$jeebaseCmd = new jeebaseCmd();
@@ -697,6 +714,7 @@ class jeebase extends eqLogic {
 			}
 			$jeebaseCmd->setConfiguration('id', $this->getConfiguration("id"));
 			$jeebaseCmd->setConfiguration('protocole', $this->getConfiguration("protocole"));
+			$jeebaseCmd->setGeneric_type('PRESENCE');
 			$jeebaseCmd->setType('info');
 			$jeebaseCmd->setSubType('binary');
 			$jeebaseCmd->save();
@@ -718,6 +736,7 @@ class jeebase extends eqLogic {
 			}
 			$jeebaseCmd->setConfiguration('id', $this->getConfiguration("id"));
 			$jeebaseCmd->setConfiguration('protocole', $this->getConfiguration("protocole"));
+			$jeebaseCmd->setGeneric_type('LIGHT_ON');
 			$jeebaseCmd->setType('action');
 			$jeebaseCmd->setSubType('other');
 			$jeebaseCmd->save();
@@ -730,7 +749,8 @@ class jeebase extends eqLogic {
 				$jeebaseCmd->setEqLogic_id($this->getId());				
 			}	
 			$jeebaseCmd->setConfiguration('id', $this->getConfiguration("id"));
-			$jeebaseCmd->setConfiguration('protocole', $this->getConfiguration("protocole"));					
+			$jeebaseCmd->setConfiguration('protocole', $this->getConfiguration("protocole"));
+			$jeebaseCmd->setGeneric_type('LIGHT_OFF');					
 			$jeebaseCmd->setType('action');
 			$jeebaseCmd->setSubType('other');
 			$jeebaseCmd->save();
@@ -744,6 +764,7 @@ class jeebase extends eqLogic {
 			}
 			$jeebaseCmd->setConfiguration('id', $this->getConfiguration("id"));
 			$jeebaseCmd->setConfiguration('protocole', $this->getConfiguration("protocole"));	
+			$jeebaseCmd->setGeneric_type('LIGHT_STATE');
 			$jeebaseCmd->setType('info');
 			$jeebaseCmd->setSubType('binary');
 			$jeebaseCmd->save();
@@ -775,6 +796,7 @@ class jeebase extends eqLogic {
 				$jeebaseCmd->setUnite('°C');
 				$jeebaseCmd->setType('info');
 				$jeebaseCmd->setSubType('numeric');
+				$jeebaseCmd->setGeneric_type('TEMPERATURE');
 				$jeebaseCmd->save();
 				
 				$jeebaseCmd = $this->getCmd(null, 'humidity');
@@ -788,6 +810,7 @@ class jeebase extends eqLogic {
 				$jeebaseCmd->setConfiguration('data', 'humidity');
 				$jeebaseCmd->setUnite('%');
 				$jeebaseCmd->setType('info');
+				$jeebaseCmd->setGeneric_type('HUMIDITY');
 				$jeebaseCmd->setSubType('numeric');
 				$jeebaseCmd->save();
 				
@@ -817,6 +840,7 @@ class jeebase extends eqLogic {
 				$jeebaseCmd->setConfiguration('data', 'lum');
 				$jeebaseCmd->setUnite('lux');
 				$jeebaseCmd->setType('info');
+				$jeebaseCmd->setGeneric_type('BRIGHTNESS');
 				$jeebaseCmd->setSubType('numeric');
 				$jeebaseCmd->save();
 				
@@ -846,6 +870,7 @@ class jeebase extends eqLogic {
 				$jeebaseCmd->setConfiguration('data', 'powerTotal');
 				$jeebaseCmd->setUnite('KW');
 				$jeebaseCmd->setType('info');
+				$jeebaseCmd->setGeneric_type('GENERIC_INFO');
 				$jeebaseCmd->setSubType('numeric');
 				$jeebaseCmd->save();
 				
@@ -857,6 +882,7 @@ class jeebase extends eqLogic {
 					$jeebaseCmd->setEqLogic_id($this->getId());				
 				}
 				$jeebaseCmd->setConfiguration('data', 'powerInstant');
+				$jeebaseCmd->setGeneric_type('GENERIC_INFO');
 				$jeebaseCmd->setUnite('kW');
 				$jeebaseCmd->setType('info');
 				$jeebaseCmd->setSubType('numeric');
@@ -886,6 +912,7 @@ class jeebase extends eqLogic {
 				}
 				$jeebaseCmd->setConfiguration('data', 'pluie');
 				$jeebaseCmd->setUnite('mm');
+				$jeebaseCmd->setGeneric_type('GENERIC_INFO');
 				$jeebaseCmd->setType('info');
 				$jeebaseCmd->setSubType('numeric');
 				$jeebaseCmd->save();
@@ -900,6 +927,7 @@ class jeebase extends eqLogic {
 				$jeebaseCmd->setConfiguration('data', 'PluieTotale');
 				$jeebaseCmd->setIsHistorized(1);
 				$jeebaseCmd->setUnite('mm/h');
+				$jeebaseCmd->setGeneric_type('GENERIC_INFO');
 				$jeebaseCmd->setType('info');
 				$jeebaseCmd->setSubType('numeric');
 				$jeebaseCmd->save();
@@ -931,6 +959,7 @@ class jeebase extends eqLogic {
 				$jeebaseCmd->setConfiguration('data', 'vent');
 				$jeebaseCmd->setUnite('km/h');
 				$jeebaseCmd->setType('info');
+				$jeebaseCmd->setGeneric_type('GENERIC_INFO');
 				$jeebaseCmd->setSubType('numeric');
 				$jeebaseCmd->save();
 				
@@ -944,6 +973,7 @@ class jeebase extends eqLogic {
 				$jeebaseCmd->setConfiguration('data', 'orientation');
 				$jeebaseCmd->setUnite('');
 				$jeebaseCmd->setType('info');
+				$jeebaseCmd->setGeneric_type('GENERIC_INFO');
 				$jeebaseCmd->setSubType('numeric');
 				$jeebaseCmd->save();
 				

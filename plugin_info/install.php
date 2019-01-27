@@ -26,6 +26,7 @@ function jeebase_update() {
 	if (is_object($cron)) {
 		$cron->remove();
 	}
+	
 	foreach (jeebase::byType('jeebase', true) as $jeebase) {
 		try {
 			$jeebase->save();
