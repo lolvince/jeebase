@@ -114,7 +114,29 @@ class jeebase extends eqLogic {
 				$eqLogic->checkAndUpdateCmd("vitesse", $info[1]);
 				$eqLogic->checkAndUpdateCmd("orientation", $info[2]);
 			}			
-		} 
+		} else {
+			$jeebase = jeebase::byTypeAndSearhConfiguration( 'jeebase', $_options['id']);
+			if ( count($jeebase) > 0) {
+				foreach ($jeebase as $eq) {
+					if($eq->getConfiguration("type") == "other") {
+						log::add('jeebase', 'debug', 'name ' . $eq->getName());
+						$cmds = $eq->getCmd();
+						foreach($cmds as $cmd) {
+							if($cmd->getConfiguration('id') == $_options['id']) {
+								$cmd->execCmd();
+								log::add('jeebase', 'debug', 'Cmd Name ' . $cmd->getName() . ' lancee. Off: ' . $eq->getConfiguration('off') . ' RAZ: ' . $eq->getConfiguration('raz'));							
+//								if ($eq->getConfiguration('off') == '' && $eq->getConfiguration('raz') != '') {
+//									log::add('jeebase', 'debug', 'Creation du cron');
+//									$eq->setConfiguration('refresh',cron::convertDateToCron(strtotime("now") + 60 * $eq->getConfiguration('raz') +60));
+//									$eq->save();
+//								}							
+								return;
+							}
+						}
+					}
+				}
+			}			
+		}
 	}
 
 	public function setStateToJeedom($_options) {
@@ -317,50 +339,9 @@ class jeebase extends eqLogic {
 			$eqLogic->setConfiguration('id', $module['id']);
 			$eqLogic->setLogicalId($id);
 			$eqLogic->save();
-			
-			$jeebaseCmd = $eqLogic->getCmd(null, 'on');
-			if ( !is_object($jeebaseCmd) ) {
-				$jeebaseCmd = new jeebaseCmd();
-				$jeebaseCmd->setName(__('ON', __FILE__));
-				$jeebaseCmd->setLogicalId('on');
-				$jeebaseCmd->setEqLogic_id($eqLogic->getId());				
-			}
-			$jeebaseCmd->setConfiguration('id', $module['id']);
-			$jeebaseCmd->setConfiguration('protocole', $module['protocol']);
-			$jeebaseCmd->setConfiguration('icon', $module['icon']);
-			$jeebaseCmd->setType('action');
-			$jeebaseCmd->setSubType('other');
-			$jeebaseCmd->save();
-			
-			$jeebaseCmd = $eqLogic->getCmd(null, 'off');
-			if ( !is_object($jeebaseCmd) ) {
-				$jeebaseCmd = new jeebaseCmd();
-				$jeebaseCmd->setName(__('OFF', __FILE__));
-				$jeebaseCmd->setLogicalId('off');
-				$jeebaseCmd->setEqLogic_id($eqLogic->getId());				
-			}			
-			$jeebaseCmd->setConfiguration('id', $module['id']);
-			$jeebaseCmd->setConfiguration('protocole', $module['protocol']);
-			$jeebaseCmd->setConfiguration('etat', $module['status']);
-			$jeebaseCmd->setConfiguration('icon', $module['icon']);
-			$jeebaseCmd->setType('action');
-			$jeebaseCmd->setSubType('other');
-			$jeebaseCmd->save();
-			
-			$jeebaseCmd = $eqLogic->getCmd(null, 'etat');
-			if ( !is_object($jeebaseCmd) ) {
-				$jeebaseCmd = new jeebaseCmd();
-				$jeebaseCmd->setName(__('Etat', __FILE__));
-				$jeebaseCmd->setLogicalId('etat');
-				$jeebaseCmd->setEqLogic_id($eqLogic->getId());				
-			}
-			$jeebaseCmd->setConfiguration('id', $module['id']);
-			$jeebaseCmd->setConfiguration('protocole', $module['protocol']);
-			$jeebaseCmd->setConfiguration('etat', $module['status']);
-			$jeebaseCmd->setConfiguration('icon', $module['icon']);
-			$jeebaseCmd->setType('info');
-			$jeebaseCmd->setSubType('binary');
-			$jeebaseCmd->save();
+			$data = array();
+			$data = array("id"=> $module['id'],"protocole"=> $module['protocol']);
+			$eqLogic->loadCmdFromConf($eqLogic->getConfiguration('type'),$data);			
 				
 			if ($module['slider'] == 1) { 
 				$jeebaseCmd = $eqLogic->getCmd(null, 'slider');
@@ -395,26 +376,9 @@ class jeebase extends eqLogic {
 			$eqLogic->setConfiguration('protocole', $sensor['protocol']);
 			$eqLogic->setConfiguration('id', $sensor['id']);					
 			$eqLogic->save();
-
-			$jeebaseCmd = $eqLogic->getCmd(null, 'etat');
-			if ( !is_object($jeebaseCmd) ) {
-				$jeebaseCmd = new jeebaseCmd();
-				$jeebaseCmd->setName(__('Etat Sensor', __FILE__));
-				$jeebaseCmd->setLogicalId('etat');
-				$jeebaseCmd->setEqLogic_id($eqLogic->getId());				
-			}
-			$jeebaseCmd->setConfiguration('id', $sensor['id']);
-			$jeebaseCmd->setConfiguration('protocole', $sensor['protocol']);
-			$jeebaseCmd->setConfiguration('icon', $sensor['icon']);
-			$jeebaseCmd->setType('info');
-			$jeebaseCmd->setSubType('binary');
-			$jeebaseCmd->save();
-			
-			$jeebaseCmd = $eqLogic->getCmd(null, 'batterie');
-			if ( is_object($jeebaseCmd) ) {
-				$jeebaseCmd->remove();			
-				
-			}
+			$data = array();
+			$data = array("id"=> $sensor['id'],"protocole"=> $sensor['protocol']);
+			$eqLogic->loadCmdFromConf($eqLogic->getConfiguration('type'),$data);			
 			
 		}
 		
@@ -428,242 +392,42 @@ class jeebase extends eqLogic {
 				$eqLogic->setLogicalId($sonde['id']);
 			}
 			if($sonde['type'] == "temperature") {
-								
-			$eqLogic->setConfiguration('type','sonde');
-			$eqLogic->setConfiguration('sonde_os',$sonde['id']);
-			$eqLogic->setConfiguration('type_sonde','temperature');			
-			$eqLogic->setCategory('heating', 1);
-			$eqLogic->save();
-			
-			$jeebaseCmd = $eqLogic->getCmd(null, 'temperature');
-			if ( !is_object($jeebaseCmd) ) {
-				$jeebaseCmd = new jeebaseCmd();
-				$jeebaseCmd->setName(__('Température', __FILE__));
-				$jeebaseCmd->setLogicalId('temperature');
-				$jeebaseCmd->setEqLogic_id($eqLogic->getId());				
-			}
-			$jeebaseCmd->setConfiguration('data', 'temp');
-			$jeebaseCmd->setIsHistorized(1);
-			$jeebaseCmd->setUnite('°C');
-			$jeebaseCmd->setType('info');
-			$jeebaseCmd->setSubType('numeric');
-			$jeebaseCmd->save();
-			
-			$jeebaseCmd = $eqLogic->getCmd(null, 'humidity');
-			if ( !is_object($jeebaseCmd) ) {
-				$jeebaseCmd = new jeebaseCmd();
-				$jeebaseCmd->setName(__('Humidité', __FILE__));
-				$jeebaseCmd->setLogicalId('humidity');
-				$jeebaseCmd->setEqLogic_id($eqLogic->getId());				
-				
-			}
-			$jeebaseCmd->setConfiguration('data', 'humidity');
-			$jeebaseCmd->setIsHistorized(0);
-			$jeebaseCmd->setUnite('%');
-			$jeebaseCmd->setType('info');
-			$jeebaseCmd->setSubType('numeric');
-			$jeebaseCmd->save();
-			
-			$jeebaseCmd = $eqLogic->getCmd(null, 'time');
-			if ( !is_object($jeebaseCmd) ) {
-				$jeebaseCmd = new jeebaseCmd();
-				$jeebaseCmd->setName(__('Time', __FILE__));
-				$jeebaseCmd->setLogicalId('time');
-				$jeebaseCmd->setEqLogic_id($eqLogic->getId());				
-			}
-			$jeebaseCmd->setConfiguration('data', 'time');
-			$jeebaseCmd->setIsHistorized(0);
-			$jeebaseCmd->setUnite('');
-			$jeebaseCmd->setType('info');
-			$jeebaseCmd->setSubType('other');
-			$jeebaseCmd->save();
-			
+				$eqLogic->setConfiguration('type','sonde');
+				$eqLogic->setConfiguration('sonde_os',$sonde['id']);
+				$eqLogic->setConfiguration('type_sonde','temperature');			
+				$eqLogic->setCategory('heating', 1);
+				$eqLogic->save();
+				$eqLogic->loadCmdFromConf($sonde['type']);			
 			} elseif($sonde['type'] == "light") {
-			$eqLogic->setConfiguration('type','sonde');
-			$eqLogic->setConfiguration('sonde_os',$sonde['id']);
-			$eqLogic->setConfiguration('type_sonde','light');
-			$eqLogic->setCategory('heating', 1);
-			$eqLogic->save();
-			
-			$jeebaseCmd = $eqLogic->getCmd(null, 'luminosite');
-			if ( !is_object($jeebaseCmd) ) {
-				$jeebaseCmd = new jeebaseCmd();
-				$jeebaseCmd->setName(__('Luminosité', __FILE__));
-				$jeebaseCmd->setLogicalId('luminosite');
-				$jeebaseCmd->setEqLogic_id($eqLogic->getId());				
-				
-			}
-			$jeebaseCmd->setConfiguration('data', 'lum');
-			$jeebaseCmd->setIsHistorized(0);
-			$jeebaseCmd->setUnite('lux');
-			$jeebaseCmd->setType('info');
-			$jeebaseCmd->setSubType('numeric');
-			$jeebaseCmd->save();
-			
-			$jeebaseCmd = $eqLogic->getCmd(null, 'time');
-			if ( !is_object($jeebaseCmd) ) {
-				$jeebaseCmd = new jeebaseCmd();
-				$jeebaseCmd->setName(__('Time', __FILE__));
-				$jeebaseCmd->setLogicalId('time');
-				$jeebaseCmd->setEqLogic_id($eqLogic->getId());				
-			}
-
-			$jeebaseCmd->setConfiguration('data', 'time');
-			$jeebaseCmd->setIsHistorized(0);
-			$jeebaseCmd->setUnite('');
-			$jeebaseCmd->setType('info');
-			$jeebaseCmd->setSubType('other');
-			$jeebaseCmd->save();				
-					 
+				$eqLogic->setConfiguration('type','sonde');
+				$eqLogic->setConfiguration('sonde_os',$sonde['id']);
+				$eqLogic->setConfiguration('type_sonde','light');
+				$eqLogic->setCategory('heating', 1);
+				$eqLogic->save();
+				$eqLogic->loadCmdFromConf($sonde['type']);			
 			} elseif($sonde['type'] == "power") {
-			$eqLogic->setConfiguration('type','sonde');
-			$eqLogic->setConfiguration('sonde_os',$sonde['id']);
-			$eqLogic->setConfiguration('type_sonde','power');
-			$eqLogic->setCategory('heating', 1);
-			$eqLogic->save();
-			
-			$jeebaseCmd = $eqLogic->getCmd(null, 'powerTotal');
-			if ( !is_object($jeebaseCmd) ) {
-				$jeebaseCmd = new jeebaseCmd();
-				$jeebaseCmd->setName(__('Consommation Totale', __FILE__));
-				$jeebaseCmd->setLogicalId('powerTotal');
-				$jeebaseCmd->setEqLogic_id($eqLogic->getId());				
-			}
-			$jeebaseCmd->setConfiguration('data', 'powerTotal');
-			$jeebaseCmd->setIsHistorized(1);
-			$jeebaseCmd->setUnite('KW');
-			$jeebaseCmd->setType('info');
-			$jeebaseCmd->setSubType('numeric');
-			$jeebaseCmd->save();
-			
-			$jeebaseCmd = $eqLogic->getCmd(null, 'powerInstant');
-			if ( !is_object($jeebaseCmd) ) {
-				$jeebaseCmd = new jeebaseCmd();
-				$jeebaseCmd->setName(__('Consommation Instantanée', __FILE__));
-				$jeebaseCmd->setLogicalId('powerInstant');
-				$jeebaseCmd->setEqLogic_id($eqLogic->getId());				
-			}
-			$jeebaseCmd->setConfiguration('data', 'powerInstant');
-			$jeebaseCmd->setIsHistorized(0);
-			$jeebaseCmd->setUnite('kW');
-			$jeebaseCmd->setType('info');
-			$jeebaseCmd->setSubType('numeric');
-			$jeebaseCmd->save();	
-			
-			$jeebaseCmd = $eqLogic->getCmd(null, 'time');
-			if ( !is_object($jeebaseCmd) ) {
-				$jeebaseCmd = new jeebaseCmd();
-				$jeebaseCmd->setName(__('Time', __FILE__));
-				$jeebaseCmd->setLogicalId('time');
-				$jeebaseCmd->setEqLogic_id($eqLogic->getId());				
-			}
-			$jeebaseCmd->setConfiguration('data', 'time');
-			$jeebaseCmd->setIsHistorized(0);
-			$jeebaseCmd->setUnite('');
-			$jeebaseCmd->setType('info');
-			$jeebaseCmd->setSubType('other');
-			$jeebaseCmd->save();				
+				$eqLogic->setConfiguration('type','sonde');
+				$eqLogic->setConfiguration('sonde_os',$sonde['id']);
+				$eqLogic->setConfiguration('type_sonde','power');
+				$eqLogic->setCategory('heating', 1);
+				$eqLogic->save();
+				$eqLogic->loadCmdFromConf($sonde['type']);			
 					
 			} elseif($sonde['type'] == "rain") {
-			$eqLogic->setConfiguration('type','sonde');
-			$eqLogic->setConfiguration('type_sonde','rain');
-			$eqLogic->setConfiguration('sonde_os',$sonde['id']);
-			$eqLogic->setCategory('heating', 1);
-			$eqLogic->save();
-			
-			$jeebaseCmd = $eqLogic->getCmd(null, 'PluieInstant');
-			if ( !is_object($jeebaseCmd) ) {
-				$jeebaseCmd = new jeebaseCmd();
-				$jeebaseCmd->setName(__('Pluie', __FILE__));
-				$jeebaseCmd->setLogicalId('PluieInstant');
-				$jeebaseCmd->setEqLogic_id($eqLogic->getId());				
-			}
-			$jeebaseCmd->setConfiguration('data', 'pluie');
-			$jeebaseCmd->setIsHistorized(0);
-			$jeebaseCmd->setUnite('mm');
-			$jeebaseCmd->setType('info');
-			$jeebaseCmd->setSubType('numeric');
-			$jeebaseCmd->save();
-			
-			$jeebaseCmd = $eqLogic->getCmd(null, 'PluieTotale');
-			if ( !is_object($jeebaseCmd) ) {
-				$jeebaseCmd = new jeebaseCmd();
-				$jeebaseCmd->setName(__('Pluie Tot', __FILE__));
-				$jeebaseCmd->setLogicalId('PluieTotale');
-				$jeebaseCmd->setEqLogic_id($eqLogic->getId());				
-			}
-			$jeebaseCmd->setConfiguration('data', 'PluieTotale');
-			$jeebaseCmd->setIsHistorized(1);
-			$jeebaseCmd->setUnite('mm/h');
-			$jeebaseCmd->setType('info');
-			$jeebaseCmd->setSubType('numeric');
-			$jeebaseCmd->save();
-			
-			$jeebaseCmd = $eqLogic->getCmd(null, 'time');
-			if ( !is_object($jeebaseCmd) ) {
-				$jeebaseCmd = new jeebaseCmd();
-				$jeebaseCmd->setName(__('Time', __FILE__));
-				$jeebaseCmd->setLogicalId('time');
-				$jeebaseCmd->setEqLogic_id($eqLogic->getId());				
-			}
-			$jeebaseCmd->setConfiguration('data', 'time');
-			$jeebaseCmd->setIsHistorized(0);
-			$jeebaseCmd->setUnite('');
-			$jeebaseCmd->setType('info');
-			$jeebaseCmd->setSubType('other');
-			$jeebaseCmd->save();
-			
-										
+				$eqLogic->setConfiguration('type','sonde');
+				$eqLogic->setConfiguration('type_sonde','rain');
+				$eqLogic->setConfiguration('sonde_os',$sonde['id']);
+				$eqLogic->setCategory('heating', 1);
+				$eqLogic->save();
+				$eqLogic->loadCmdFromConf($sonde['type']);
 			} elseif($sonde['type'] == "wind") {
-				
-			$eqLogic->setConfiguration('type','sonde');
-			$eqLogic->setConfiguration('sonde_os',$sonde['id']);
-			$eqLogic->setConfiguration('type_sonde','wind');
-			$eqLogic->setCategory('heating', 1);
-			$eqLogic->setObject_id($id);
-			$eqLogic->save();
-			
-			$jeebaseCmd = $eqLogic->getCmd(null, 'vitesse');
-			if ( !is_object($jeebaseCmd) ) {
-				$jeebaseCmd = new jeebaseCmd();
-				$jeebaseCmd->setName(__('Vent', __FILE__));
-				$jeebaseCmd->setLogicalId('vitesse');
-				$jeebaseCmd->setEqLogic_id($eqLogic->getId());				
-			}
-			$jeebaseCmd->setConfiguration('data', 'vent');
-			$jeebaseCmd->setIsHistorized(1);
-			$jeebaseCmd->setUnite('km/h');
-			$jeebaseCmd->setType('info');
-			$jeebaseCmd->setSubType('numeric');
-			$jeebaseCmd->save();
-			
-			$jeebaseCmd = $eqLogic->getCmd(null, 'orientation');
-			if ( !is_object($jeebaseCmd) ) {
-				$jeebaseCmd = new jeebaseCmd();
-				$jeebaseCmd->setName(__('Orientation', __FILE__));
-				$jeebaseCmd->setEqLogic_id($eqLogic->getId());
-				$jeebaseCmd->setLogicalId('orientation');				
-			}
-			$jeebaseCmd->setConfiguration('data', 'orientation');
-			$jeebaseCmd->setIsHistorized(0);
-			$jeebaseCmd->setUnite('');
-			$jeebaseCmd->setType('info');
-			$jeebaseCmd->setSubType('numeric');
-			$jeebaseCmd->save();
-			
-			$jeebaseCmd = $eqLogic->getCmd(null, 'time');
-			if ( !is_object($jeebaseCmd) ) {
-				$jeebaseCmd = new jeebaseCmd();
-				$jeebaseCmd->setName(__('Time', __FILE__));
-				$jeebaseCmd->setLogicalId('time');
-				$jeebaseCmd->setEqLogic_id($eqLogic->getId());				
-			}
-			$jeebaseCmd->setConfiguration('data', 'time');
-			$jeebaseCmd->setIsHistorized(0);
-			$jeebaseCmd->setUnite('');
-			$jeebaseCmd->setType('info');
-			$jeebaseCmd->setSubType('other');
-			$jeebaseCmd->save();
+				$eqLogic->setConfiguration('type','sonde');
+				$eqLogic->setConfiguration('sonde_os',$sonde['id']);
+				$eqLogic->setConfiguration('type_sonde','wind');
+				$eqLogic->setCategory('heating', 1);
+				$eqLogic->setObject_id($id);
+				$eqLogic->save();
+				$eqLogic->loadCmdFromConf($sonde['type']);
 			}
 		}	
 	}
@@ -684,91 +448,54 @@ class jeebase extends eqLogic {
 	  public function preSave() {
 		  
 	  }
+	    
 	  
-	public function loadCmdFromConf($_update = false) {
-		if (!is_file(dirname(__FILE__) . '/../config/devices/' . $this->getConfiguration("type") .'.json')) {
+	  
+	public function loadCmdFromConf($type,$data = false) {
+	
+		if (!is_file(__DIR__ . '/../config/devices/' . $type . '.json')) {
+			log::add('ioscloud','debug', 'no file' . $type);
 			return;
 		}
-		$content = file_get_contents(dirname(__FILE__) . '/../config/devices/' . $this->getConfiguration("type") .'.json');
+		$content = file_get_contents(__DIR__ . '/../config/devices/' . $type . '.json');
+		
 		if (!is_json($content)) {
+			log::add('ioscloud','debug', 'no json content');
 			return;
 		}
 		$device = json_decode($content, true);
 		if (!is_array($device) || !isset($device['commands'])) {
 			return true;
 		}
-
-		$this->import($device);
+		foreach ($device['commands'] as $command) {
+			$jeebaseCmd = $this->getCmd(null, $command['logicalId']);
+			if ( !is_object($jeebaseCmd) ) {
+				$jeebaseCmd = new jeebaseCmd();
+				$jeebaseCmd->setName(__($command['name'], __FILE__));
+				$jeebaseCmd->setLogicalId($command['logicalId']);
+				$jeebaseCmd->setEqLogic_id($this->getId());					
+			}
+			if($data) {
+				$command['configuration'] = $data;
+			}
+			utils::a2o($jeebaseCmd, $command);
+			$jeebaseCmd->save();
+		}
 	}	  
 	  
 	  
 	 public function postSave() {
 
 		if($this->getConfiguration("type") == "sensor") {
-			$jeebaseCmd = $this->getCmd(null, 'etat');
-			if ( !is_object($jeebaseCmd) ) {
-				$jeebaseCmd = new jeebaseCmd();
-				$jeebaseCmd->setName(__('Etat Sensor', __FILE__));
-				$jeebaseCmd->setLogicalId('etat');
-				$jeebaseCmd->setEqLogic_id($this->getId());				
-			}
-			$jeebaseCmd->setConfiguration('id', $this->getConfiguration("id"));
-			$jeebaseCmd->setConfiguration('protocole', $this->getConfiguration("protocole"));
-			$jeebaseCmd->setGeneric_type('PRESENCE');
-			$jeebaseCmd->setType('info');
-			$jeebaseCmd->setSubType('binary');
-			$jeebaseCmd->save();
-			
-			$jeebaseCmd = $this->getCmd(null, 'batterie');
-			if ( is_object($jeebaseCmd) ) {
-				$jeebaseCmd->remove();			
-				
-			}			 
+			$data = array();
+			$data = array("id"=> $this->getConfiguration("id"),"protocole"=> $this->getConfiguration("protocole"));
+			$this->loadCmdFromConf($this->getConfiguration('type'),$data);
+		 
 		 }
 		 if($this->getConfiguration("type") == "module") {
-			 log::add('jeebase','debug', 'postSave :' .  $this->getConfiguration('id') . '  ' . ' ' . $this->getConfiguration('type'));
-			$jeebaseCmd = $this->getCmd(null, 'on');
-			if ( !is_object($jeebaseCmd) ) {
-				$jeebaseCmd = new jeebaseCmd();
-				$jeebaseCmd->setName(__('ON', __FILE__));
-				$jeebaseCmd->setLogicalId('on');
-				$jeebaseCmd->setEqLogic_id($this->getId());				
-			}
-			$jeebaseCmd->setConfiguration('id', $this->getConfiguration("id"));
-			$jeebaseCmd->setConfiguration('protocole', $this->getConfiguration("protocole"));
-			$jeebaseCmd->setGeneric_type('LIGHT_ON');
-			$jeebaseCmd->setType('action');
-			$jeebaseCmd->setSubType('other');
-			$jeebaseCmd->save();
-			
-			$jeebaseCmd = $this->getCmd(null, 'off');
-			if ( !is_object($jeebaseCmd) ) {
-				$jeebaseCmd = new jeebaseCmd();
-				$jeebaseCmd->setName(__('OFF', __FILE__));
-				$jeebaseCmd->setLogicalId('off');
-				$jeebaseCmd->setEqLogic_id($this->getId());				
-			}	
-			$jeebaseCmd->setConfiguration('id', $this->getConfiguration("id"));
-			$jeebaseCmd->setConfiguration('protocole', $this->getConfiguration("protocole"));
-			$jeebaseCmd->setGeneric_type('LIGHT_OFF');					
-			$jeebaseCmd->setType('action');
-			$jeebaseCmd->setSubType('other');
-			$jeebaseCmd->save();
-			
-			$jeebaseCmd = $this->getCmd(null, 'etat');
-			if ( !is_object($jeebaseCmd) ) {
-				$jeebaseCmd = new jeebaseCmd();
-				$jeebaseCmd->setName(__('Etat', __FILE__));
-				$jeebaseCmd->setLogicalId('etat');
-				$jeebaseCmd->setEqLogic_id($this->getId());				
-			}
-			$jeebaseCmd->setConfiguration('id', $this->getConfiguration("id"));
-			$jeebaseCmd->setConfiguration('protocole', $this->getConfiguration("protocole"));	
-			$jeebaseCmd->setGeneric_type('LIGHT_STATE');
-			$jeebaseCmd->setType('info');
-			$jeebaseCmd->setSubType('binary');
-			$jeebaseCmd->save();
-				
+			$data = array();
+			$data = array("id"=> $this->getConfiguration("id"),"protocole"=> $this->getConfiguration("protocole"));	
+			$this->loadCmdFromConf($this->getConfiguration('type'),$data);		 
 //			if ($module['slider'] == 1) { 
 //				$jeebaseCmd = $eqLogic->getCmd(null, 'slider');
 //				if ( !is_object($jeebaseCmd) ) {
@@ -784,213 +511,13 @@ class jeebase extends eqLogic {
 		 }
 		 
 		if($this->getConfiguration("type") == "sonde") {
-			if($this->getConfiguration("type_sonde") == "temperature") {
-				$jeebaseCmd = $this->getCmd(null, 'temperature');
-				if ( !is_object($jeebaseCmd) ) {
-					$jeebaseCmd = new jeebaseCmd();
-					$jeebaseCmd->setName(__('Température', __FILE__));
-					$jeebaseCmd->setLogicalId('temperature');
-					$jeebaseCmd->setEqLogic_id($this->getId());				
-				}
-				$jeebaseCmd->setConfiguration('data', 'temp');
-				$jeebaseCmd->setUnite('°C');
-				$jeebaseCmd->setType('info');
-				$jeebaseCmd->setSubType('numeric');
-				$jeebaseCmd->setGeneric_type('TEMPERATURE');
-				$jeebaseCmd->save();
-				
-				$jeebaseCmd = $this->getCmd(null, 'humidity');
-				if ( !is_object($jeebaseCmd) ) {
-					$jeebaseCmd = new jeebaseCmd();
-					$jeebaseCmd->setName(__('Humidité', __FILE__));
-					$jeebaseCmd->setLogicalId('humidity');
-					$jeebaseCmd->setEqLogic_id($this->getId());				
-					
-				}
-				$jeebaseCmd->setConfiguration('data', 'humidity');
-				$jeebaseCmd->setUnite('%');
-				$jeebaseCmd->setType('info');
-				$jeebaseCmd->setGeneric_type('HUMIDITY');
-				$jeebaseCmd->setSubType('numeric');
-				$jeebaseCmd->save();
-				
-				$jeebaseCmd = $this->getCmd(null, 'time');
-				if ( !is_object($jeebaseCmd) ) {
-					$jeebaseCmd = new jeebaseCmd();
-					$jeebaseCmd->setName(__('Time', __FILE__));
-					$jeebaseCmd->setLogicalId('time');
-					$jeebaseCmd->setEqLogic_id($this->getId());				
-				}
-				$jeebaseCmd->setConfiguration('data', 'time');
-				$jeebaseCmd->setUnite('');
-				$jeebaseCmd->setType('info');
-				$jeebaseCmd->setSubType('other');
-				$jeebaseCmd->save();
-				
-			} elseif($this->getConfiguration("type_sonde") == "light") {
-
-				$jeebaseCmd = $this->getCmd(null, 'luminosite');
-				if ( !is_object($jeebaseCmd) ) {
-					$jeebaseCmd = new jeebaseCmd();
-					$jeebaseCmd->setName(__('Luminosité', __FILE__));
-					$jeebaseCmd->setLogicalId('luminosite');
-					$jeebaseCmd->setEqLogic_id($this->getId());				
-					
-				}
-				$jeebaseCmd->setConfiguration('data', 'lum');
-				$jeebaseCmd->setUnite('lux');
-				$jeebaseCmd->setType('info');
-				$jeebaseCmd->setGeneric_type('BRIGHTNESS');
-				$jeebaseCmd->setSubType('numeric');
-				$jeebaseCmd->save();
-				
-				$jeebaseCmd = $this->getCmd(null, 'time');
-				if ( !is_object($jeebaseCmd) ) {
-					$jeebaseCmd = new jeebaseCmd();
-					$jeebaseCmd->setName(__('Time', __FILE__));
-					$jeebaseCmd->setLogicalId('time');
-					$jeebaseCmd->setEqLogic_id($this->getId());				
-				}
-	
-				$jeebaseCmd->setConfiguration('data', 'time');
-				$jeebaseCmd->setUnite('');
-				$jeebaseCmd->setType('info');
-				$jeebaseCmd->setSubType('other');
-				$jeebaseCmd->save();				
-						 
-			} elseif($this->getConfiguration("type_sonde") == "power") {
-				
-				$jeebaseCmd = $this->getCmd(null, 'powerTotal');
-				if ( !is_object($jeebaseCmd) ) {
-					$jeebaseCmd = new jeebaseCmd();
-					$jeebaseCmd->setName(__('Consommation Totale', __FILE__));
-					$jeebaseCmd->setLogicalId('powerTotal');
-					$jeebaseCmd->setEqLogic_id($this->getId());				
-				}
-				$jeebaseCmd->setConfiguration('data', 'powerTotal');
-				$jeebaseCmd->setUnite('KW');
-				$jeebaseCmd->setType('info');
-				$jeebaseCmd->setGeneric_type('GENERIC_INFO');
-				$jeebaseCmd->setSubType('numeric');
-				$jeebaseCmd->save();
-				
-				$jeebaseCmd = $this->getCmd(null, 'powerInstant');
-				if ( !is_object($jeebaseCmd) ) {
-					$jeebaseCmd = new jeebaseCmd();
-					$jeebaseCmd->setName(__('Consommation Instantanée', __FILE__));
-					$jeebaseCmd->setLogicalId('powerInstant');
-					$jeebaseCmd->setEqLogic_id($this->getId());				
-				}
-				$jeebaseCmd->setConfiguration('data', 'powerInstant');
-				$jeebaseCmd->setGeneric_type('GENERIC_INFO');
-				$jeebaseCmd->setUnite('kW');
-				$jeebaseCmd->setType('info');
-				$jeebaseCmd->setSubType('numeric');
-				$jeebaseCmd->save();	
-				
-				$jeebaseCmd = $this->getCmd(null, 'time');
-				if ( !is_object($jeebaseCmd) ) {
-					$jeebaseCmd = new jeebaseCmd();
-					$jeebaseCmd->setName(__('Time', __FILE__));
-					$jeebaseCmd->setLogicalId('time');
-					$jeebaseCmd->setEqLogic_id($this->getId());				
-				}
-				$jeebaseCmd->setConfiguration('data', 'time');
-				$jeebaseCmd->setUnite('');
-				$jeebaseCmd->setType('info');
-				$jeebaseCmd->setSubType('other');
-				$jeebaseCmd->save();				
-						
-			} elseif($this->getConfiguration("type_sonde") == "rain") {
-				
-				$jeebaseCmd = $this->getCmd(null, 'PluieInstant');
-				if ( !is_object($jeebaseCmd) ) {
-					$jeebaseCmd = new jeebaseCmd();
-					$jeebaseCmd->setName(__('Pluie', __FILE__));
-					$jeebaseCmd->setLogicalId('PluieInstant');
-					$jeebaseCmd->setEqLogic_id($this->getId());				
-				}
-				$jeebaseCmd->setConfiguration('data', 'pluie');
-				$jeebaseCmd->setUnite('mm');
-				$jeebaseCmd->setGeneric_type('GENERIC_INFO');
-				$jeebaseCmd->setType('info');
-				$jeebaseCmd->setSubType('numeric');
-				$jeebaseCmd->save();
-				
-				$jeebaseCmd = $this->getCmd(null, 'PluieTotale');
-				if ( !is_object($jeebaseCmd) ) {
-					$jeebaseCmd = new jeebaseCmd();
-					$jeebaseCmd->setName(__('Pluie Tot', __FILE__));
-					$jeebaseCmd->setLogicalId('PluieTotale');
-					$jeebaseCmd->setEqLogic_id($this->getId());				
-				}
-				$jeebaseCmd->setConfiguration('data', 'PluieTotale');
-				$jeebaseCmd->setIsHistorized(1);
-				$jeebaseCmd->setUnite('mm/h');
-				$jeebaseCmd->setGeneric_type('GENERIC_INFO');
-				$jeebaseCmd->setType('info');
-				$jeebaseCmd->setSubType('numeric');
-				$jeebaseCmd->save();
-				
-				$jeebaseCmd = $this->getCmd(null, 'time');
-				if ( !is_object($jeebaseCmd) ) {
-					$jeebaseCmd = new jeebaseCmd();
-					$jeebaseCmd->setName(__('Time', __FILE__));
-					$jeebaseCmd->setLogicalId('time');
-					$jeebaseCmd->setEqLogic_id($this->getId());				
-				}
-				$jeebaseCmd->setConfiguration('data', 'time');
-				$jeebaseCmd->setIsHistorized(0);
-				$jeebaseCmd->setUnite('');
-				$jeebaseCmd->setType('info');
-				$jeebaseCmd->setSubType('other');
-				$jeebaseCmd->save();
-				
-											
-			} elseif($this->getConfiguration("type_sonde") == "wind") {
-				
-				$jeebaseCmd = $this->getCmd(null, 'vitesse');
-				if ( !is_object($jeebaseCmd) ) {
-					$jeebaseCmd = new jeebaseCmd();
-					$jeebaseCmd->setName(__('Vent', __FILE__));
-					$jeebaseCmd->setLogicalId('vitesse');
-					$jeebaseCmd->setEqLogic_id($this->getId());				
-				}
-				$jeebaseCmd->setConfiguration('data', 'vent');
-				$jeebaseCmd->setUnite('km/h');
-				$jeebaseCmd->setType('info');
-				$jeebaseCmd->setGeneric_type('GENERIC_INFO');
-				$jeebaseCmd->setSubType('numeric');
-				$jeebaseCmd->save();
-				
-				$jeebaseCmd = $this->getCmd(null, 'orientation');
-				if ( !is_object($jeebaseCmd) ) {
-					$jeebaseCmd = new jeebaseCmd();
-					$jeebaseCmd->setName(__('Orientation', __FILE__));
-					$jeebaseCmd->setEqLogic_id($this->getId());
-					$jeebaseCmd->setLogicalId('orientation');				
-				}
-				$jeebaseCmd->setConfiguration('data', 'orientation');
-				$jeebaseCmd->setUnite('');
-				$jeebaseCmd->setType('info');
-				$jeebaseCmd->setGeneric_type('GENERIC_INFO');
-				$jeebaseCmd->setSubType('numeric');
-				$jeebaseCmd->save();
-				
-				$jeebaseCmd = $this->getCmd(null, 'time');
-				if ( !is_object($jeebaseCmd) ) {
-					$jeebaseCmd = new jeebaseCmd();
-					$jeebaseCmd->setName(__('Time', __FILE__));
-					$jeebaseCmd->setLogicalId('time');
-					$jeebaseCmd->setEqLogic_id($this->getId());				
-				}
-				$jeebaseCmd->setConfiguration('data', 'time');
-				$jeebaseCmd->setUnite('');
-				$jeebaseCmd->setType('info');
-				$jeebaseCmd->setSubType('other');
-				$jeebaseCmd->save();	
-			}
+			$this->loadCmdFromConf($this->getConfiguration('type_sonde'));
 		}
+		if($this->getConfiguration("type") == "other") {
+			$this->loadCmdFromConf($this->getConfiguration('type'));
+		}		
+		
+		
 	}
 	 
 	 
@@ -998,54 +525,28 @@ class jeebase extends eqLogic {
 	public function postUpdate() {
 		
 		switch ($this->getConfiguration("type")) {
+			case "sensor":
 			case "module":$this->setLogicalId($this->getConfiguration("id"));break;
 			case "sonde":$this->setLogicalId($this->getConfiguration("sonde_os"));break;
-			case "sensor":$this->setLogicalId($this->getConfiguration("id"));break;
 			
 		}
 		$this->save(true);		
 		
 		
 		if($this->getConfiguration("type") == "other" ) {
-			$jeebaseCmd = $this->getCmd(null, 'etat');
-			if (!is_object($jeebaseCmd)) {
-				$jeebaseCmd = new jeebaseCmd();
-			}
-			$jeebaseCmd->setEqLogic_id($this->id);
-			$jeebaseCmd->setType('info');
-			$jeebaseCmd->setSubType('binary');
-			$jeebaseCmd->setName(__('Etat', __FILE__));
-			$jeebaseCmd->setLogicalId('etat');	
-			$jeebaseCmd->setIsVisible(1);			
-			$jeebaseCmd->save();
-			
-			
+
 			$jeebaseCmd = $this->getCmd(null, 'on');
-			if (!is_object($jeebaseCmd)) {
-				$jeebaseCmd = new jeebaseCmd();
+			if (is_object($jeebaseCmd)) {
+				$jeebaseCmd->setConfiguration('id',$this->getConfiguration("on"));
+				$jeebaseCmd->save();
+				
 			}
-			$jeebaseCmd->setEqLogic_id($this->id);
-			$jeebaseCmd->setType('action');
-			$jeebaseCmd->setSubType('other');
-			$jeebaseCmd->setName(__('On', __FILE__));
-			$jeebaseCmd->setLogicalId('on');
-			$jeebaseCmd->setConfiguration('id',$this->getConfiguration("on"));	
-			$jeebaseCmd->setIsVisible(1);			
-			$jeebaseCmd->save();
-			
-			$jeebaseCmd = $this->getCmd(null,'off');
-			if (!is_object($jeebaseCmd)) {
-				$jeebaseCmd = new jeebaseCmd();
-			}
-			$jeebaseCmd->setEqLogic_id($this->id);
-			$jeebaseCmd->setType('action');
-			$jeebaseCmd->setSubType('other');
-			$jeebaseCmd->setName(__('Off', __FILE__));
-			$jeebaseCmd->setLogicalId('off');	
-			$jeebaseCmd->setConfiguration('id',$this->getConfiguration("off"));
-			$jeebaseCmd->setIsVisible(1);			
-			$jeebaseCmd->save();			
-			
+			$jeebaseCmd = $this->getCmd(null, 'off');
+			if (is_object($jeebaseCmd)) {
+				$jeebaseCmd->setConfiguration('id',$this->getConfiguration("off"));
+				$jeebaseCmd->save();
+				
+			}			
 			
 			if($this->getIsEnable() == 1) {
 				$cron = cron::byClassAndFunction('jeebase', 'launchAction', array('eq_id' => intval($this->getId())));
@@ -1075,7 +576,8 @@ class jeebaseCmd extends cmd {
 	public function execute($_options = array()) {
 		if ($this->getType() != 'action') {
 			return;
-		}		
+		}	
+			
 		$eqLogic = $this->getEqLogic();
 		if($eqLogic->getConfiguration("type") == "other") {
 			switch ($this->getLogicalId()) {
@@ -1087,8 +589,8 @@ class jeebaseCmd extends cmd {
 					break;
 			}
 			return;			
-			
 		}
+		
 		$zibase = new ZiBase(config::byKey('zibase_ip', 'jeebase'));
 
 		log::add('jeebase','debug', 'message :' .  $this->getConfiguration('id') . ' ZbAction::ON ' . ' ' . $this->getConfiguration('protocole'));

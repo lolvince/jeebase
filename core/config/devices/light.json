@@ -1,0 +1,24 @@
+{
+    "commands":[{
+                "name": "Luminosité",
+                "type": "info",
+                "subtype": "numeric",
+                "isVisible": 1,
+				"logicalId": "luminosite",
+				"configuration": {
+					"data": "lum"
+				},	
+				"unite": "lux",			
+				"generic_type":"BRIGHTNESS"
+        },{
+                "name": "Time",
+                "type": "info",
+                "subtype": "other",
+                "isVisible": 1,
+				"logicalId": "time",
+				"configuration": {
+					"data": "time"
+				}
+        }
+    ]
+}

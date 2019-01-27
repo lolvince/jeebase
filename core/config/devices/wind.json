@@ -1,0 +1,36 @@
+{
+    "commands":[{
+                "name": "Vent",
+                "type": "info",
+                "subtype": "numeric",
+                "isVisible": 1,
+				"logicalId": "vitesse",
+				"configuration": {
+					"data": "vent"
+				},	
+				"unite": "km/h",			
+				"generic_type":"GENERIC_INFO"
+        },{
+                "name": "Orientation",
+                "type": "info",
+                "subtype": "numeric",
+                "isVisible": 1,
+				"logicalId": "orientation",
+				"configuration": {
+					"data": "orientation"
+				},			
+				"generic_type":"GENERIC_INFO"
+        },{
+                "name": "Time",
+                "type": "info",
+                "subtype": "other",
+                "isVisible": 1,
+				"logicalId": "time",
+				"configuration": {
+					"data": "time"
+				}
+        }
+		
+		
+    ]
+}

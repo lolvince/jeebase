@@ -1,0 +1,35 @@
+{
+    "commands":[{
+                "name": "Température",
+                "type": "info",
+                "subtype": "numeric",
+                "isVisible": 1,
+				"logicalId": "temperature",
+				"configuration": {
+					"data": "temp"
+				},	
+				"unite": "°C",			
+				"generic_type":"TEMPERATURE"
+        },{
+                "name": "Humidité",
+                "type": "info",
+                "subtype": "numeric",
+                "isVisible": 1,
+				"logicalId": "humidity",
+				"configuration": {
+					"data": "humidity"
+				},	
+				"unite": "%",			
+				"generic_type":"HUMIDITY"
+        },{
+                "name": "Time",
+                "type": "info",
+                "subtype": "other",
+                "isVisible": 1,
+				"logicalId": "time",
+				"configuration": {
+					"data": "time"
+				}
+        }
+    ]
+}
