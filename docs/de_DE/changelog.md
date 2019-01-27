@@ -1,6 +1,13 @@
 XX.08.2018
 ===
 
+* Ajout des generic_type
+* Possibilité de créer des équipements directement depuis le plugin (équipement sans association ou id connu)
+
+
+XX.08.2018
+===
+
 * Ajout d'une option pour être alerté si batterie déclarée faible par Zibase
 * Barre de recherche pour les équipements
 * Ajout d'un bouton dans la configuration générale du plugin pour mettre à jour les données de tous les équipements. (Utile en cas d'arrêt du démon)
