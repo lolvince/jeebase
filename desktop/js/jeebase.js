@@ -63,6 +63,107 @@ $('.eqLogicAction[data-action=addEquipement]').on('click', function () {
     });
 });
 
+
+$("body").delegate(".listCmdAction", 'click', function() {
+    var type = $(this).attr('data-type');
+    var el = $(this).closest('.' + type).find('.expressionAttr[data-l1key=cmd]');
+    jeedom.cmd.getSelectModal({cmd: {type: 'action'}}, function(result) {
+        el.value(result.human);
+        jeedom.cmd.displayActionOption(el.value(), '', function(html) {
+            el.closest('.' + type).find('.actionOptions').html(html);
+        });
+    });
+});
+
+$("body").delegate(".listAction", 'click', function () {
+  var type = $(this).attr('data-type');
+  var el = $(this).closest('.' + type).find('.expressionAttr[data-l1key=cmd]');
+  jeedom.getSelectActionModal({}, function (result) {
+    el.value(result.human);
+    jeedom.cmd.displayActionOption(el.value(), '', function (html) {
+      el.closest('.' + type).find('.actionOptions').html(html);
+  });
+});
+});
+
+$("body").delegate(".listEquipement", 'click', function() {
+    var type = $(this).attr('data-type');
+    var el = $(this).closest('.' + type).find('.expressionAttr[data-l1key=eqLogic]');
+    jeedom.eqLogic.getSelectModal({}, function(result) {
+        //console.log(result);
+        el.value(result.human);
+    });
+});
+
+$("body").delegate('.bt_removeAction', 'click', function() {
+    var type = $(this).attr('data-type');
+    $(this).closest('.' + type).remove();
+});
+
+
+$("body").delegate(".listCmdInfo", 'click', function() {
+	var type = $(this).attr('data-type');	
+	var el = $(this).closest('.' + type).find('.triggerAttr[data-l1key=cmd]');
+    jeedom.cmd.getSelectModal({cmd: {type: 'info', subtype: 'binary'}}, function(result) {
+        el.value(result.human);
+    });
+});
+
+
+$('#addEventOn').on('click', function() {
+    addEvent({}, '{{Action}}');
+});
+
+$('#addEventOff').on('click', function() {
+    addEventAction({}, '{{Action}}');
+});
+
+function addEvent(_action, _name, _el,id) {
+	
+    if (!isset(_action)) {
+        _action = {};
+    }
+    if (!isset(_action.options)) {
+        _action.options = {};
+    }
+
+    var div = '<div class="action_on">';
+    div += '<div class="form-group ">';
+    div += '<label class="col-sm-1 control-label">' + _name + '</label>';
+	
+    div += '<div class="col-sm-4 has-success">';
+	
+    div += '<div class="input-group">';
+    div += '<span class="input-group-btn">';
+    div += '<a class="btn btn-default bt_removeAction btn-sm" data-type="action_on"><i class="fa fa-minus-circle"></i></a>';
+    div += '</span>';
+    div += '<input class="expressionAttr form-control input-sm cmdAction" data-l1key="cmd" data-type="action_on" />';
+    div += '<span class="input-group-btn">';
+    div += '<a class="btn btn-success btn-sm listAction" data-type="action_on" title="{{Sélectionner un mot-clé}}"><i class="fa fa-tasks"></i></a>';
+    div += '<a class="btn btn-success btn-sm listCmdAction" data-type="action_on"><i class="fa fa-list-alt"></i></a>';
+    div += '</span>';
+    div += '</div>';
+    div += '</div>';
+    div += '<div class="col-lg-6 actionOptions">';
+    div += jeedom.cmd.displayActionOption(init(_action.cmd, ''), _action.options);
+    div += '</div>';
+    div += '</div>';
+    if (isset(_el)) {
+		console.log('ttut')
+        _el.find('.div_action_on').append(div);
+        _el.find('.action_on:last').setValues(_action, '.expressionAttr');
+    } else {
+		if(document.getElementById("div_action_on") !== null)
+		{
+			console.log('ttut')
+		}		
+        $('#div_action_on').append(div);
+        $('#div_action_on .action_on:last').setValues(_action, '.expressionAttr');
+    }
+
+}
+
+
 //$('.IncludeState').on('click', function () {
 //	$('#div_alert').showAlert({message: '{{ne pas fermer la fenêtre.}}', level: 'danger'});
 //	$('#md_modal2').load('index.php?v=d&plugin=jeebase&modal=include');		
@@ -205,8 +306,20 @@ function addCmdToTable(_cmd) {
             
 }
 
-function printEqLogic(_eqLogic)  {
+function saveEqLogic(_eqLogic) {
+    if (!isset(_eqLogic.configuration)) {
+        _eqLogic.configuration = {};
+    }
 	
+	_eqLogic.configuration.action_on = $('#div_action_on .action_on').getValues('.expressionAttr');
+	_eqLogic.configuration.action_off = $('#div_action_off .action_off').getValues('.expressionAttr');
+
+	return _eqLogic;
+}
+
+function printEqLogic(_eqLogic)  {
+	$('#div_action_on').empty();
+	$('#div_action_off').empty();	
 	if (!isset(_eqLogic)) {
 		var _eqLogic = {configuration: {}};
 	}
@@ -215,13 +328,28 @@ function printEqLogic(_eqLogic)  {
 	   _eqLogic.configuration = {};
 	}
 	
+	
+	
     if (isset(_eqLogic.configuration) && isset(_eqLogic.configuration.type) && _eqLogic.configuration.type != '') {
         $('.item-conf').load('index.php?v=d&plugin=jeebase&modal=' + _eqLogic.configuration.type + '.configuration', function () {
             $('body').setValues(_eqLogic, '.eqLogicAttr');
-           // $('#typeCal').prop('disabled', true);
+			if (isset(_eqLogic.configuration.action_on)) {
+				for (var i in _eqLogic.configuration.action_on) {
+					//console.log(_eqLogic.configuration.action_alarm[i]);
+					addEvent(_eqLogic.configuration.action_on[i], '{{Action}}');
+				}
+			}
+			if (isset(_eqLogic.configuration.action_alarm_add)) {
+				for (var i in _eqLogic.configuration.action_alarm_add) {
+					//console.log(_eqLogic.configuration.action_alarm[i]);
+					addEventAction(_eqLogic.configuration.action_alarm_add[i], '{{Action}}');
+				}
+			}		   
+		   
             initCheckBox();
             modifyWithoutSave = false;
-        });
+        });		
+		
     } else {
         $('.item-conf').empty();
         $('.eqLogicAttr[data-l1key=configuration][data-l2key=type]').on('change', function () {
@@ -229,23 +357,26 @@ function printEqLogic(_eqLogic)  {
                 initCheckBox();
             });
         });
-    }	
+    }
 	
+			
 	switch (_eqLogic.configuration.type) {
 	   case "module":
-	   case "sensor":
 	   case "other": 
 		   $('#table_Z1base,#table_Z1bas3,#div_Z1bas3').hide();
-		   $('#table_cmd').show();
+		   $('#table_cmd,#action').show();
+		   $('.collapse').collapse();	   
 		   break;
+		case "sensor":
+		   $('#table_Z1base,#table_Z1bas3,#div_Z1bas3,#action').hide();
+		   $('#table_cmd').show();		
+			break;
 	    case "sonde": 
 		   $('#table_Z1base,#table_Z1bas3,#div_Z1bas3').show();
-		   $('#table_cmd').hide();
+		   $('#table_cmd,#action').hide();
 		   break;
 	}	
 
-			
-	
     $.ajax({// fonction permettant de faire de l'ajax
         type: "POST", // methode de transmission des données au fichier php
         url: "plugins/jeebase/core/ajax/jeebase.ajax.php", // url du fichier php

@@ -141,6 +141,7 @@ class jeebase extends eqLogic {
 
 	public function setStateToJeedom($_options) {
 		$jeebase = jeebase::byLogicalId( $_options['id'],  'jeebase') ;
+		log::add('jeebase', 'debug', 'state id ' . $_options['id']);
 		$changed = false;
 	 	if ( is_object($jeebase) ) {
 			$id = $_options['id'];
@@ -278,7 +279,7 @@ class jeebase extends eqLogic {
 //		}
 //	}	
 	
-	public function syncWithZibase($_options = false) {
+public function syncWithZibase($_options) {
         if( config::byKey('zibase_url', 'jeebase') != ''){
         	$url=config::byKey('zibase_url', 'jeebase');
         }else{
@@ -290,35 +291,6 @@ class jeebase extends eqLogic {
 		$modules = $parsed_json['body']['actuators'];
 		$sensors = $parsed_json['body']['sensors'];
 		$sondes = $parsed_json['body']['probes'];
-		$scenarios = $parsed_json['body']['scenarios'];
-		
-		foreach ($scenarios as $scenario) {
-			$id = $scenario['id'];
-			$eqLogic = jeebase::byLogicalId( 'scenario_' . $id,  'jeebase');
-			if ( !is_object($eqLogic) ) {
-				$eqLogic = new eqLogic();
-				$eqLogic->setEqType_name('jeebase');
-				$eqLogic->setLogicalId('scenario_' . $id);
-				$eqLogic->setIsEnable(1);
-				$eqLogic->setIsVisible(1);				
-			}
-			$eqLogic->setName($scenario['name']);
-			$eqLogic->setConfiguration('type','scenario');
-			$eqLogic->setConfiguration('id', $scenario['id']);
-			$eqLogic->save();
-			
-			$jeebaseCmd = $eqLogic->getCmd(null, 'launch');
-			if (!is_object($jeebaseCmd)) {
-				$jeebaseCmd = new jeebaseCmd();
-				$jeebaseCmd->setLogicalId('launch');
-				$jeebaseCmd->setName(__('Lancer', __FILE__));
-				$jeebaseCmd->setEqLogic_id($eqLogic->id);
-			}		
-			
-			$jeebaseCmd->setType('action');
-			$jeebaseCmd->setSubType('other');
-			$jeebaseCmd->save();				
-		}
 		
 		foreach ($modules as $module) {
 			if ($module['protocol'] == 6) {
@@ -328,34 +300,65 @@ class jeebase extends eqLogic {
 				
 			}
 			
-			$eqLogic = jeebase::byLogicalId( $id,  'jeebase') ;
-			if ( !is_object($eqLogic) ) {	
+			$jeebase = jeebase::byLogicalId( $id,  'jeebase') ;
+			if ( !is_object($jeebase) ) {	
 				$eqLogic = new eqLogic();
 				$eqLogic->setEqType_name('jeebase');
 				$eqLogic->setIsEnable(1);
 				$eqLogic->setIsVisible(1);
-			}
-			$eqLogic->setName($module['name']);
-			$eqLogic->setConfiguration('type','module');
-			$eqLogic->setConfiguration('protocole', $module['protocol']);
-			$eqLogic->setConfiguration('id', $module['id']);
-			$eqLogic->setLogicalId($id);
-			$eqLogic->save();
-			$data = array();
-			$data = array("id"=> $module['id'],"protocole"=> $module['protocol']);
-			$eqLogic->loadCmdFromConf($eqLogic->getConfiguration('type'),$data);			
+				$eqLogic->setName($module['name']);
+				$eqLogic->setConfiguration('type','module');
+				$eqLogic->setConfiguration('protocole', $module['protocol']);
+				$eqLogic->setConfiguration('id', $module['id']);
+				$eqLogic->setLogicalId($id);
+				$eqLogic->save();
+				$eqLogic = self::byId($eqLogic->getId());
 				
-			if ($module['slider'] == 1) { 
-				$jeebaseCmd = $eqLogic->getCmd(null, 'slider');
-				if ( !is_object($jeebaseCmd) ) {
+				$jeebaseCmd = new jeebaseCmd();
+				$jeebaseCmd->setName(__('ON', __FILE__));
+				$jeebaseCmd->setLogicalId('on');
+				$jeebaseCmd->setEqLogic_id($eqLogic->getId());
+				$jeebaseCmd->setConfiguration('id', $module['id']);
+				$jeebaseCmd->setConfiguration('protocole', $module['protocol']);
+				$jeebaseCmd->setConfiguration('icon', $module['icon']);
+				$jeebaseCmd->setType('action');
+				$jeebaseCmd->setSubType('other');
+				$jeebaseCmd->save();
+				
+				$jeebaseCmd = new jeebaseCmd();
+				$jeebaseCmd->setName(__('OFF', __FILE__));
+				$jeebaseCmd->setLogicalId('off');
+				$jeebaseCmd->setEqLogic_id($eqLogic->getId());
+				$jeebaseCmd->setConfiguration('id', $module['id']);
+				$jeebaseCmd->setConfiguration('protocole', $module['protocol']);
+				$jeebaseCmd->setConfiguration('etat', $module['status']);
+				$jeebaseCmd->setConfiguration('icon', $module['icon']);
+				$jeebaseCmd->setType('action');
+				$jeebaseCmd->setSubType('other');
+				$jeebaseCmd->save();	
+				
+				$jeebaseCmd = new jeebaseCmd();
+				$jeebaseCmd->setName(__('Etat', __FILE__));
+				$jeebaseCmd->setLogicalId('etat');
+				$jeebaseCmd->setEqLogic_id($eqLogic->getId());
+				$jeebaseCmd->setConfiguration('id', $module['id']);
+				$jeebaseCmd->setConfiguration('protocole', $module['protocol']);
+				$jeebaseCmd->setConfiguration('etat', $module['status']);
+				$jeebaseCmd->setConfiguration('icon', $module['icon']);
+				$jeebaseCmd->setType('info');
+				$jeebaseCmd->setSubType('binary');
+				$jeebaseCmd->save();
+				
+				
+				if ($module['slider'] == 1) { 
 					$jeebaseCmd = new jeebaseCmd();
 					$jeebaseCmd->setName(__('Slider', __FILE__));
 					$jeebaseCmd->setLogicalId('slider');
-					$jeebaseCmd->setEqLogic_id($eqLogic->getId());					
+					$jeebaseCmd->setEqLogic_id($eqLogic->getId());
+					$jeebaseCmd->setType('action');
+					$jeebaseCmd->setSubType('slider');
+					$jeebaseCmd->save();
 				}
-				$jeebaseCmd->setType('action');
-				$jeebaseCmd->setSubType('slider');
-				$jeebaseCmd->save();
 			}
 		}
 		
@@ -365,71 +368,301 @@ class jeebase extends eqLogic {
 			} else {
 				$id = $sensor['id'];
 			}	
-			$eqLogic = jeebase::byLogicalId( $id,  'jeebase') ;
-			if ( !is_object($eqLogic) ) {
+			$jeebase = jeebase::byLogicalId( $id,  'jeebase') ;
+			if ( !is_object($jeebase) ) {
 				$eqLogic = new eqLogic();
 				$eqLogic->setEqType_name('jeebase');
 				$eqLogic->setIsEnable(1);
 				$eqLogic->setIsVisible(1);
-				$eqLogic->setLogicalId($id);				
+				$eqLogic->setName($sensor['name']);
+				$eqLogic->setLogicalId($id);
+				$eqLogic->setConfiguration('type','sensor');
+				$eqLogic->setConfiguration('protocole', $sensor['protocol']);
+				$eqLogic->setConfiguration('id', $sensor['id']);					
+				$eqLogic->save();
+				$eqLogic = self::byId($eqLogic->getId());
+				
+				$jeebaseCmd = new jeebaseCmd();
+				$jeebaseCmd->setName(__('Etat Sensor', __FILE__));
+				$jeebaseCmd->setLogicalId('etat');
+				$jeebaseCmd->setEqLogic_id($eqLogic->getId());
+				$jeebaseCmd->setConfiguration('id', $sensor['id']);
+				$jeebaseCmd->setConfiguration('protocole', $sensor['protocol']);
+				$jeebaseCmd->setConfiguration('icon', $sensor['icon']);
+				$jeebaseCmd->setType('info');
+				$jeebaseCmd->setSubType('binary');
+				$jeebaseCmd->save();	
+				
+				$jeebaseCmd = new jeebaseCmd();
+				$jeebaseCmd->setName(__('Batterie', __FILE__));
+				$jeebaseCmd->setLogicalId('batterie');
+				$jeebaseCmd->setEqLogic_id($eqLogic->getId());
+				$jeebaseCmd->setIsVisible(0);
+				$jeebaseCmd->setConfiguration('id', $sensor['id']);
+				$jeebaseCmd->setConfiguration('protocole', $sensor['protocol']);
+				$jeebaseCmd->setConfiguration('etat', $sensor['status']);
+				$jeebaseCmd->setConfiguration('icon', $sensor['icon']);
+				$jeebaseCmd->setType('info');
+				$jeebaseCmd->setSubType('binary');
+				$jeebaseCmd->save();
 			}
-			$eqLogic->setName($sensor['name']);
-			$eqLogic->setConfiguration('type','sensor');
-			$eqLogic->setConfiguration('protocole', $sensor['protocol']);
-			$eqLogic->setConfiguration('id', $sensor['id']);					
-			$eqLogic->save();
-			$data = array();
-			$data = array("id"=> $sensor['id'],"protocole"=> $sensor['protocol']);
-			$eqLogic->loadCmdFromConf($eqLogic->getConfiguration('type'),$data);			
-			
 		}
 		
 		foreach ($sondes as $sonde) {
-			$eqLogic = jeebase::byLogicalId( $sonde['id'],  'jeebase') ;
-			if ( !is_object($eqLogic) ) {
+			$jeebase = jeebase::byLogicalId( $sonde['id'],  'jeebase') ;
+			if ( !is_object($jeebase) ) {
+				if($sonde['type'] == "temperature") {
+									
+					  
 				$eqLogic = new eqLogic();
 				$eqLogic->setEqType_name('jeebase');
 				$eqLogic->setIsEnable(1);
 				$eqLogic->setName($sonde['name']);
 				$eqLogic->setLogicalId($sonde['id']);
-			}
-			if($sonde['type'] == "temperature") {
 				$eqLogic->setConfiguration('type','sonde');
 				$eqLogic->setConfiguration('sonde_os',$sonde['id']);
 				$eqLogic->setConfiguration('type_sonde','temperature');			
 				$eqLogic->setCategory('heating', 1);
 				$eqLogic->save();
-				$eqLogic->loadCmdFromConf($sonde['type']);			
-			} elseif($sonde['type'] == "light") {
+				$eqLogic = self::byId($eqLogic->getId());
+				
+				$jeebaseCmd = new jeebaseCmd();
+				$jeebaseCmd->setName(__('Température', __FILE__));
+				$jeebaseCmd->setLogicalId('temperature');
+				$jeebaseCmd->setEqLogic_id($eqLogic->getId());
+				$jeebaseCmd->setConfiguration('data', 'temp');
+				$jeebaseCmd->setIsHistorized(1);
+				$jeebaseCmd->setUnite('°C');
+				$jeebaseCmd->setType('info');
+				$jeebaseCmd->setSubType('numeric');
+				$jeebaseCmd->save();
+		
+				$jeebaseCmd = new jeebaseCmd();
+				$jeebaseCmd->setName(__('Humidité', __FILE__));
+				$jeebaseCmd->setLogicalId('humidity');
+				$jeebaseCmd->setEqLogic_id($eqLogic->getId());
+				$jeebaseCmd->setConfiguration('data', 'humidity');
+				$jeebaseCmd->setIsHistorized(0);
+				$jeebaseCmd->setUnite('%');
+				$jeebaseCmd->setType('info');
+				$jeebaseCmd->setSubType('numeric');
+				$jeebaseCmd->save();
+	
+				$jeebaseCmd = new jeebaseCmd();
+				$jeebaseCmd->setName(__('Time', __FILE__));
+				$jeebaseCmd->setLogicalId('time');
+				$jeebaseCmd->setEqLogic_id($eqLogic->getId());
+				$jeebaseCmd->setConfiguration('data', 'time');
+				$jeebaseCmd->setIsHistorized(0);
+				$jeebaseCmd->setUnite('');
+				$jeebaseCmd->setType('info');
+				$jeebaseCmd->setSubType('other');
+				$jeebaseCmd->save();
+				
+			    } elseif($sonde['type'] == "light") {
+				$eqLogic = new eqLogic();
+				
+				$eqLogic->setEqType_name('jeebase');
+				$eqLogic->setIsEnable(1);
+				$eqLogic->setName($sonde['name']);
+				$eqLogic->setLogicalId($sonde['id']);
 				$eqLogic->setConfiguration('type','sonde');
 				$eqLogic->setConfiguration('sonde_os',$sonde['id']);
 				$eqLogic->setConfiguration('type_sonde','light');
 				$eqLogic->setCategory('heating', 1);
 				$eqLogic->save();
-				$eqLogic->loadCmdFromConf($sonde['type']);			
-			} elseif($sonde['type'] == "power") {
+				$eqLogic = self::byId($eqLogic->getId());
+				
+				$jeebaseCmd = new jeebaseCmd();
+				$jeebaseCmd->setName(__('Luminosité', __FILE__));
+				$jeebaseCmd->setLogicalId('luminosite');
+				$jeebaseCmd->setEqLogic_id($eqLogic->getId());
+				$jeebaseCmd->setConfiguration('data', 'lum');
+				$jeebaseCmd->setIsHistorized(0);
+				$jeebaseCmd->setUnite('lux');
+				$jeebaseCmd->setType('info');
+				$jeebaseCmd->setSubType('numeric');
+				$jeebaseCmd->save();	
+				
+				$jeebaseCmd = new jeebaseCmd();
+				$jeebaseCmd->setName(__('Time', __FILE__));
+				$jeebaseCmd->setLogicalId('time');
+				$jeebaseCmd->setEqLogic_id($eqLogic->getId());
+				$jeebaseCmd->setConfiguration('data', 'time');
+				$jeebaseCmd->setIsHistorized(0);
+				$jeebaseCmd->setUnite('');
+				$jeebaseCmd->setType('info');
+				$jeebaseCmd->setSubType('other');
+
+				$jeebaseCmd->save();				
+						 
+			    } elseif($sonde['type'] == "power") {
+					
+			    $eqLogic = new eqLogic();
+	            $eqLogic->setEqType_name('jeebase');
+	            $eqLogic->setIsEnable(1);
+	            $eqLogic->setName($sonde['name']);
+	            $eqLogic->setLogicalId($sonde['id']);
 				$eqLogic->setConfiguration('type','sonde');
 				$eqLogic->setConfiguration('sonde_os',$sonde['id']);
 				$eqLogic->setConfiguration('type_sonde','power');
 				$eqLogic->setCategory('heating', 1);
-				$eqLogic->save();
-				$eqLogic->loadCmdFromConf($sonde['type']);			
-					
-			} elseif($sonde['type'] == "rain") {
+	            $eqLogic->save();
+	            $eqLogic = self::byId($eqLogic->getId());
+				
+				$jeebaseCmd = new jeebaseCmd();
+		        $jeebaseCmd->setName(__('Consommation Totale', __FILE__));
+                $jeebaseCmd->setLogicalId('powerTotal');
+		        $jeebaseCmd->setEqLogic_id($eqLogic->getId());
+		        $jeebaseCmd->setConfiguration('data', 'powerTotal');
+		        $jeebaseCmd->setIsHistorized(1);
+		        $jeebaseCmd->setUnite('KW');
+		        $jeebaseCmd->setType('info');
+		        $jeebaseCmd->setSubType('numeric');
+		        $jeebaseCmd->save();	
+				
+				$jeebaseCmd = new jeebaseCmd();
+		        $jeebaseCmd->setName(__('Consommation Instantanée', __FILE__));
+                $jeebaseCmd->setLogicalId('powerInstant');
+		        $jeebaseCmd->setEqLogic_id($eqLogic->getId());
+		        $jeebaseCmd->setConfiguration('data', 'powerInstant');
+		        $jeebaseCmd->setIsHistorized(0);
+		        $jeebaseCmd->setUnite('kW');
+		        $jeebaseCmd->setType('info');
+		        $jeebaseCmd->setSubType('numeric');
+		        $jeebaseCmd->save();	
+				
+		        $jeebaseCmd = new jeebaseCmd();
+		        $jeebaseCmd->setName(__('Time', __FILE__));
+                $jeebaseCmd->setLogicalId('time');
+		        $jeebaseCmd->setEqLogic_id($eqLogic->getId());
+		        $jeebaseCmd->setConfiguration('data', 'time');
+		        $jeebaseCmd->setIsHistorized(0);
+		        $jeebaseCmd->setUnite('');
+		        $jeebaseCmd->setType('info');
+		        $jeebaseCmd->setSubType('other');
+		        $jeebaseCmd->save();				
+						
+			    } elseif($sonde['type'] == "rain") {
+				 
+			    $eqLogic = new eqLogic();
+	            $eqLogic->setEqType_name('jeebase');
+	            $eqLogic->setIsEnable(1);
+	            $eqLogic->setName($sonde['name']);
+	            $eqLogic->setLogicalId($sonde['id']);
 				$eqLogic->setConfiguration('type','sonde');
 				$eqLogic->setConfiguration('type_sonde','rain');
 				$eqLogic->setConfiguration('sonde_os',$sonde['id']);
 				$eqLogic->setCategory('heating', 1);
-				$eqLogic->save();
-				$eqLogic->loadCmdFromConf($sonde['type']);
-			} elseif($sonde['type'] == "wind") {
+	            $eqLogic->save();
+	            $eqLogic = self::byId($eqLogic->getId());
+				
+				$jeebaseCmd = new jeebaseCmd();
+		        $jeebaseCmd->setName(__('Pluie', __FILE__));
+                $jeebaseCmd->setLogicalId('PluieInstant');
+		        $jeebaseCmd->setEqLogic_id($eqLogic->getId());
+		        $jeebaseCmd->setConfiguration('data', 'pluie');
+		        $jeebaseCmd->setIsHistorized(0);
+		        $jeebaseCmd->setUnite('mm');
+		        $jeebaseCmd->setType('info');
+		        $jeebaseCmd->setSubType('numeric');
+		        $jeebaseCmd->save();	
+				
+				$jeebaseCmd = new jeebaseCmd();
+		        $jeebaseCmd->setName(__('Pluie Tot', __FILE__));
+                $jeebaseCmd->setLogicalId('PluieTotale');
+		        $jeebaseCmd->setEqLogic_id($eqLogic->getId());
+		        $jeebaseCmd->setConfiguration('data', 'PluieTotale');
+		        $jeebaseCmd->setIsHistorized(1);
+		        $jeebaseCmd->setUnite('mm/h');
+		        $jeebaseCmd->setType('info');
+		        $jeebaseCmd->setSubType('numeric');
+		        $jeebaseCmd->save();
+				
+		        $jeebaseCmd = new jeebaseCmd();
+		        $jeebaseCmd->setName(__('Time', __FILE__));
+                $jeebaseCmd->setLogicalId('time');
+		        $jeebaseCmd->setEqLogic_id($eqLogic->getId());
+		        $jeebaseCmd->setConfiguration('data', 'time');
+		        $jeebaseCmd->setIsHistorized(0);
+		        $jeebaseCmd->setUnite('');
+		        $jeebaseCmd->setType('info');
+		        $jeebaseCmd->setSubType('other');
+		        $jeebaseCmd->save();
+				
+											
+			    } elseif($sonde['type'] == "wind") {
+					
+			    $eqLogic = new eqLogic();
+	            $eqLogic->setEqType_name('jeebase');
+	            $eqLogic->setIsEnable(1);
+	            $eqLogic->setName($sonde['name']);
+	            $eqLogic->setLogicalId($sonde['id']);
 				$eqLogic->setConfiguration('type','sonde');
 				$eqLogic->setConfiguration('sonde_os',$sonde['id']);
 				$eqLogic->setConfiguration('type_sonde','wind');
 				$eqLogic->setCategory('heating', 1);
 				$eqLogic->setObject_id($id);
-				$eqLogic->save();
-				$eqLogic->loadCmdFromConf($sonde['type']);
+	            $eqLogic->save();
+	            $eqLogic = self::byId($eqLogic->getId());
+				
+				$jeebaseCmd = new jeebaseCmd();
+		        $jeebaseCmd->setName(__('Vent', __FILE__));
+                $jeebaseCmd->setLogicalId('vitesse');
+		        $jeebaseCmd->setEqLogic_id($eqLogic->getId());
+		        $jeebaseCmd->setConfiguration('data', 'vent');
+		        $jeebaseCmd->setIsHistorized(1);
+		        $jeebaseCmd->setUnite('km/h');
+		        $jeebaseCmd->setType('info');
+		        $jeebaseCmd->setSubType('numeric');
+		        $jeebaseCmd->save();
+				
+				$jeebaseCmd = new jeebaseCmd();
+				$jeebaseCmd->setName(__('Orientation', __FILE__));
+				$jeebaseCmd->setEqLogic_id($eqLogic->getId());
+				$jeebaseCmd->setLogicalId('orientation');
+				$jeebaseCmd->setConfiguration('data', 'orientation');
+				$jeebaseCmd->setIsHistorized(0);
+				$jeebaseCmd->setUnite('');
+				$jeebaseCmd->setType('info');
+				$jeebaseCmd->setSubType('numeric');
+				$jeebaseCmd->save();				
+				
+		        $jeebaseCmd = new jeebaseCmd();
+		        $jeebaseCmd->setName(__('Time', __FILE__));
+                $jeebaseCmd->setLogicalId('time');
+		        $jeebaseCmd->setEqLogic_id($eqLogic->getId());
+		        $jeebaseCmd->setConfiguration('data', 'time');
+		        $jeebaseCmd->setIsHistorized(0);
+		        $jeebaseCmd->setUnite('');
+		        $jeebaseCmd->setType('info');
+		        $jeebaseCmd->setSubType('other');
+		        $jeebaseCmd->save();
+				}
+			} else {
+				if($sonde['type'] == "power") {
+					$cmd = cmd::byEqLogicIdCmdName($jeebase->getId(), 'Consommation Totale');
+					$cmd->setLogicalId('powerTotal');
+					$cmd->save();
+					$cmd = cmd::byEqLogicIdCmdName($jeebase->getId(), 'Consommation Instantanée');
+					$cmd->setLogicalId('powerInstant');
+					$cmd->save();	
+				} elseif($sonde['type'] == "rain") {
+					$cmd = cmd::byEqLogicIdCmdName($jeebase->getId(), 'Pluie');
+					$cmd->setLogicalId('PluieInstant');
+					$cmd->save();
+					$cmd = cmd::byEqLogicIdCmdName($jeebase->getId(), 'Pluie Tot');
+					$cmd->setLogicalId('PluieTotale');
+					$cmd->save();	
+									
+				} elseif($sonde['type'] == "wind") {
+					$cmd = cmd::byEqLogicIdCmdName($jeebase->getId(), 'Vent');
+					$cmd->setLogicalId('vitesse');
+					$cmd->save();
+					$cmd = cmd::byEqLogicIdCmdName($jeebase->getId(), 'Orientation');
+					$cmd->setLogicalId('orientation');
+					$cmd->save();					
+				}
 			}
 		}	
 	}

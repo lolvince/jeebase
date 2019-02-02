@@ -194,6 +194,61 @@ $plugin = plugin::byId('jeebase');
                 	</fieldset>
                 </form>        
             </div> 
+            <div id="action">
+                <div class="mode panel panel-default">
+                    <div class="panel-heading">
+                        <h4 class="panel-title">
+                        <a data-toggle="collapse" data-parent="#action_clock" href="#action_add_action">
+                        <span class="name">{{Action(s) à executer :}}</span>
+                        </a>
+                        </h4>
+                    </div>
+                    <div id="action_add_action" class="panel-collapse collapse in">
+                        <div class="panel-body">
+                            <div class="well">
+                                <form class="form-horizontal" role="form">
+                                    <div class="form-group">
+                                            <div class="btn-group pull-right" role="group">
+                                                <a class="btn btn-success btn-xs" id="addEventOn" style="margin-left: 5px;"><i class="fa fa-plus-circle"></i> {{Ajouter Action}}</a>
+                                            </div>
+                                    </div>
+                                    <hr/>
+                                    <div id="div_action_on"></div>
+                                    <hr/>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div> 
+                <div id="action_diff" class="mode panel panel-default">
+                    <div class="panel-heading">
+                        <h4 class="panel-title">
+                        <a data-toggle="collapse" data-parent="#action_clock" href="#action_alarm_addaction">
+                        <span class="name">{{Action(s) en différé  :}}</span>
+                        </a>
+                        </h4>
+                    </div>
+                    <div id="action_alarm_addaction" class="panel-collapse collapse in">
+                        <div class="panel-body">
+                            <div class="well">
+                                <form class="form-horizontal" role="form">
+                                    <div class="form-group">
+                                            <div class="btn-group pull-right" role="group">
+                                                <a class="btn btn-success btn-xs" id="addEventOff" style="margin-left: 5px;"><i class="fa fa-plus-circle"></i> {{Ajouter Action}}</a>
+                                            </div>
+                                    </div>
+                                    <hr/>
+                                    <div id="div_action_alarm_addaction"></div>
+                                    <hr/>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div> 
+            </div>             
+            
+            
+            
 
         </div>
         <br/>
