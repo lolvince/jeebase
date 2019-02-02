@@ -110,15 +110,12 @@ $("body").delegate(".listCmdInfo", 'click', function() {
 });
 
 
-$('#addEventOn').on('click', function() {
-    addEvent({}, '{{Action}}');
+$('.addEvent').on('click', function() {
+	var type = $(this).attr('data-action');
+    addEvent({}, '{{Action}}',type);
 });
 
-$('#addEventOff').on('click', function() {
-    addEventAction({}, '{{Action}}');
-});
-
-function addEvent(_action, _name, _el,id) {
+function addEvent(_action, _name, _type, _el) {
 	
     if (!isset(_action)) {
         _action = {};
@@ -127,7 +124,7 @@ function addEvent(_action, _name, _el,id) {
         _action.options = {};
     }
 
-    var div = '<div class="action_on">';
+    var div = '<div class="action_' + _type + '">';
     div += '<div class="form-group ">';
     div += '<label class="col-sm-1 control-label">' + _name + '</label>';
 	
@@ -135,12 +132,12 @@ function addEvent(_action, _name, _el,id) {
 	
     div += '<div class="input-group">';
     div += '<span class="input-group-btn">';
-    div += '<a class="btn btn-default bt_removeAction btn-sm" data-type="action_on"><i class="fa fa-minus-circle"></i></a>';
+    div += '<a class="btn btn-default bt_removeAction btn-sm" data-type="action_' + _type + '"><i class="fa fa-minus-circle"></i></a>';
     div += '</span>';
-    div += '<input class="expressionAttr form-control input-sm cmdAction" data-l1key="cmd" data-type="action_on" />';
+    div += '<input class="expressionAttr form-control input-sm cmdAction" data-l1key="cmd" data-type="action_' + _type + '" />';
     div += '<span class="input-group-btn">';
-    div += '<a class="btn btn-success btn-sm listAction" data-type="action_on" title="{{Sélectionner un mot-clé}}"><i class="fa fa-tasks"></i></a>';
-    div += '<a class="btn btn-success btn-sm listCmdAction" data-type="action_on"><i class="fa fa-list-alt"></i></a>';
+    div += '<a class="btn btn-success btn-sm listAction" data-type="action_' + _type + '" title="{{Sélectionner un mot-clé}}"><i class="fa fa-tasks"></i></a>';
+    div += '<a class="btn btn-success btn-sm listCmdAction" data-type="action_' + _type + '"><i class="fa fa-list-alt"></i></a>';
     div += '</span>';
     div += '</div>';
     div += '</div>';
@@ -150,15 +147,11 @@ function addEvent(_action, _name, _el,id) {
     div += '</div>';
     if (isset(_el)) {
 		console.log('ttut')
-        _el.find('.div_action_on').append(div);
-        _el.find('.action_on:last').setValues(_action, '.expressionAttr');
+        _el.find('.div_action_' + _type ).append(div);
+        _el.find('.action_' + _type + ':last').setValues(_action, '.expressionAttr');
     } else {
-		if(document.getElementById("div_action_on") !== null)
-		{
-			console.log('ttut')
-		}		
-        $('#div_action_on').append(div);
-        $('#div_action_on .action_on:last').setValues(_action, '.expressionAttr');
+        $('#div_action_' + _type).append(div);
+        $('#div_action_' + _type + ' .action_' + _type + ':last').setValues(_action, '.expressionAttr');
     }
 
 }
@@ -336,13 +329,12 @@ function printEqLogic(_eqLogic)  {
 			if (isset(_eqLogic.configuration.action_on)) {
 				for (var i in _eqLogic.configuration.action_on) {
 					//console.log(_eqLogic.configuration.action_alarm[i]);
-					addEvent(_eqLogic.configuration.action_on[i], '{{Action}}');
+					addEvent(_eqLogic.configuration.action_on[i], '{{Action}}','on');
 				}
 			}
-			if (isset(_eqLogic.configuration.action_alarm_add)) {
-				for (var i in _eqLogic.configuration.action_alarm_add) {
-					//console.log(_eqLogic.configuration.action_alarm[i]);
-					addEventAction(_eqLogic.configuration.action_alarm_add[i], '{{Action}}');
+			if (isset(_eqLogic.configuration.action_off)) {
+				for (var i in _eqLogic.configuration.action_off) {
+					addEvent(_eqLogic.configuration.action_off[i], '{{Action}}','off');
 				}
 			}		   
 		   

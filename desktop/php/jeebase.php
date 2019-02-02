@@ -209,7 +209,7 @@ $plugin = plugin::byId('jeebase');
                                 <form class="form-horizontal" role="form">
                                     <div class="form-group">
                                             <div class="btn-group pull-right" role="group">
-                                                <a class="btn btn-success btn-xs" id="addEventOn" style="margin-left: 5px;"><i class="fa fa-plus-circle"></i> {{Ajouter Action}}</a>
+                                                <a class="btn btn-success btn-xs addEvent"  data-action="on" style="margin-left: 5px;"><i class="fa fa-plus-circle"></i> {{Ajouter Action}}</a>
                                             </div>
                                     </div>
                                     <hr/>
@@ -234,11 +234,11 @@ $plugin = plugin::byId('jeebase');
                                 <form class="form-horizontal" role="form">
                                     <div class="form-group">
                                             <div class="btn-group pull-right" role="group">
-                                                <a class="btn btn-success btn-xs" id="addEventOff" style="margin-left: 5px;"><i class="fa fa-plus-circle"></i> {{Ajouter Action}}</a>
+                                                <a class="btn btn-success btn-xs addEvent" data-action="off" style="margin-left: 5px;"><i class="fa fa-plus-circle"></i> {{Ajouter Action}}</a>
                                             </div>
                                     </div>
                                     <hr/>
-                                    <div id="div_action_alarm_addaction"></div>
+                                    <div id="div_action_off"></div>
                                     <hr/>
                                 </form>
                             </div>
