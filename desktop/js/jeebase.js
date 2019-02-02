@@ -49,7 +49,6 @@ $('.eqLogicAction[data-action=addEquipement]').on('click', function () {
 				$('#div_alert').showAlert({message: error.message, level: 'danger'});
 			},
 			success: function (_data) {
-				  console.log(_data)
 				var vars = getUrlVars();
 				var url = 'index.php?';
 				for (var i in vars) {

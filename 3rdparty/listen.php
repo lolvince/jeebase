@@ -24,7 +24,9 @@ while (true) {
         socket_recvfrom($socket, $data, 512, 0, $remote_ip, $remote_port);
         $zbData = new ZbResponse($data);
 		if(config::byKey('log::level::jeebase')['100'] == 1) {
-			echo $zbData->message . PHP_EOL;
+			$date = new DateTime();
+			$date = $date->format("d/m/y h:i:s");
+			echo $date . ' : ' . $zbData->message . PHP_EOL;
 		}
 
 		if( preg_match_all('#Received radio ID \(.*<rf>(.*?)</rf>.*CMD\/INTER</dev>.*<id>(.*?)(_OFF)?</id>.*#',$zbData->message,$results,PREG_SET_ORDER)) { 

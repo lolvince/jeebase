@@ -151,17 +151,19 @@ class jeebase extends eqLogic {
 			} else {
 				log::add('jeebase', 'debug',' Info module pour ' . $jeebase->getName());
 				$etat = $zibase->getState($id);	
-			}				
+			}
+			log::add('jeebase', 'debug',' Etat module pour ' . $jeebase->getName() . ' : ' . $etat);				
 			$jeebase->checkAndUpdateCmd('etat',$etat);			
 		} else {
 			$jeebase = jeebase::byTypeAndSearhConfiguration( 'jeebase', $_options['id']);
 			if ( count($jeebase) > 0) {
 				foreach ($jeebase as $eq) {
 					if($eq->getConfiguration("type") == "other") {
-						log::add('jeebase', 'debug', 'name ' . $eq->getName());
+						log::add('jeebase', 'debug', 'name other' . $eq->getName());
 						$cmds = $eq->getCmd();
 						foreach($cmds as $cmd) {
 							if($cmd->getConfiguration('id') == $_options['id']) {
+								log::add('jeebase', 'debug',' Etat module pour ' . $eq->getName() . ' : ' . $cmd->getConfiguration('id'));
 								$cmd->execCmd();
 								log::add('jeebase', 'debug', 'Cmd Name ' . $cmd->getName() . ' lancee. Off: ' . $eq->getConfiguration('off') . ' RAZ: ' . $eq->getConfiguration('raz'));							
 //								if ($eq->getConfiguration('off') == '' && $eq->getConfiguration('raz') != '') {
@@ -514,7 +516,40 @@ class jeebase extends eqLogic {
 			$this->loadCmdFromConf($this->getConfiguration('type_sonde'));
 		}
 		if($this->getConfiguration("type") == "other") {
-			$this->loadCmdFromConf($this->getConfiguration('type'));
+			$jeebaseCmd = $this->getCmd(null, 'on');
+			if ( !is_object($jeebaseCmd) ) {
+				$jeebaseCmd = new jeebaseCmd();
+				$jeebaseCmd->setName(__('On', __FILE__));
+				$jeebaseCmd->setLogicalId('on');
+				$jeebaseCmd->setEqLogic_id($this->getId());					
+			}			
+			$jeebaseCmd->setConfiguration('id', $this->getConfiguration('on'));
+			$jeebaseCmd->setType('action');
+			$jeebaseCmd->setSubType('other');
+			$jeebaseCmd->save();
+			
+			$jeebaseCmd = $this->getCmd(null, 'off');
+			if ( !is_object($jeebaseCmd) ) {
+				$jeebaseCmd = new jeebaseCmd();
+				$jeebaseCmd->setName(__('Off', __FILE__));
+				$jeebaseCmd->setLogicalId('off');
+				$jeebaseCmd->setEqLogic_id($this->getId());					
+			}			
+			$jeebaseCmd->setConfiguration('id', $this->getConfiguration('off'));
+			$jeebaseCmd->setType('action');
+			$jeebaseCmd->setSubType('other');
+			$jeebaseCmd->save();
+			
+			$jeebaseCmd = $this->getCmd(null, 'etat');
+			if ( !is_object($jeebaseCmd) ) {
+				$jeebaseCmd = new jeebaseCmd();
+				$jeebaseCmd->setName(__('Etat', __FILE__));
+				$jeebaseCmd->setLogicalId('etat');
+				$jeebaseCmd->setEqLogic_id($this->getId());					
+			}			
+			$jeebaseCmd->setType('info');
+			$jeebaseCmd->setSubType('binary');
+			$jeebaseCmd->save();			
 		}		
 		
 		
