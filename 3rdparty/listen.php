@@ -31,13 +31,9 @@ while (true) {
 
 		if( preg_match_all('#Received radio ID \(.*<rf>(.*?)</rf>.*CMD\/INTER</dev>.*<id>(.*?)(_OFF)?</id>.*#',$zbData->message,$results,PREG_SET_ORDER)) { 
 			$data = array();
-				if(isset($results[0][3])) {
-					$data['etat'] = 0;
-					$data['cmd'] = $results[0][3];
-				} else {
-					$data['etat'] = 1;
-				}
+				$etat = (isset($results[0][3])) ? '0' : '1';
 				$data['id'] = $results[0][2];
+				$data['etat'] = $etat;
 				jeebase::setStateToJeedom($data);
 				
 			

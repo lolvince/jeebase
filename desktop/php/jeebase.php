@@ -199,7 +199,7 @@ $plugin = plugin::byId('jeebase');
                     <div class="panel-heading">
                         <h4 class="panel-title">
                         <a data-toggle="collapse" data-parent="#action_clock" href="#action_add_action">
-                        <span class="name">{{Action(s) à executer :}}</span>
+                        <span class="name">{{Action(s) à executer quand commande on détectée:}}</span>
                         </a>
                         </h4>
                     </div>
@@ -224,7 +224,7 @@ $plugin = plugin::byId('jeebase');
                     <div class="panel-heading">
                         <h4 class="panel-title">
                         <a data-toggle="collapse" data-parent="#action_clock" href="#action_alarm_addaction">
-                        <span class="name">{{Action(s) en différé  :}}</span>
+                        <span class="name">{{Action(s) à executer quand commande off détectée  :}}</span>
                         </a>
                         </h4>
                     </div>

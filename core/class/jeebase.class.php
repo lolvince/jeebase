@@ -154,25 +154,60 @@ class jeebase extends eqLogic {
 				$etat = $zibase->getState($id);	
 			}
 			log::add('jeebase', 'debug',' Etat module pour ' . $jeebase->getName() . ' : ' . $etat);				
-			$jeebase->checkAndUpdateCmd('etat',$etat);			
+			$jeebase->checkAndUpdateCmd('etat',$etat);	
+			if ($etat == 1) {
+				$events = $jeebase->getConfiguration('action_on');
+			} else {
+				$events = $jeebase->getConfiguration('action_off');
+			}
+			foreach ($events as $event) {
+				try {
+				  $options = array();
+				  if (isset($event['options'])) {
+					  $options = $event['options'];
+				  }					  
+					scenarioExpression::createAndExec('action', $event['cmd'], $options);
+				} catch (Exception $e) {
+					log::add('jeebase', 'error', __('Erreur lors de l\'éxecution de ', __FILE__) . $event['cmd'] . __('. Détails : ', __FILE__) . $e->getMessage());
+				}
+			}			
+			
+			
 		} else {
 			$jeebase = jeebase::byTypeAndSearhConfiguration( 'jeebase', $_options['id']);
 			if ( count($jeebase) > 0) {
 				foreach ($jeebase as $eq) {
 					if($eq->getConfiguration("type") == "other") {
-						log::add('jeebase', 'debug', 'name other' . $eq->getName());
+						log::add('jeebase', 'debug', 'name other' . $eq->getName() . ' etat ' . $_options['id']);
 						$cmds = $eq->getCmd();
 						foreach($cmds as $cmd) {
 							if($cmd->getConfiguration('id') == $_options['id']) {
-								log::add('jeebase', 'debug',' Etat module pour ' . $eq->getName() . ' : ' . $cmd->getConfiguration('id'));
 								$cmd->execCmd();
-								log::add('jeebase', 'debug', 'Cmd Name ' . $cmd->getName() . ' lancee. Off: ' . $eq->getConfiguration('off') . ' RAZ: ' . $eq->getConfiguration('raz'));							
 //								if ($eq->getConfiguration('off') == '' && $eq->getConfiguration('raz') != '') {
 //									log::add('jeebase', 'debug', 'Creation du cron');
 //									$eq->setConfiguration('refresh',cron::convertDateToCron(strtotime("now") + 60 * $eq->getConfiguration('raz') +60));
 //									$eq->save();
 //								}							
-								return;
+								log::add('jeebase', 'debug',' Etat module pour ' . $eq->getName() . ' : ' . $_options['etat']);				
+								if ($_options['etat'] == 1) {
+									$events = $eq->getConfiguration('action_on');
+								} else {
+									$events = $eq->getConfiguration('action_off');
+								}
+								foreach ($events as $event) {
+									try {
+									  $options = array();
+									  if (isset($event['options'])) {
+										  $options = $event['options'];
+									  }					  
+										scenarioExpression::createAndExec('action', $event['cmd'], $options);
+									} catch (Exception $e) {
+										log::add('jeebase', 'error', __('Erreur lors de l\'éxecution de ', __FILE__) . $event['cmd'] . __('. Détails : ', __FILE__) . $e->getMessage());
+									}
+								}								
+								
+								
+								
 							}
 						}
 					}
