@@ -125,12 +125,11 @@ class jeebase extends eqLogic {
 							if($cmd->getConfiguration('id') == $_options['id']) {
 								$cmd->execCmd();
 								log::add('jeebase', 'debug', 'Cmd Name ' . $cmd->getName() . ' lancee. Off: ' . $eq->getConfiguration('off') . ' RAZ: ' . $eq->getConfiguration('raz'));							
-//								if ($eq->getConfiguration('off') == '' && $eq->getConfiguration('raz') != '') {
-//									log::add('jeebase', 'debug', 'Creation du cron');
-//									$eq->setConfiguration('refresh',cron::convertDateToCron(strtotime("now") + 60 * $eq->getConfiguration('raz') +60));
-//									$eq->save();
-//								}							
-								return;
+								if ($eq->getConfiguration('off') == '' && $eq->getConfiguration('raz') != '') {
+									log::add('jeebase', 'debug', 'Creation du cron');
+									$eq->setConfiguration('refresh',cron::convertDateToCron(strtotime("now") + 60 * $eq->getConfiguration('raz') +60));
+									$eq->save();
+								}							
 							}
 						}
 					}
@@ -141,7 +140,6 @@ class jeebase extends eqLogic {
 
 	public function setStateToJeedom($_options) {
 		$jeebase = jeebase::byLogicalId( $_options['id'],  'jeebase') ;
-		log::add('jeebase', 'debug', 'state id ' . $_options['id']);
 		$changed = false;
 	 	if ( is_object($jeebase) ) {
 			$id = $_options['id'];
@@ -150,15 +148,17 @@ class jeebase extends eqLogic {
 				$id = substr($id, 1);
 				$etat = $zibase->getState($id,true);
 			} else {
-				log::add('jeebase', 'debug',' Info module pour ' . $jeebase->getName());
 				$etat = $zibase->getState($id);	
 			}
-			log::add('jeebase', 'debug',' Etat module pour ' . $jeebase->getName() . ' : ' . $etat);				
-			$jeebase->checkAndUpdateCmd('etat',$etat);	
+							
+			$jeebase->checkAndUpdateCmd('etat',$etat);
 			if ($etat == 1) {
 				$events = $jeebase->getConfiguration('action_on');
 			} else {
 				$events = $jeebase->getConfiguration('action_off');
+			}
+			if (empty($events)) {
+				return;
 			}
 			foreach ($events as $event) {
 				try {
@@ -183,18 +183,32 @@ class jeebase extends eqLogic {
 						foreach($cmds as $cmd) {
 							if($cmd->getConfiguration('id') == $_options['id']) {
 								$cmd->execCmd();
-//								if ($eq->getConfiguration('off') == '' && $eq->getConfiguration('raz') != '') {
-//									log::add('jeebase', 'debug', 'Creation du cron');
-//									$eq->setConfiguration('refresh',cron::convertDateToCron(strtotime("now") + 60 * $eq->getConfiguration('raz') +60));
-//									$eq->save();
-//								}							
-								log::add('jeebase', 'debug',' Etat module pour ' . $eq->getName() . ' : ' . $_options['etat']);				
+								if ($eq->getConfiguration('off') == '' && $eq->getConfiguration('raz') != '') {
+									log::add('jeebase', 'debug', 'Creation du cron');
+									$eq->setConfiguration('refresh',cron::convertDateToCron(strtotime("now") + 60 * $eq->getConfiguration('raz') +60));
+									$eq->save();
+								}							
+								log::add('jeebase', 'debug',' Etat module pour ' . $eq->getName() . ' : etat ' . $_options['etat']);				
 								if ($_options['etat'] == 1) {
 									$events = $eq->getConfiguration('action_on');
 								} else {
 									$events = $eq->getConfiguration('action_off');
 								}
+								log::add('jeebase', 'debug', 'RAz : '.  $eq->getConfiguration('raz'));
+								log::add('jeebase', 'debug', 'Cron : '.  cron::convertDateToCron(strtotime("now") + 60 * $eq->getConfiguration('raz') +60));
+								
+								if ($eq->getConfiguration('off') == '' && $eq->getConfiguration('raz') != '') {
+									log::add('jeebase', 'debug', 'Creation du cron');
+									$eq->setConfiguration('refresh',cron::convertDateToCron(strtotime("now") + 60 * $eq->getConfiguration('raz') +60));
+									$eq->save();
+								}									
+								
+								
+								if (empty($events)) {
+									return;
+								}
 								foreach ($events as $event) {
+									log::add('jeebase', 'debug',' Actions ' . $event['cmd']);
 									try {
 									  $options = array();
 									  if (isset($event['options'])) {
@@ -205,9 +219,6 @@ class jeebase extends eqLogic {
 										log::add('jeebase', 'error', __('Erreur lors de l\'éxecution de ', __FILE__) . $event['cmd'] . __('. Détails : ', __FILE__) . $e->getMessage());
 									}
 								}								
-								
-								
-								
 							}
 						}
 					}
@@ -285,34 +296,34 @@ class jeebase extends eqLogic {
 	}
 	
 	
-//	public static function cron() {
-//		$eqs = jeebase::byTypeAndSearhConfiguration( 'jeebase', 'custom');
-//		if(count($eqs) > 0){
-//			foreach ($eqs as $jeebase) {
-//				$autorefresh = $jeebase->getConfiguration('refresh');
-//				log::add('jeebase', 'debug',' Cron pour ' . $jeebase->getName());
-//				if ($jeebase->getIsEnable() == 1 && $jeebase->getConfiguration('type_eq') == 'custom') {
-//					try {
-//						$c = new Cron\CronExpression($autorefresh, new Cron\FieldFactory);
-//						if ($c->isDue()) {
-//							log::add('jeebase', 'debug',' launch refresh ');
-//							try {
-//								 $cmd = $jeebase->getCmd(null , 'off');
-//								 if (is_object($cmd)) {
-//									 $cmd->execCmd();
-//								 }							
-//								
-//							} catch (Exception $exc) {
-//								log::add('jeebase', 'error', __('Erreur pour ', __FILE__) . $jeebase->getHumanName() . ' : ' . $exc->getMessage());
-//							}
-//						}
-//					} catch (Exception $exc) {
-//						log::add('jeebase', 'error', __('Expression cron non valide pour ', __FILE__) . $jeebase->getHumanName() . ' : ' . $autorefresh);
-//					}
-//				}
-//			}
-//		}
-//	}	
+	public static function cron() {
+		$eqs = jeebase::byTypeAndSearhConfiguration( 'jeebase', 'other');
+		if(count($eqs) > 0){
+			foreach ($eqs as $jeebase) {
+				$autorefresh = $jeebase->getConfiguration('refresh');
+				if ($jeebase->getIsEnable() == 1 && $autorefresh != "" && $jeebase->getConfiguration('type') == "other" ) {
+					log::add('jeebase', 'debug',' Cron pour ' . $jeebase->getName());
+					try {
+						$c = new Cron\CronExpression($autorefresh, new Cron\FieldFactory);
+						if ($c->isDue()) {
+							log::add('jeebase', 'debug',' launch refresh ');
+							try {
+								 $cmd = $jeebase->getCmd(null , 'off');
+								 if (is_object($cmd)) {
+									 $cmd->execCmd();
+								 }							
+								
+							} catch (Exception $exc) {
+								log::add('jeebase', 'error', __('Erreur pour ', __FILE__) . $jeebase->getHumanName() . ' : ' . $exc->getMessage());
+							}
+						}
+					} catch (Exception $exc) {
+						log::add('jeebase', 'error', __('Expression cron non valide pour ', __FILE__) . $jeebase->getHumanName() . ' : ' . $autorefresh);
+					}
+				}
+			}
+		}
+	}	
 	
 public function syncWithZibase($_options) {
         if( config::byKey('zibase_url', 'jeebase') != ''){

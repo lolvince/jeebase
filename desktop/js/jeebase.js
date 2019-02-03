@@ -44,7 +44,7 @@ $('.eqLogicAction[data-action=addEquipement]').on('click', function () {
 
 		jeedom.eqLogic.save({
 			type: eqType,
-			eqLogics: [{name: $('#name').val(),configuration: {'type':$('#sel_type').value(),'type_eq':'other'}}],
+			eqLogics: [{name: $('#name').val(),configuration: {'type':$('#sel_type').value()}}],
 			error: function (error) {
 				$('#div_alert').showAlert({message: error.message, level: 'danger'});
 			},

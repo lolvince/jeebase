@@ -46,8 +46,12 @@ while (true) {
 				$data = array();
 				if(preg_match_all( '#<lev>(.*?)</lev>#', $m[0][0] ,$lev )) {
 					$data['lev'] = $lev[1][0];
-					
 				};
+				
+				if(preg_match_all( '#<flag1>(.*?)</flag1>#', $m[0][0] ,$lev )) {
+					$data['flag1'] = $lev[1][0];
+				};
+				
 				if(preg_match_all( '#<noise>(.*?)</noise>#', $m[0][0] ,$noise )) {
 					$data['noise'] = $noise[1][0];
 				};
