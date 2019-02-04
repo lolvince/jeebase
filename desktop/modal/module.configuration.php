@@ -29,4 +29,16 @@ if (!isConnect('admin')) {
                   <option value="12">{{XDD868 Boiler/AC }}</option>                                        
             </select>                                
         </div> 
+    </div>      
+    <div class="form-group ">
+        <label class="col-md-2 control-label" >{{Variateur}}</label>
+        <div class="col-md-1" >
+            </span><input type="checkbox" class="eqLogicAttr checkbox-inline" data-l1key="configuration"  data-l2key="dim"/>
+        </div>
     </div> 
+    <div class="form-group ">
+       <label class="col-md-2 control-label">{{Somfy My}}</label>
+        <div class="col-md-1" >
+            </span><input type="checkbox" class="eqLogicAttr checkbox-inline" data-l1key="configuration"  data-l2key="somfy"/>
+        </div>
+    </div>     

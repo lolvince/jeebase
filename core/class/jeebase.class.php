@@ -94,25 +94,23 @@ class jeebase extends eqLogic {
 		$eqLogic = jeebase::byLogicalId( $_options['id'],  'jeebase') ;	
 		$changed = false;	
 		if ( is_object($eqLogic) ) {
-			$id = $_options['id'];
-			$zibase = new ZiBase(config::byKey('zibase_ip', 'jeebase'));
-			$info = $zibase->getSensorInfo($id);
-			$eqLogic->checkAndUpdateCmd("time", $info[0]->format("d/m/Y H:i:s"));
-			log::add('jeebase', 'debug',' Info sonde pour ' . $eqLogic->getName() . ' ' . print_r($info,true));
+			$date = new DateTime();
+			$date = $date->format("d/m/y H:i:s");			
+			$eqLogic->checkAndUpdateCmd("time", $date);
 			if ($eqLogic->getConfiguration('type_sonde') == 'temperature') { 
-				$eqLogic->checkAndUpdateCmd("temperature", $info[1]/10);
-				$eqLogic->checkAndUpdateCmd("humidity", $info[2]); 						
+				$eqLogic->checkAndUpdateCmd("temperature", $_options['tem']);
+				$eqLogic->checkAndUpdateCmd("humidity", $_options['hum']); 						
 			} elseif ($eqLogic->getConfiguration('type_sonde') == 'light') { 
-				$eqLogic->checkAndUpdateCmd("luminosite", $info[1]);
+				$eqLogic->checkAndUpdateCmd("luminosite", $_options['uvl']);
 			} elseif ($eqLogic->getConfiguration('type_sonde') == 'power') { 
-				$eqLogic->checkAndUpdateCmd("powerTotal", $info[1]);
-				$eqLogic->checkAndUpdateCmd("powerInstant", $info[2]);
+				$eqLogic->checkAndUpdateCmd("powerTotal", $_options['kwh']);
+				$eqLogic->checkAndUpdateCmd("powerInstant", $_options['kw']);
 			} elseif ($eqLogic->getConfiguration('type_sonde') == 'rain') { 
-				$eqLogic->checkAndUpdateCmd("PluieInstant", $info[1]);
-				$eqLogic->checkAndUpdateCmd("PluieTotale", $info[2]);
+				$eqLogic->checkAndUpdateCmd("PluieInstant", $_options['cra']);
+				$eqLogic->checkAndUpdateCmd("PluieTotale", $_options['tra']);
 			} elseif ($eqLogic->getConfiguration('type_sonde') == 'wind') { 
-				$eqLogic->checkAndUpdateCmd("vitesse", $info[1]);
-				$eqLogic->checkAndUpdateCmd("orientation", $info[2]);
+				$eqLogic->checkAndUpdateCmd("vitesse", $_options['kwh']);
+				$eqLogic->checkAndUpdateCmd("orientation", $_options['drt']);
 			}			
 		} else {
 			$jeebase = jeebase::byTypeAndSearhConfiguration( 'jeebase', $_options['id']);
@@ -140,19 +138,9 @@ class jeebase extends eqLogic {
 
 	public function setStateToJeedom($_options) {
 		$jeebase = jeebase::byLogicalId( $_options['id'],  'jeebase') ;
-		$changed = false;
-	 	if ( is_object($jeebase) ) {
-			$id = $_options['id'];
-			$zibase = new ZiBase(config::byKey('zibase_ip', 'jeebase'));
-			if (preg_match('#^Z[A-Z][0-9]*#',$id)) {
-				$id = substr($id, 1);
-				$etat = $zibase->getState($id,true);
-			} else {
-				$etat = $zibase->getState($id);	
-			}
-							
-			$jeebase->checkAndUpdateCmd('etat',$etat);
-			if ($etat == 1) {
+	 	if ( is_object($jeebase) ) {			
+			$jeebase->checkAndUpdateCmd('etat',$_options['etat']);
+			if ($_options['etat'] == 1) {
 				$events = $jeebase->getConfiguration('action_on');
 			} else {
 				$events = $jeebase->getConfiguration('action_off');
@@ -174,26 +162,28 @@ class jeebase extends eqLogic {
 			
 			
 		} else {
+			log::add('jeebase', 'debug', 'etat state Cmd Name ' . $_options['etat']);
 			$jeebase = jeebase::byTypeAndSearhConfiguration( 'jeebase', $_options['id']);
 			if ( count($jeebase) > 0) {
+				log::add('jeebase', 'debug', 'foreach to yes ');
 				foreach ($jeebase as $eq) {
 					if($eq->getConfiguration("type") == "other") {
 						log::add('jeebase', 'debug', 'name other' . $eq->getName() . ' etat ' . $_options['id']);
+						$eq->checkAndUpdateCmd('etat',$_options['etat']);
 						$cmds = $eq->getCmd();
 						foreach($cmds as $cmd) {
 							if($cmd->getConfiguration('id') == $_options['id']) {
-								$cmd->execCmd();
+								if ($_options['etat'] == 1) {
+									$events = $eq->getConfiguration('action_on');
+								} else {
+									$events = $eq->getConfiguration('action_off');
+								}								
 								if ($eq->getConfiguration('off') == '' && $eq->getConfiguration('raz') != '') {
 									log::add('jeebase', 'debug', 'Creation du cron');
 									$eq->setConfiguration('refresh',cron::convertDateToCron(strtotime("now") + 60 * $eq->getConfiguration('raz') +60));
 									$eq->save();
 								}							
 								log::add('jeebase', 'debug',' Etat module pour ' . $eq->getName() . ' : etat ' . $_options['etat']);				
-								if ($_options['etat'] == 1) {
-									$events = $eq->getConfiguration('action_on');
-								} else {
-									$events = $eq->getConfiguration('action_off');
-								}
 								log::add('jeebase', 'debug', 'RAz : '.  $eq->getConfiguration('raz'));
 								log::add('jeebase', 'debug', 'Cron : '.  cron::convertDateToCron(strtotime("now") + 60 * $eq->getConfiguration('raz') +60));
 								
@@ -777,23 +767,36 @@ public function syncWithZibase($_options) {
 			$data = array();
 			$data = array("id"=> $this->getConfiguration("id"),"protocole"=> $this->getConfiguration("protocole"));	
 			$this->loadCmdFromConf($this->getConfiguration('type'),$data);		 
-//			if ($module['slider'] == 1) { 
-//				$jeebaseCmd = $eqLogic->getCmd(null, 'slider');
-//				if ( !is_object($jeebaseCmd) ) {
-//					$jeebaseCmd = new jeebaseCmd();
-//					$jeebaseCmd->setName(__('Slider', __FILE__));
-//					$jeebaseCmd->setLogicalId('slider');
-//					$jeebaseCmd->setEqLogic_id($eqLogic->getId());					
-//				}
-//				$jeebaseCmd->setType('action');
-//				$jeebaseCmd->setSubType('slider');
-//				$jeebaseCmd->save();
-//			}
+			if ($this->getConfiguration('dim') == 1) { 
+				$jeebaseCmd = $this->getCmd(null, 'slider');
+				if ( !is_object($jeebaseCmd) ) {
+					$jeebaseCmd = new jeebaseCmd();
+					$jeebaseCmd->setName(__('Slider', __FILE__));
+					$jeebaseCmd->setLogicalId('slider');
+					$jeebaseCmd->setEqLogic_id($this->getId());					
+				}
+				$jeebaseCmd->setType('action');
+				$jeebaseCmd->setSubType('slider');
+				$jeebaseCmd->save();
+			}
+			if ($this->getConfiguration('somfy') == 1) { 
+				$jeebaseCmd = $this->getCmd(null, 'somfy');
+				if ( !is_object($jeebaseCmd) ) {
+					$jeebaseCmd = new jeebaseCmd();
+					$jeebaseCmd->setName(__('My', __FILE__));
+					$jeebaseCmd->setLogicalId('somfy');
+					$jeebaseCmd->setEqLogic_id($this->getId());					
+				}			
+				$jeebaseCmd->setType('action');
+				$jeebaseCmd->setSubType('other');
+				$jeebaseCmd->save();
+			}			
 		 }
 		 
 		if($this->getConfiguration("type") == "sonde") {
 			$this->loadCmdFromConf($this->getConfiguration('type_sonde'));
 		}
+		
 		if($this->getConfiguration("type") == "other") {
 			$jeebaseCmd = $this->getCmd(null, 'on');
 			if ( !is_object($jeebaseCmd) ) {
@@ -839,9 +842,14 @@ public function syncWithZibase($_options) {
 	public function postUpdate() {
 		
 		switch ($this->getConfiguration("type")) {
-			case "sensor":
-			case "module":$this->setLogicalId($this->getConfiguration("id"));break;
-			case "sonde":$this->setLogicalId($this->getConfiguration("sonde_os"));break;
+			case "sensor":$this->setLogicalId($this->getConfiguration("id"));
+				break;
+			case "module":
+				$this->setLogicalId($this->getConfiguration("id"));
+				break;
+			case "sonde":
+				$this->setLogicalId($this->getConfiguration("sonde_os"));
+				break;
 			
 		}
 		$this->save(true);		
@@ -907,7 +915,7 @@ class jeebaseCmd extends cmd {
 		
 		$zibase = new ZiBase(config::byKey('zibase_ip', 'jeebase'));
 
-		log::add('jeebase','debug', 'message :' .  $this->getConfiguration('id') . ' ZbAction::ON ' . ' ' . $this->getConfiguration('protocole'));
+		log::add('jeebase','debug', 'message :' .  $eqLogic->getConfiguration('id') . ' ZbAction::ON ' . ' ' . $eqLogic->getConfiguration('protocole'));
 		if ($this->getLogicalId() == 'on') {
 			log::add('jeebase','debug', 'message :' .  $this->getConfiguration('id') . ' ZbAction::ON ' . ' ' . $this->getConfiguration('protocole'));
 			$zibase->sendCommand($this->getConfiguration('id'), ZbAction::ON, $this->getConfiguration('protocole'));
@@ -915,7 +923,13 @@ class jeebaseCmd extends cmd {
 			$zibase->sendCommand($this->getConfiguration('id'), ZbAction::OFF, $this->getConfiguration('protocole'));
 		} elseif ($this->getLogicalId() == 'slider') {
 			 $zibase->sendCommand($this->getConfiguration('id'), ZbAction::DIM_BRIGHT, $this->getConfiguration('protocole'), $_options['slider']);
-		}		
+			 
+		} elseif ($this->getLogicalId() == 'somfy') {
+			 $zibase->sendCommand($eqLogic->getConfiguration('id'), ZbAction::DIM_BRIGHT, $eqLogic->getConfiguration('protocole'), 50);
+			 $eqLogic->checkAndUpdateCmd('etat',1);
+		}
+		
+				
     }
 
 }

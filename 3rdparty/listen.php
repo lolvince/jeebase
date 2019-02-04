@@ -25,7 +25,7 @@ while (true) {
         $zbData = new ZbResponse($data);
 		if(config::byKey('log::level::jeebase')['100'] == 1) {
 			$date = new DateTime();
-			$date = $date->format("d/m/y h:i:s");
+			$date = $date->format("d/m/y H:i:s");
 			echo $date . ' : ' . $zbData->message . PHP_EOL;
 		}
 
