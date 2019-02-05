@@ -131,8 +131,8 @@ class jeebase extends eqLogic {
 								}							
 							}
 						}
-						if (isset( $_options['noise'])) $eqLogic->checkAndCreateCommand('noise',$_options['noise']);
-						if (isset( $_options['lev']))  $eqLogic->checkAndCreateCommand('level',$_options['lev']); 
+						if (isset( $_options['noise'])) $eq->checkAndCreateCommand('noise',$_options['noise']);
+						if (isset( $_options['lev']))  $eq->checkAndCreateCommand('level',$_options['lev']); 
 					}
 				}
 			}			
@@ -143,8 +143,8 @@ class jeebase extends eqLogic {
 		$jeebase = jeebase::byLogicalId( $_options['id'],  'jeebase') ;
 	 	if ( is_object($jeebase) ) {			
 			$jeebase->checkAndUpdateCmd('etat',$_options['etat']);
-			if (isset( $_options['noise'])) $eqLogic->checkAndCreateCommand('noise',$_options['noise']);
-			if (isset( $_options['lev']) && is_numeric( $_options['lev']))  $eqLogic->checkAndCreateCommand('level',$_options['lev']); 
+			if (isset( $_options['noise'])) $jeebase->checkAndCreateCommand('noise',$_options['noise']);
+			if (isset( $_options['lev']) && is_numeric( $_options['lev']))  $jeebase->checkAndCreateCommand('level',$_options['lev']); 
 			($_options['etat'] == 1) ? $events = $jeebase->getConfiguration('action_on') : $events = $jeebase->getConfiguration('action_off');
 			if (empty($events))return;
 			foreach ($events as $event) {
@@ -164,8 +164,8 @@ class jeebase extends eqLogic {
 				foreach ($jeebase as $eq) {
 					if($eq->getConfiguration("type") == "other") {
 						$eq->checkAndUpdateCmd('etat',$_options['etat']);
-						if (isset( $_options['noise'])) $eqLogic->checkAndCreateCommand('noise',$_options['noise']);
-						if (isset( $_options['lev']))  $eqLogic->checkAndCreateCommand('level',$_options['lev']); 
+						if (isset( $_options['noise'])) $eq->checkAndCreateCommand('noise',$_options['noise']);
+						if (isset( $_options['lev']))  $eq->checkAndCreateCommand('level',$_options['lev']); 
 						$cmds = $eq->getCmd();
 						foreach($cmds as $cmd) {
 							if($cmd->getConfiguration('id') == $_options['id']) {
