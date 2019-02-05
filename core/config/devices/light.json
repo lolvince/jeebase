@@ -3,7 +3,6 @@
                 "name": "Luminosité",
                 "type": "info",
                 "subtype": "numeric",
-                "isVisible": 1,
 				"logicalId": "luminosite",
 				"configuration": {
 					"data": "lum"

@@ -3,7 +3,6 @@
                 "name": "Vent",
                 "type": "info",
                 "subtype": "numeric",
-                "isVisible": 1,
 				"logicalId": "vitesse",
 				"configuration": {
 					"data": "vent"
@@ -13,8 +12,7 @@
         },{
                 "name": "Orientation",
                 "type": "info",
-                "subtype": "numeric",
-                "isVisible": 1,
+                "subtype": "other",
 				"logicalId": "orientation",
 				"configuration": {
 					"data": "orientation"
@@ -24,7 +22,6 @@
                 "name": "Time",
                 "type": "info",
                 "subtype": "other",
-                "isVisible": 1,
 				"logicalId": "time",
 				"configuration": {
 					"data": "time"

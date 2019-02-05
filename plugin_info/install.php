@@ -22,16 +22,16 @@ function jeebase_update() {
     if (is_object($cron)) {
         $cron->remove();
     }
-	$cron = cron::byClassAndFunction('jeebase', 'launchAction', array('eq_id' => intval($this->getId())));
-	if (is_object($cron)) {
-		$cron->remove();
-	}
+
 	
 	foreach (jeebase::byType('jeebase', true) as $jeebase) {
 		try {
+			$jeebaseCmd = $jeebase->getCmd(null, 'batterie');
+			if ( is_object($jeebaseCmd) ) {
+				$jeebaseCmd->remove();
+			}				
 			$jeebase->save();
 		} catch (Exception $e) {
-
 		}
 	}	
 }
@@ -40,11 +40,7 @@ function jeebase_remove() {
     $cron = cron::byClassAndFunction('jeebase', 'pull');
     if (is_object($cron)) {
         $cron->remove();
-    }
-	$cron = cron::byClassAndFunction('jeebase', 'launchAction', array('eq_id' => intval($this->getId())));
-	if (is_object($cron)) {
-		$cron->remove();
-	}		
+    }	
 }
 
 

@@ -3,7 +3,6 @@
                 "name": "Etat Sensor",
                 "type": "info",
                 "subtype": "binary",
-                "isVisible": 1,
 				"isHistorized": 0,
 				"logicalId": "etat",
 				"configuration": {

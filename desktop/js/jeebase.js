@@ -260,10 +260,13 @@ function addCmdToTable(_cmd) {
 			tr += '<td>' + _cmd.logicalId + '</td>'; 
 			tr += '<td>';
 			tr += '<span><input type="checkbox" class="cmdAttr" data-l1key="isHistorized" /> {{Historiser}}<br/></span>';
+			tr += '<span><input type="checkbox" class="cmdAttr" data-l1key="isVisible" /> {{Afficher}}<br/></span>';
 			tr += '</td>';
 			tr += '<td>';
-			tr += '<a class="btn btn-default btn-xs cmdAction expertModeVisible" data-action="configure"><i class="fa fa-cogs"></i></a> ';
-			tr += '<span><input type="checkbox" class="cmdAttr" data-l1key="isVisible" /> {{Afficher}}<br/></span>';
+			if (is_numeric(_cmd.id)) {
+				tr += '<a class="btn btn-default btn-xs cmdAction expertModeVisible" data-action="configure"><i class="fa fa-cogs"></i></a> ';
+				tr += '<a class="btn btn-default btn-xs cmdAction" data-action="test"><i class="fa fa-rss"></i> {{Tester}}</a>';
+			}
 			tr += '</td>';
 			tr += '</tr>';
 			$('#table_Z1bas3 tbody').append(tr);
@@ -355,16 +358,16 @@ function printEqLogic(_eqLogic)  {
 	switch (_eqLogic.configuration.type) {
 	   case "module":
 	   case "other": 
-		   $('#table_Z1base,#table_Z1bas3,#div_Z1bas3').hide();
+		   $('#table_Z1base,#div_Z1bas3').hide();
 		   $('#table_cmd,#action').show();
 		   $('.collapse').collapse();	   
 		   break;
 		case "sensor":
-		   $('#table_Z1base,#table_Z1bas3,#div_Z1bas3,#action').hide();
+		   $('#table_Z1base,#div_Z1bas3,#action').hide();
 		   $('#table_cmd').show();		
 			break;
 	    case "sonde": 
-		   $('#table_Z1base,#table_Z1bas3,#div_Z1bas3').show();
+		   $('#table_Z1base,#div_Z1bas3').show();
 		   $('#table_cmd,#action').hide();
 		   break;
 	}	

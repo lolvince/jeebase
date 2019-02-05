@@ -3,7 +3,6 @@
                 "name": "Pluie",
                 "type": "info",
                 "subtype": "numeric",
-                "isVisible": 1,
 				"logicalId": "PluieInstant",
 				"configuration": {
 					"data": "pluie"
@@ -14,7 +13,6 @@
                 "name": "Pluie Tot",
                 "type": "info",
                 "subtype": "numeric",
-                "isVisible": 1,
 				"logicalId": "PluieTotale",
 				"configuration": {
 					"data": "PluieTotale"
@@ -25,13 +23,11 @@
                 "name": "Time",
                 "type": "info",
                 "subtype": "other",
-                "isVisible": 1,
 				"logicalId": "time",
 				"configuration": {
 					"data": "time"
 				}
         }
-		
 		
     ]
 }

@@ -3,7 +3,6 @@
                 "name": "Consommation Totale",
                 "type": "info",
                 "subtype": "numeric",
-                "isVisible": 1,
 				"logicalId": "powerTotal",
 				"configuration": {
 					"data": "powerTotal"
@@ -14,7 +13,6 @@
                 "name": "Consommation Instantanée",
                 "type": "info",
                 "subtype": "numeric",
-                "isVisible": 1,
 				"logicalId": "powerInstant",
 				"configuration": {
 					"data": "powerInstant"
@@ -22,16 +20,14 @@
 				"unite": "kW",			
 				"generic_type":"GENERIC_INFO"
         },{
+
                 "name": "Time",
                 "type": "info",
                 "subtype": "other",
-                "isVisible": 1,
 				"logicalId": "time",
 				"configuration": {
 					"data": "time"
 				}
         }
-		
-		
     ]
 }

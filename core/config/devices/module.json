@@ -3,7 +3,6 @@
                 "name": "On",
                 "type": "action",
                 "subtype": "other",
-                "isVisible": 1,
 				"logicalId": "on",
 				"configuration": {
 					"id": "", 
@@ -14,7 +13,6 @@
                 "name": "Off",
                 "type": "action",
                 "subtype": "other",
-                "isVisible": 1,
 				"logicalId": "off",
 				"configuration": {
 					"id": "", 
@@ -25,7 +23,6 @@
                 "name": "Etat",
                 "type": "info",
                 "subtype": "binary",
-                "isVisible": 1,
 				"isHistorized": 0,
 				"logicalId": "etat",
 				"configuration": {

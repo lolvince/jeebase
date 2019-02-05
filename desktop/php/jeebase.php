@@ -285,7 +285,7 @@ $plugin = plugin::byId('jeebase');
         <table id="table_Z1bas3" class="table table-bordered table-condensed">
             <thead>
                 <tr>
-                    <th>{{id}}</th><th>{{Nom}}</th><th>{{Historiser}}</th><th>{{Afficher}}</th>
+                    <th>{{id}}</th><th>{{Nom}}</th><th>{{Options}}</th><th>{{Actions}}</th>
                 </tr>
             </thead>
             <tbody>

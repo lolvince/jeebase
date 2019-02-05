@@ -90,16 +90,14 @@ class jeebase extends eqLogic {
 	}	
 	
     public function setInfoToJeedom($_options) {
-		log::add('jeebase', 'debug',' setInfoToJeedom ');
 		$eqLogic = jeebase::byLogicalId( $_options['id'],  'jeebase') ;	
 		$changed = false;	
-		if ( is_object($eqLogic) ) {
-			$date = new DateTime();
-			$date = $date->format("d/m/y H:i:s");			
-			$eqLogic->checkAndUpdateCmd("time", $date);
+		if ( is_object($eqLogic) ) {		
+			//(isset( $_options['bat']) && $_options['bat'] == "Low") ? $eqLogic->batteryStatus(config::byKey('battery::warning'),date('Y-m-d H:i:s')) : $eqLogic->batteryStatus(100,date('Y-m-d H:i:s'));				
+			//(isset( $_options['bat']) && $_options['bat'] == "Low") ?   $eqLogic->batteryStatus(5,date('Y-m-d H:i:s')) : $eqLogic->batteryStatus(100,date('Y-m-d H:i:s'));
 			if ($eqLogic->getConfiguration('type_sonde') == 'temperature') { 
 				$eqLogic->checkAndUpdateCmd("temperature", $_options['tem']);
-				$eqLogic->checkAndUpdateCmd("humidity", $_options['hum']); 						
+				$eqLogic->checkAndUpdateCmd("humidity", $_options['hum']); 
 			} elseif ($eqLogic->getConfiguration('type_sonde') == 'light') { 
 				$eqLogic->checkAndUpdateCmd("luminosite", $_options['uvl']);
 			} elseif ($eqLogic->getConfiguration('type_sonde') == 'power') { 
@@ -111,7 +109,10 @@ class jeebase extends eqLogic {
 			} elseif ($eqLogic->getConfiguration('type_sonde') == 'wind') { 
 				$eqLogic->checkAndUpdateCmd("vitesse", $_options['kwh']);
 				$eqLogic->checkAndUpdateCmd("orientation", $_options['drt']);
-			}			
+			}	
+			$eqLogic->checkAndUpdateCmd("time", date('d/m/y H:i:s'));
+			if (isset( $_options['noise'])) $eqLogic->checkAndCreateCommand('noise',$_options['noise']);
+			if (isset( $_options['lev']))  $eqLogic->checkAndCreateCommand('level',$_options['lev']);					
 		} else {
 			$jeebase = jeebase::byTypeAndSearhConfiguration( 'jeebase', $_options['id']);
 			if ( count($jeebase) > 0) {
@@ -130,6 +131,8 @@ class jeebase extends eqLogic {
 								}							
 							}
 						}
+						if (isset( $_options['noise'])) $eqLogic->checkAndCreateCommand('noise',$_options['noise']);
+						if (isset( $_options['lev']))  $eqLogic->checkAndCreateCommand('level',$_options['lev']); 
 					}
 				}
 			}			
@@ -140,36 +143,29 @@ class jeebase extends eqLogic {
 		$jeebase = jeebase::byLogicalId( $_options['id'],  'jeebase') ;
 	 	if ( is_object($jeebase) ) {			
 			$jeebase->checkAndUpdateCmd('etat',$_options['etat']);
-			if ($_options['etat'] == 1) {
-				$events = $jeebase->getConfiguration('action_on');
-			} else {
-				$events = $jeebase->getConfiguration('action_off');
-			}
-			if (empty($events)) {
-				return;
-			}
+			if (isset( $_options['noise'])) $eqLogic->checkAndCreateCommand('noise',$_options['noise']);
+			if (isset( $_options['lev']) && is_numeric( $_options['lev']))  $eqLogic->checkAndCreateCommand('level',$_options['lev']); 
+			($_options['etat'] == 1) ? $events = $jeebase->getConfiguration('action_on') : $events = $jeebase->getConfiguration('action_off');
+			if (empty($events))return;
 			foreach ($events as $event) {
 				try {
 				  $options = array();
 				  if (isset($event['options'])) {
 					  $options = $event['options'];
 				  }					  
-					scenarioExpression::createAndExec('action', $event['cmd'], $options);
+				  scenarioExpression::createAndExec('action', $event['cmd'], $options);
 				} catch (Exception $e) {
 					log::add('jeebase', 'error', __('Erreur lors de l\'éxecution de ', __FILE__) . $event['cmd'] . __('. Détails : ', __FILE__) . $e->getMessage());
 				}
 			}			
-			
-			
 		} else {
-			log::add('jeebase', 'debug', 'etat state Cmd Name ' . $_options['etat']);
 			$jeebase = jeebase::byTypeAndSearhConfiguration( 'jeebase', $_options['id']);
 			if ( count($jeebase) > 0) {
-				log::add('jeebase', 'debug', 'foreach to yes ');
 				foreach ($jeebase as $eq) {
 					if($eq->getConfiguration("type") == "other") {
-						log::add('jeebase', 'debug', 'name other' . $eq->getName() . ' etat ' . $_options['id']);
 						$eq->checkAndUpdateCmd('etat',$_options['etat']);
+						if (isset( $_options['noise'])) $eqLogic->checkAndCreateCommand('noise',$_options['noise']);
+						if (isset( $_options['lev']))  $eqLogic->checkAndCreateCommand('level',$_options['lev']); 
 						$cmds = $eq->getCmd();
 						foreach($cmds as $cmd) {
 							if($cmd->getConfiguration('id') == $_options['id']) {
@@ -183,22 +179,13 @@ class jeebase extends eqLogic {
 									$eq->setConfiguration('refresh',cron::convertDateToCron(strtotime("now") + 60 * $eq->getConfiguration('raz') +60));
 									$eq->save();
 								}							
-								log::add('jeebase', 'debug',' Etat module pour ' . $eq->getName() . ' : etat ' . $_options['etat']);				
-								log::add('jeebase', 'debug', 'RAz : '.  $eq->getConfiguration('raz'));
-								log::add('jeebase', 'debug', 'Cron : '.  cron::convertDateToCron(strtotime("now") + 60 * $eq->getConfiguration('raz') +60));
-								
 								if ($eq->getConfiguration('off') == '' && $eq->getConfiguration('raz') != '') {
 									log::add('jeebase', 'debug', 'Creation du cron');
 									$eq->setConfiguration('refresh',cron::convertDateToCron(strtotime("now") + 60 * $eq->getConfiguration('raz') +60));
 									$eq->save();
 								}									
-								
-								
-								if (empty($events)) {
-									return;
-								}
+								if (empty($events)) return;
 								foreach ($events as $event) {
-									log::add('jeebase', 'debug',' Actions ' . $event['cmd']);
 									try {
 									  $options = array();
 									  if (isset($event['options'])) {
@@ -216,6 +203,20 @@ class jeebase extends eqLogic {
 			}			
 		}
 	}	
+	
+	public  function checkAndcreateCommand($_logical,$_value) {
+		$jeebaseCmd = $this->getCmd(null, $_logical);	
+		if ( !is_object($jeebaseCmd) ) {
+			$jeebaseCmd = new jeebaseCmd();
+			$jeebaseCmd->setName(__($_logical, __FILE__));
+			$jeebaseCmd->setLogicalId($_logical);
+			$jeebaseCmd->setEqLogic_id($this->getId());
+			$jeebaseCmd->setType('info');
+			$jeebaseCmd->setSubType('numeric');			
+			$jeebaseCmd->save();				
+		}
+		$this->checkAndUpdateCmd($_logical, $_value);
+	}
 	
 //	public static function deregislistener() {
 //		$zibase = new ZiBase(config::byKey('zibase_ip', 'jeebase'));
@@ -345,7 +346,7 @@ public function syncWithZibase($_options) {
 				$eqLogic->setName($module['name']);
 				$eqLogic->setConfiguration('type','module');
 				$eqLogic->setConfiguration('protocole', $module['protocol']);
-				$eqLogic->setConfiguration('id', $module['id']);
+				$eqLogic->setConfiguration('id', $id);
 				$eqLogic->setLogicalId($id);
 				$eqLogic->save();
 				$eqLogic = self::byId($eqLogic->getId());
@@ -354,7 +355,7 @@ public function syncWithZibase($_options) {
 				$jeebaseCmd->setName(__('ON', __FILE__));
 				$jeebaseCmd->setLogicalId('on');
 				$jeebaseCmd->setEqLogic_id($eqLogic->getId());
-				$jeebaseCmd->setConfiguration('id', $module['id']);
+				$jeebaseCmd->setConfiguration('id', $id);
 				$jeebaseCmd->setConfiguration('protocole', $module['protocol']);
 				$jeebaseCmd->setConfiguration('icon', $module['icon']);
 				$jeebaseCmd->setType('action');
@@ -365,7 +366,7 @@ public function syncWithZibase($_options) {
 				$jeebaseCmd->setName(__('OFF', __FILE__));
 				$jeebaseCmd->setLogicalId('off');
 				$jeebaseCmd->setEqLogic_id($eqLogic->getId());
-				$jeebaseCmd->setConfiguration('id', $module['id']);
+				$jeebaseCmd->setConfiguration('id', $id);
 				$jeebaseCmd->setConfiguration('protocole', $module['protocol']);
 				$jeebaseCmd->setConfiguration('etat', $module['status']);
 				$jeebaseCmd->setConfiguration('icon', $module['icon']);
@@ -377,7 +378,7 @@ public function syncWithZibase($_options) {
 				$jeebaseCmd->setName(__('Etat', __FILE__));
 				$jeebaseCmd->setLogicalId('etat');
 				$jeebaseCmd->setEqLogic_id($eqLogic->getId());
-				$jeebaseCmd->setConfiguration('id', $module['id']);
+				$jeebaseCmd->setConfiguration('id', $id);
 				$jeebaseCmd->setConfiguration('protocole', $module['protocol']);
 				$jeebaseCmd->setConfiguration('etat', $module['status']);
 				$jeebaseCmd->setConfiguration('icon', $module['icon']);
@@ -414,7 +415,7 @@ public function syncWithZibase($_options) {
 				$eqLogic->setLogicalId($id);
 				$eqLogic->setConfiguration('type','sensor');
 				$eqLogic->setConfiguration('protocole', $sensor['protocol']);
-				$eqLogic->setConfiguration('id', $sensor['id']);					
+				$eqLogic->setConfiguration('id', $id);					
 				$eqLogic->save();
 				$eqLogic = self::byId($eqLogic->getId());
 				
@@ -422,25 +423,13 @@ public function syncWithZibase($_options) {
 				$jeebaseCmd->setName(__('Etat Sensor', __FILE__));
 				$jeebaseCmd->setLogicalId('etat');
 				$jeebaseCmd->setEqLogic_id($eqLogic->getId());
-				$jeebaseCmd->setConfiguration('id', $sensor['id']);
+				$jeebaseCmd->setConfiguration('id', $id);
 				$jeebaseCmd->setConfiguration('protocole', $sensor['protocol']);
 				$jeebaseCmd->setConfiguration('icon', $sensor['icon']);
 				$jeebaseCmd->setType('info');
 				$jeebaseCmd->setSubType('binary');
 				$jeebaseCmd->save();	
 				
-				$jeebaseCmd = new jeebaseCmd();
-				$jeebaseCmd->setName(__('Batterie', __FILE__));
-				$jeebaseCmd->setLogicalId('batterie');
-				$jeebaseCmd->setEqLogic_id($eqLogic->getId());
-				$jeebaseCmd->setIsVisible(0);
-				$jeebaseCmd->setConfiguration('id', $sensor['id']);
-				$jeebaseCmd->setConfiguration('protocole', $sensor['protocol']);
-				$jeebaseCmd->setConfiguration('etat', $sensor['status']);
-				$jeebaseCmd->setConfiguration('icon', $sensor['icon']);
-				$jeebaseCmd->setType('info');
-				$jeebaseCmd->setSubType('binary');
-				$jeebaseCmd->save();
 			}
 		}
 		
@@ -700,7 +689,7 @@ public function syncWithZibase($_options) {
 					$cmd->save();					
 				}
 			}
-		}	
+		}
 	}
 	
 
@@ -711,10 +700,7 @@ public function syncWithZibase($_options) {
 	}
 	
 	 public function preRemove() {
-		$cron = cron::byClassAndFunction('jeebase', 'launchAction', array('eq_id' => intval($this->getId())));
-		if (is_object($cron)) {
-			$cron->remove();
-		}	
+
 	 }	
 	  public function preSave() {
 		  
@@ -725,13 +711,13 @@ public function syncWithZibase($_options) {
 	public function loadCmdFromConf($type,$data = false) {
 	
 		if (!is_file(__DIR__ . '/../config/devices/' . $type . '.json')) {
-			log::add('ioscloud','debug', 'no file' . $type);
+			log::add('jeebase','debug', 'no file' . $type);
 			return;
 		}
 		$content = file_get_contents(__DIR__ . '/../config/devices/' . $type . '.json');
 		
 		if (!is_json($content)) {
-			log::add('ioscloud','debug', 'no json content');
+			log::add('jeebase','debug', 'no json content');
 			return;
 		}
 		$device = json_decode($content, true);
@@ -869,14 +855,7 @@ public function syncWithZibase($_options) {
 				$jeebaseCmd->save();
 				
 			}			
-			
-			if($this->getIsEnable() == 1) {
-				$cron = cron::byClassAndFunction('jeebase', 'launchAction', array('eq_id' => intval($this->getId())));
-				if (is_object($cron)) {
-					$cron->remove();
-				}
-							
-			}
+
 		}
 	}
 	
@@ -914,8 +893,6 @@ class jeebaseCmd extends cmd {
 		}
 		
 		$zibase = new ZiBase(config::byKey('zibase_ip', 'jeebase'));
-
-		log::add('jeebase','debug', 'message :' .  $eqLogic->getConfiguration('id') . ' ZbAction::ON ' . ' ' . $eqLogic->getConfiguration('protocole'));
 		if ($this->getLogicalId() == 'on') {
 			log::add('jeebase','debug', 'message :' .  $this->getConfiguration('id') . ' ZbAction::ON ' . ' ' . $this->getConfiguration('protocole'));
 			$zibase->sendCommand($this->getConfiguration('id'), ZbAction::ON, $this->getConfiguration('protocole'));
