@@ -1,21 +1,11 @@
 {
-    "plugins\/jeebase\/desktop\/modal\/module.configuration.php": {
-        "Identifiant Module": "Identifiant Module",
-        "Type de protocole": "Type de protocole",
-        "DEFAULT BROADCAST (X10, CHACON)": "DEFAULT BROADCAST (X10, CHACON)",
-        "VISONIC433": "VISONIC433",
-        "VISONIC868": "VISONIC868",
-        "CHACON (32bits frame) (ChaconV2\/DIO series)": "CHACON (32bits frame) (ChaconV2\/DIO series)",
-        "DOMIA (24 bits frame) ( Chacon V1 + low-cost devices)": "DOMIA (24 bits frame) ( Chacon V1 + low-cost devices)",
-        "RF X10 ": "RF X10 ",
-        "ZWAVE": "ZWAVE",
-        "RFS10\/TS10": "RFS10\/TS10",
-        "XDD433 alrm": "XDD433 alrm",
-        "XDD868 alrm ": "XDD868 alrm ",
-        "XDD868 inter\/shutter*": "XDD868 inter\/shutter*",
-        "XDD868 Pilot Wire": "XDD868 Pilot Wire",
-        "XDD868 Boiler\/AC ": "XDD868 Boiler\/AC ",
-        "Variateur": "Variateur",
-        "Somfy My": "Somfy My"
+    "plugins\/jeebase\/desktop\/modal\/sonde.configuration.php": {
+        "Identifiant Sonde": "Identifiant Sonde",
+        "Type de sonde": "Type de sonde",
+        "Température": "Température",
+        "Luminosité": "Luminosité",
+        "Puissance": "Puissance",
+        "Pluviomètre": "Pluviomètre",
+        "Anémomètre": "Anémomètre"
     }
 }

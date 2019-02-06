@@ -1,10 +1,9 @@
 XX.02.2018
 
-*
 
-XX.08.2018
-===
-
+* Support de la commande My de somfy
+* Optimisation de la collecte des information (info,état)
+* Amélioration du sytème de log (Activité de la zibase)
 * Ajout des generic_type
 * Possibilité de créer des équipements directement depuis le plugin (équipement sans association ou id connu)
 
