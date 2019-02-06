@@ -1,6 +1,6 @@
 XX.02.2018
 
- 
+* Ajout de la page santé 
 * Support de la commande My de somfy
 * Optimisation de la collecte des information (info,état)
 * Amélioration du sytème de log (Activité de la zibase)

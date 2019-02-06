@@ -15,6 +15,10 @@
 * along with Jeedom. If not, see <http://www.gnu.org/licenses/>.
 */
 
+ $('#bt_healthJeebase').on('click', function () {
+    $('#md_modal').dialog({title: "{{Santé Jeebase}}"});
+    $('#md_modal').load('index.php?v=d&plugin=jeebase&modal=health').dialog('open');
+});
 
 $('.eqLogicAction[data-action=addEquipement]').on('click', function () {	
     bootbox.confirm("<form id='infos' class='form-horizontal'><fieldset>\
@@ -113,6 +117,38 @@ $("body").delegate(".listCmdInfo", 'click', function() {
 $('.addEvent').on('click', function() {
 	var type = $(this).attr('data-action');
     addEvent({}, '{{Action}}',type);
+});
+
+$('.modeEquipement').on('click', function() {
+//	console.log($('.eqLogicAttr[data-l1key=id]').val())
+//	console.log($('.eqLogicAttr[data-l1key=configuration][data-l2key=id]').val())
+//	console.log($('.eqLogicAttr[data-l1key=configuration][data-l2key=protocole]').val())
+//	console.log($(this).attr('data-action'))
+//	mode = $(this).attr('data-action'); 
+	
+	$.ajax({// fonction permettant de faire de l'ajax
+		type: "POST", // methode de transmission des données au fichier php
+		url: "plugins/jeebase/core/ajax/jeebase.ajax.php", // url du fichier php
+		data: {
+			action: "includeEquipment",
+			id: $('.eqLogicAttr[data-l1key=configuration][data-l2key=id]').val(),
+			protocol: $('.eqLogicAttr[data-l1key=configuration][data-l2key=protocole]').val(),
+			mode: $(this).attr('data-action')
+		},
+		dataType: 'json',
+		error: function (request, status, error) {
+			handleAjaxError(request, status, error);
+		},
+		success: function (data) { // si l'appel a bien fonctionné
+			if (data.state != 'ok') {
+				$('#div_alert').showAlert({message: data.result, level: 'danger'});
+				return;
+			}
+			$('#div_alert').showAlert({message: data.result, level: 'success'});
+		}
+	});	
+	
+	
 });
 
 function addEvent(_action, _name, _type, _el) {

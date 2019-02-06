@@ -19,6 +19,10 @@
 try {
     require_once __DIR__ . '/../../../../core/php/core.inc.php';
     include_file('core', 'authentification', 'php');
+	
+	if (!class_exists('ZiBase')) {
+		require_once __DIR__ . '/../../3rdparty/zibase.php';
+	}
 
     if (!isConnect('admin')) {
         throw new Exception(__('401 - Accès non autorisé', __FILE__));
@@ -27,13 +31,13 @@ try {
 	if (init('action') == 'syncWithZibase') {
 		jeebase::syncWithZibase();
 		ajax::success();
-	} else if (init('action') == 'refreshDataZibase') {
+	} elseif (init('action') == 'refreshDataZibase') {
         jeebase::pull();
         ajax::success();
-    } else if (init('action') == 'deleteDataZibase') {
+    } elseif (init('action') == 'deleteDataZibase') {
         $zibase = jeebase::deleteDataZibase();
         ajax::success($return);
-    } else if (init('action') == 'getSonde') {
+    } elseif (init('action') == 'getSonde') {
         $sonde = jeebase::byId(init('id'));
 		
         if (!is_object($sonde)) {
@@ -50,7 +54,14 @@ try {
                 $return['cmd'][] = $cmd_info;
             }
         ajax::success($return);
-    } 
+    } elseif (init('action') == 'includeEquipment') {
+		$zibase = new ZiBase(config::byKey('zibase_ip', 'jeebase'));
+		(init('protocol') == 6) ? $id = 0 : $id = init('id');
+		(init('mode') == "ASSOC") ? $zibase->sendCommand($id, ZbAction::ASSOC,init('protocol')): $zibase->sendCommand($id, ZbAction::UNASSOC,init('protocol'));	
+		//(init('mode') == "ASSOC") ?  ajax::success('assoc ' . $id . ' ' . init('protocol')): ajax::success('unassoc');		
+	
+		 ajax::success('ok');
+	}
 
     throw new Exception(__('Aucune methode correspondante à : ', __FILE__) . init('action'));
     /*     * *********Catch exeption*************** */

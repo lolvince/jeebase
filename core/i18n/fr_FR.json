@@ -1,11 +1,17 @@
 {
-    "plugins\/jeebase\/desktop\/modal\/sonde.configuration.php": {
-        "Identifiant Sonde": "Identifiant Sonde",
-        "Type de sonde": "Type de sonde",
-        "Température": "Température",
-        "Luminosité": "Luminosité",
-        "Puissance": "Puissance",
-        "Pluviomètre": "Pluviomètre",
-        "Anémomètre": "Anémomètre"
+    "plugins\/jeebase\/plugin_info\/configuration.php": {
+        "ip locale (Jeedom)": "ip locale (Jeedom)",
+        "Ip de la zibase": "Ip de la zibase",
+        "Id de la zibase": "Id de la zibase",
+        "Token de la zibase": "Token de la zibase",
+        "Url": "Url",
+        "Synchroniser": "Synchroniser",
+        "Synchroniser mes équipements": "Synchroniser mes équipements",
+        "Rafraîchir": "Rafraîchir",
+        " MAJ": " MAJ",
+        " Permet de mettre à jour toutes les informations des équipements (utile en cas de panne du démon) ": " Permet de mettre à jour toutes les informations des équipements (utile en cas de panne du démon) ",
+        " Êtes-vous sûr d\\'effectuer cette opération ": " Êtes-vous sûr d\\'effectuer cette opération ",
+        "Mise à jour réussie": "Mise à jour réussie",
+        "Synchronisation réussie": "Synchronisation réussie"
     }
 }
