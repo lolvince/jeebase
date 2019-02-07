@@ -1,3 +1,6 @@
+<script>
+$('#div_alert').showAlert({message: '|| !! Mise à jour importante de Février 2019. Bien lire la documentation !!! ||', level: 'danger'});
+</script>
 <?php
 
 /* This file is part of Jeedom.
@@ -22,8 +25,6 @@ function jeebase_update() {
     if (is_object($cron)) {
         $cron->remove();
     }
-
-	
 	foreach (jeebase::byType('jeebase', true) as $jeebase) {
 		try {
 			$jeebaseCmd = $jeebase->getCmd(null, 'batterie');

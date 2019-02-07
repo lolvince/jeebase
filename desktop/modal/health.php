@@ -26,9 +26,10 @@ $eqLogics = jeebase::byType('jeebase');
 		<tr>
 			<th>{{Module}}</th>
 			<th>{{ID}}</th>
-			<!--<th>{{Batterie}}</th>
-			<th>{{Serial}}</th>
-			<th>{{Firmware}}</th>
+            <th>{{Frequence}}</th>
+			<th>{{Batterie}}</th>
+			<th>{{Level}}</th>
+		<!--	<th>{{Firmware}}</th>
 			<th>{{Wifi}}</th>
 			<th>{{RF}}</th>-->
 			<th>{{Date création}}</th>
@@ -39,18 +40,9 @@ $eqLogics = jeebase::byType('jeebase');
 foreach ($eqLogics as $eqLogic) {
 	echo '<tr><td><a href="' . $eqLogic->getLinkToConfiguration() . '" style="text-decoration: none;">' . $eqLogic->getHumanName(true) . '</a></td>';
 	echo '<td><span class="label label-info" style="font-size : 1em;">' . $eqLogic->getId() . '</span></td>';
-//	$battery = $eqLogic->getConfiguration('batteryStatus');
-//	if (trim($battery != '') && $battery < 20) {
-//		$battery_status = '<span class="label label-danger" style="font-size : 1em;">' . $battery . '%</span>';
-//	} elseif (trim($battery != '') && $battery < 60) {
-//		$battery_status = '<span class="label label-warning" style="font-size : 1em;">' . $battery . '%</span>';
-//	} elseif (trim($battery != '') && $battery > 60) {
-//		$battery_status = '<span class="label label-success" style="font-size : 1em;">' . $battery . '%</span>';
-//	} else {
-//		$battery_status = '<span class="label label-primary" style="font-size : 1em;" title="{{Secteur}}"><i class="fa fa-plug"></i></span>';
-//	}
-//	echo '<td>' . $battery_status . '</td>';
-//	echo '<td><span class="label label-info" style="font-size : 1em;">' . $eqLogic->getLogicalId() . '</span></td>';
+	echo '<td>' . $eqLogic->getConfiguration('frequence') . '</td>';
+	echo '<td>' . $eqLogic->getConfiguration('bat') . '</td>';
+	echo '<td>' . $eqLogic->getConfiguration('level') . '</td>';
 //	echo '<td><span class="label label-info" style="font-size : 1em;">' . $eqLogic->getConfiguration('firmware') . '</span></td>';
 //	echo '<td><span class="label label-info" style="font-size : 1em;">' . $eqLogic->getConfiguration('wifi_status') . '</span></td>';
 //	echo '<td><span class="label label-info" style="font-size : 1em;">' . $eqLogic->getConfiguration('rf_status') . '</span></td>';

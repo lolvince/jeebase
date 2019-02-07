@@ -120,11 +120,6 @@ $('.addEvent').on('click', function() {
 });
 
 $('.modeEquipement').on('click', function() {
-//	console.log($('.eqLogicAttr[data-l1key=id]').val())
-//	console.log($('.eqLogicAttr[data-l1key=configuration][data-l2key=id]').val())
-//	console.log($('.eqLogicAttr[data-l1key=configuration][data-l2key=protocole]').val())
-//	console.log($(this).attr('data-action'))
-//	mode = $(this).attr('data-action'); 
     $('#md_modal2').dialog({title: "{{Log du plugin}}"});
     $("#md_modal2").load('index.php?v=d&modal=log.display&log=jeebase_php').dialog('open');
 	

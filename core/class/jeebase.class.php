@@ -111,9 +111,11 @@ class jeebase extends eqLogic {
 				$eqLogic->checkAndUpdateCmd("orientation", $_options['drt']);
 			}	
 			$eqLogic->checkAndUpdateCmd("time", date('d/m/y H:i:s'));
-			//(isset( $_options['bat']) && $_options['bat'] == "Low") ?   $eqLogic->batteryStatus(5,date('Y-m-d H:i:s')) : $eqLogic->batteryStatus(100,date('Y-m-d H:i:s'));
-			if (isset( $_options['noise'])) $eqLogic->checkAndCreateCommand('noise',$_options['noise']);
-			if (isset( $_options['lev']))  $eqLogic->checkAndCreateCommand('level',$_options['lev']);					
+			(isset( $_options['bat']) && $_options['bat'] == "Low") ?   $eqLogic->batteryStatus(config::byKey('battery', 'jeebase'),date('Y-m-d H:i:s')) : $eqLogic->batteryStatus(100,date('Y-m-d H:i:s'));
+			if (isset( $_options['bat'])) $eqLogic->checkAndCreateCommand('bat',$_options['bat'],'info','other');
+			if (isset( $_options['rf'])) $eqLogic->checkAndCreateCommand('frequence',$_options['rf'],'info','other');
+			if (isset( $_options['noise'])) $eqLogic->checkAndCreateCommand('noise',$_options['noise'],'info','numeric');
+			if (isset( $_options['lev']))  $eqLogic->checkAndCreateCommand('level',$_options['lev'],'info','numeric');					
 		}
 		$jeebase = jeebase::byTypeAndSearhConfiguration( 'jeebase', $_options['id']);
 		if ( count($jeebase) > 0) {
@@ -132,9 +134,11 @@ class jeebase extends eqLogic {
 							}							
 						}
 					}
-					if (isset( $_options['noise'])) $eq->checkAndCreateCommand('noise',$_options['noise']);
-					if (isset( $_options['lev']))  $eq->checkAndCreateCommand('level',$_options['lev']); 
-					//(isset( $_options['bat']) && $_options['bat'] == "Low") ?   $eq->batteryStatus(5,date('Y-m-d H:i:s')) : $eq->batteryStatus(100,date('Y-m-d H:i:s'));
+					if (isset( $_options['noise'])) $eq->checkAndCreateCommand('noise',$_options['noise'],'info','numeric');
+					if (isset( $_options['lev']))  $eq->checkAndCreateCommand('level',$_options['lev'],'info','numeric'); 
+					if (isset( $_options['bat'])) $eq->checkAndCreateCommand('bat',$_options['bat'],'info','other');
+					if (isset( $_options['rf'])) $eqLogic->checkAndCreateCommand('frequence',$_options['rf'],'info','other');
+					(isset( $_options['bat']) && $_options['bat'] == "Low") ?   $eq->batteryStatus(config::byKey('battery', 'jeebase'),date('Y-m-d H:i:s')) : $eq->batteryStatus(100,date('Y-m-d H:i:s'));
 					
 				}
 			}
@@ -146,9 +150,12 @@ class jeebase extends eqLogic {
 		$jeebase = jeebase::byLogicalId( $_options['id'],  'jeebase') ;
 	 	if ( is_object($jeebase) ) {			
 			$jeebase->checkAndUpdateCmd('etat',$_options['etat']);
-			if (isset( $_options['noise'])) $jeebase->checkAndCreateCommand('noise',$_options['noise']);
-			if (isset( $_options['lev']) && is_numeric( $_options['lev']))  $jeebase->checkAndCreateCommand('level',$_options['lev']); 
-			//(isset( $_options['bat']) && $_options['bat'] == "Low") ?   $jeebase->batteryStatus(5,date('Y-m-d H:i:s')) : $jeebase->batteryStatus(100,date('Y-m-d H:i:s'));
+			if (isset( $_options['noise'])) $jeebase->checkAndCreateCommand('noise',$_options['noise'],'info','numeric');
+			if (isset( $_options['lev']) && is_numeric( $_options['lev']))  $jeebase->checkAndCreateCommand('level',$_options['lev'],'info','numeric');
+			if (isset( $_options['bat'])) $jeebase->checkAndCreateCommand('bat',$_options['bat'],'info','other');
+			if (isset( $_options['rf'])) $eqLogic->checkAndCreateCommand('frequence',$_options['rf'],'info','other');
+			(isset( $_options['bat']) && $_options['bat'] == "Low") ?   $jeebase->batteryStatus(config::byKey('battery', 'jeebase'),date('Y-m-d H:i:s')) : $jeebase->batteryStatus(100,date('Y-m-d H:i:s'));
+			if (isset( $_options['bat'])) $eqLogic->checkAndCreateCommand('bat',$_options['bat'],'info','other');
 			($_options['etat'] == 1) ? $events = $jeebase->getConfiguration('action_on') : $events = $jeebase->getConfiguration('action_off');
 			if (empty($events))return;
 			foreach ($events as $event) {
@@ -168,9 +175,11 @@ class jeebase extends eqLogic {
 			foreach ($jeebase as $eq) {
 				if($eq->getConfiguration("type") == "other") {
 					$eq->checkAndUpdateCmd('etat',$_options['etat']);
-					if (isset( $_options['noise'])) $eq->checkAndCreateCommand('noise',$_options['noise']);
-					if (isset( $_options['lev']))  $eq->checkAndCreateCommand('level',$_options['lev']); 
-					//(isset( $_options['bat']) && $_options['bat'] == "Low") ?   $eq->batteryStatus(5,date('Y-m-d H:i:s')) : $eq->batteryStatus(100,date('Y-m-d H:i:s'));
+					if (isset( $_options['noise'])) $eq->checkAndCreateCommand('noise',$_options['noise'],'info','numeric');
+					if (isset( $_options['lev']))  $eq->checkAndCreateCommand('level',$_options['lev'],'info','numeric'); 
+					if (isset( $_options['bat'])) $eq->checkAndCreateCommand('bat',$_options['bat'],'info','other');
+					if (isset( $_options['rf'])) $eqLogic->checkAndCreateCommand('frequence',$_options['rf'],'info','other');
+					(isset( $_options['bat']) && $_options['bat'] == "Low") ?   $eq->batteryStatus(config::byKey('battery', 'jeebase'),date('Y-m-d H:i:s')) : $eq->batteryStatus(100,date('Y-m-d H:i:s'));
 		
 					$cmds = $eq->getCmd();
 					foreach($cmds as $cmd) {
@@ -205,18 +214,22 @@ class jeebase extends eqLogic {
 		
 	}	
 	
-	public  function checkAndcreateCommand($_logical,$_value) {
+	public  function checkAndcreateCommand($_logical,$_value,$_type,$_subtype) {
 		$jeebaseCmd = $this->getCmd(null, $_logical);	
 		if ( !is_object($jeebaseCmd) ) {
 			$jeebaseCmd = new jeebaseCmd();
 			$jeebaseCmd->setName(__($_logical, __FILE__));
 			$jeebaseCmd->setLogicalId($_logical);
 			$jeebaseCmd->setEqLogic_id($this->getId());
-			$jeebaseCmd->setType('info');
-			$jeebaseCmd->setSubType('numeric');			
+			$jeebaseCmd->setType($_type);
+			$jeebaseCmd->setSubType($_subtype);			
 			$jeebaseCmd->save();				
 		}
 		$this->checkAndUpdateCmd($_logical, $_value);
+		if($this->getConfiguration($_logical) != $_value) {
+			$this->setConfiguration($_logical,$_value);
+			$this->save(true);
+		}
 	}
 	
 //	public static function deregislistener() {

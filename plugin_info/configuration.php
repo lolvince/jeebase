@@ -65,6 +65,12 @@ if (!isConnect()) {
             </div>
         </div> 
         <div class="form-group">
+            <label class="col-lg-4 control-label">{{Niveau Batterie}}</label>
+            <div class="col-lg-2">
+                <input class="configKey form-control" data-l1key="battery" placeholder="Lire doc" />
+            </div>
+        </div>         
+        <div class="form-group">
             <label class="col-lg-4 control-label">{{Rafraîchir}}</label>
             <div class="col-lg-2">
             <a class="btn btn-warning" id="bt_refresh"><i class='fa fa-refresh'></i> {{ MAJ}}</a>
