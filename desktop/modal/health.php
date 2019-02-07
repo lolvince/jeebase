@@ -29,8 +29,8 @@ $eqLogics = jeebase::byType('jeebase');
             <th>{{Frequence}}</th>
 			<th>{{Batterie}}</th>
 			<th>{{Level}}</th>
-		<!--	<th>{{Firmware}}</th>
-			<th>{{Wifi}}</th>
+			<th>{{Dernière communication}}</th>
+		<!--	<th>{{Wifi}}</th>
 			<th>{{RF}}</th>-->
 			<th>{{Date création}}</th>
 		</tr>
@@ -43,7 +43,7 @@ foreach ($eqLogics as $eqLogic) {
 	echo '<td>' . $eqLogic->getConfiguration('frequence') . '</td>';
 	echo '<td>' . $eqLogic->getConfiguration('bat') . '</td>';
 	echo '<td>' . $eqLogic->getConfiguration('level') . '</td>';
-//	echo '<td><span class="label label-info" style="font-size : 1em;">' . $eqLogic->getConfiguration('firmware') . '</span></td>';
+	echo '<td><span class="label label-info" style="font-size : 1em;">' . $eqLogic->getConfiguration('last_seen') . '</span></td>';
 //	echo '<td><span class="label label-info" style="font-size : 1em;">' . $eqLogic->getConfiguration('wifi_status') . '</span></td>';
 //	echo '<td><span class="label label-info" style="font-size : 1em;">' . $eqLogic->getConfiguration('rf_status') . '</span></td>';
 	echo '<td><span class="label label-info" style="font-size : 1em;">' . $eqLogic->getConfiguration('createtime') . '</span></td></tr>';
