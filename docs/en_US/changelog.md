@@ -1,11 +1,12 @@
 XX.02.2018
 
-
+* Possiblité de lancer des actions lorsqu'une commandeest reçue par Zibase (on et off)
+* Ajout de la page santé 
 * Support de la commande My de somfy
 * Optimisation de la collecte des information (info,état)
 * Amélioration du sytème de log (Activité de la zibase)
 * Ajout des generic_type
-* Possibilité de créer des équipements directement depuis le plugin (équipement sans association ou id connu)
+* Possibilité de créer des équipements directement depuis le plugin 
 
 
 XX.08.2018
