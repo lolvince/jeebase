@@ -58,9 +58,12 @@ try {
 		$zibase = new ZiBase(config::byKey('zibase_ip', 'jeebase'));
 		(init('protocol') == 6) ? $id = 0 : $id = init('id');
 		(init('mode') == "ASSOC") ? $zibase->sendCommand($id, ZbAction::ASSOC,init('protocol')): $zibase->sendCommand($id, ZbAction::UNASSOC,init('protocol'));	
-		//(init('mode') == "ASSOC") ?  ajax::success('assoc ' . $id . ' ' . init('protocol')): ajax::success('unassoc');		
-	
 		 ajax::success('ok');
+	} elseif (init('action') == 'getUrl') {
+		$cmd = cmd::byId(init('id'));
+		if (is_object($cmd)) {
+			 ajax::success($cmd->getDirectUrlAccess());
+		}
 	}
 
     throw new Exception(__('Aucune methode correspondante à : ', __FILE__) . init('action'));

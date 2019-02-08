@@ -200,10 +200,35 @@ $plugin = plugin::byId('jeebase');
                 	</fieldset>
                 </form>        
             </div> 
-             <label class="col-md-2 control-label" ></label>
+<!--             <label class="col-md-2 control-label" ></label>
             <a class="btn btn-warning modeEquipement" title="{{Inclure périphérique }}" data-action="ASSOC" style="margin-bottom : 5px;"><i class="fa fa-sign-in fa-rotate-90"></i> {{Mode inclusion}}</a>
-            <a class="btn btn-danger modeEquipement" title="{{Exclure périphérique }}" data-action="UNASSOC" style="margin-bottom : 5px;"><i class="fa fa-sign-in fa-rotate-90"></i> {{Mode Exclusion}}</a>
+            <a class="btn btn-danger modeEquipement" title="{{Exclure périphérique }}" data-action="UNASSOC" style="margin-bottom : 5px;"><i class="fa fa-sign-in fa-rotate-90"></i> {{Mode Exclusion}}</a>-->
             <div id="action">
+                <div class="mode panel panel-default">
+                    <div class="panel-heading">
+                        <h4 class="panel-title">
+                        <a data-toggle="collapse" data-parent="#action_clock" href="#action_add_actionState">
+                        <span class="name">{{Url à lancer au changement d'état:}}</span>
+                        </a>
+                        </h4>
+                    </div>
+                    <div id="action_add_actionState" class="panel-collapse collapse in">
+                        <div class="panel-body">
+                            <div class="well">
+                            
+                                <form class="form-horizontal" role="form">
+                                    <div class="form-group">
+                                        <label class="col-lg-1 control-label">{{URL}}</label>
+                                        <div class="col-lg-8">
+                                        	<input type="text" class="eqLogicAttr configuration form-control" data-l1key="configuration" data-l2key="pushState" placeholder="{{Mettez ici l'URL à appeler lors d'une mise à jour de la valeur de la commande.}}"/>
+                                            <!--<input type="text"  class="eqLogicAttr form-control" data-l1key="configuration"  data-l1key="pushOn" title="{{Mettez ici l'URL à appeler lors d'une mise à jour de la valeur de la commande.}}"/>-->
+                                        </div>
+                                    </div>                                
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>             
                 <div class="mode panel panel-default">
                     <div class="panel-heading">
                         <h4 class="panel-title">
@@ -215,9 +240,17 @@ $plugin = plugin::byId('jeebase');
                     <div id="action_add_action" class="panel-collapse collapse in">
                         <div class="panel-body">
                             <div class="well">
+                            
                                 <form class="form-horizontal" role="form">
                                     <div class="form-group">
-                                            <div class="btn-group pull-right" role="group">
+                                        <label class="col-lg-1 control-label">{{URL}}</label>
+                                        <div class="col-lg-8">
+                                        	<input type="text" class="eqLogicAttr configuration form-control" data-l1key="configuration" data-l2key="pushOn" placeholder="{{Mettez ici l'URL à appeler lors d'une mise à jour de la valeur de la commande.}}"/>
+                                            <!--<input type="text"  class="eqLogicAttr form-control" data-l1key="configuration"  data-l1key="pushOn" title="{{Mettez ici l'URL à appeler lors d'une mise à jour de la valeur de la commande.}}"/>-->
+                                        </div>
+                                    </div>                                
+                                    <div class="form-group">
+                                            <div class="btn-group pull-left" role="group">
                                                 <a class="btn btn-success btn-xs addEvent"  data-action="on" style="margin-left: 5px;"><i class="fa fa-plus-circle"></i> {{Ajouter Action}}</a>
                                             </div>
                                     </div>
@@ -229,7 +262,7 @@ $plugin = plugin::byId('jeebase');
                         </div>
                     </div>
                 </div> 
-                <div id="action_diff" class="mode panel panel-default">
+                <div  class="mode panel panel-default">
                     <div class="panel-heading">
                         <h4 class="panel-title">
                         <a data-toggle="collapse" data-parent="#action_clock" href="#action_alarm_addaction">
@@ -241,8 +274,15 @@ $plugin = plugin::byId('jeebase');
                         <div class="panel-body">
                             <div class="well">
                                 <form class="form-horizontal" role="form">
+                                   <div class="form-group">
+                                        <label class="col-lg-1 control-label">{{URL}}</label>
+                                        <div class="col-lg-8">
+                                        	<input type="text" class="eqLogicAttr configuration form-control" data-l1key="configuration" data-l2key="pushOff" placeholder="{{Mettez ici l'URL à appeler lors d'une mise à jour de la valeur de la commande.}}"/>
+                                        </div>
+                                    </div>                                     
+                                
                                     <div class="form-group">
-                                            <div class="btn-group pull-right" role="group">
+                                            <div class="btn-group pull-left" role="group">
                                                 <a class="btn btn-success btn-xs addEvent" data-action="off" style="margin-left: 5px;"><i class="fa fa-plus-circle"></i> {{Ajouter Action}}</a>
                                             </div>
                                     </div>
