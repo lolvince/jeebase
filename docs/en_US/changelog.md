@@ -1,8 +1,6 @@
 XX.02.2018
 
-* Dans la version betâ , inclusion/exclusion
-* Possibilité de lancer une url lorsque qu'une commande est reçu(on,off,état)
-* Possiblité de lancer des actions lorsqu'une commande est reçue par Zibase (on et off)
+* Possiblité de lancer des actions lorsqu'une commandeest reçue par Zibase (on et off)
 * Ajout de la page santé 
 * Support de la commande My de somfy
 * Optimisation de la collecte des information (info,état)

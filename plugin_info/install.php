@@ -1,3 +1,6 @@
+<script>
+$('#div_alert').showAlert({message: '|| !! Mise à jour importante de Février 2019. Bien lire la documentation !!! ||', level: 'danger'});
+</script>
 <?php
 
 /* This file is part of Jeedom.
@@ -15,24 +18,32 @@
  * You should have received a copy of the GNU General Public License
  * along with Jeedom. If not, see <http://www.gnu.org/licenses/>.
  */
-
-require_once dirname(__FILE__) . '/../../../core/php/core.inc.php';
+require_once __DIR__ . '/../../../core/php/core.inc.php';
 
 function jeebase_update() {
     $cron = cron::byClassAndFunction('jeebase', 'pull');
     if (is_object($cron)) {
         $cron->remove();
     }
+	foreach (jeebase::byType('jeebase', true) as $jeebase) {
+		try {
+			$jeebaseCmd = $jeebase->getCmd(null, 'batterie');
+			if ( is_object($jeebaseCmd) ) {
+				$jeebaseCmd->remove();
+			}				
+			$jeebase->save();
+		} catch (Exception $e) {
+		}
+	}
+	log::add('jeebase', 'error', __('|| !!! Attention !!! Bien lire la documentation et le changelog !!! || ', __FILE__));	
 }
 
 function jeebase_remove() {
     $cron = cron::byClassAndFunction('jeebase', 'pull');
     if (is_object($cron)) {
         $cron->remove();
-    }
+    }	
 }
-
-
 
 
 ?>

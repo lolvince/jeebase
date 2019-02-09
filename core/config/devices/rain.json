@@ -1,0 +1,33 @@
+{
+    "commands":[{
+                "name": "Pluie",
+                "type": "info",
+                "subtype": "numeric",
+				"logicalId": "PluieInstant",
+				"configuration": {
+					"data": "pluie"
+				},	
+				"unite": "mm",			
+				"generic_type":"GENERIC_INFO"
+        },{
+                "name": "Pluie Tot",
+                "type": "info",
+                "subtype": "numeric",
+				"logicalId": "PluieTotale",
+				"configuration": {
+					"data": "PluieTotale"
+				},	
+				"unite": "mm/h",			
+				"generic_type":"GENERIC_INFO"
+        },{
+                "name": "Time",
+                "type": "info",
+                "subtype": "other",
+				"logicalId": "time",
+				"configuration": {
+					"data": "time"
+				}
+        }
+		
+    ]
+}

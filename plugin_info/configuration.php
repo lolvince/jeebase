@@ -16,7 +16,7 @@
 * along with Jeedom. If not, see <http://www.gnu.org/licenses/>.
 */
 
-require_once dirname(__FILE__) . '/../../../core/php/core.inc.php';
+require_once __DIR__ . '/../../../core/php/core.inc.php';
 include_file('core', 'authentification', 'php');
 if (!isConnect()) {
   include_file('desktop', '404', 'php');
@@ -29,7 +29,7 @@ if (!isConnect()) {
 
     <fieldset>
         <div class="form-group">
-            <label class="col-lg-4 control-label">{{ip locale}}</label>
+            <label class="col-lg-4 control-label">{{ip locale (Jeedom)}}</label>
             <div class="col-lg-2">
                 <input class="configKey form-control" data-l1key="locale_ip" />
             </div>
@@ -61,18 +61,23 @@ if (!isConnect()) {
         <div class="form-group">
             <label class="col-lg-4 control-label">{{Synchroniser}}</label>
             <div class="col-lg-2">
-            <a class="btn btn-warning" id="bt_syncWithZibase"><i class='fa fa-refresh'></i> {{Synchroniser mes équipements}}</a>
+            <a class="btn btn-default" id="bt_syncWithZibase"><i class='fa fa-refresh'></i> {{Synchroniser mes équipements}}</a>
             </div>
-        </div>
+        </div> 
         <div class="form-group">
-            <label class="col-lg-4 control-label">{{Update}}</label>
+            <label class="col-lg-4 control-label">{{Niveau Batterie}}</label>
             <div class="col-lg-2">
-            <a class="btn btn-danger" id="bt_syncJeebase"><i class='fa fa-refresh'></i> {{Update}}</a><label style='color:red;'>{{A faire seulement en cas de passage à la nouvelle version}}</label>
+                <input class="configKey form-control" data-l1key="battery" placeholder="Lire doc" />
             </div>
-            
-        </div>                  
-        
-                     
+        </div>         
+        <div class="form-group">
+            <label class="col-lg-4 control-label">{{Rafraîchir}}</label>
+            <div class="col-lg-2">
+            <a class="btn btn-warning" id="bt_refresh"><i class='fa fa-refresh'></i> {{ MAJ}}</a>
+            </div>
+            <span>{{ Permet de mettre à jour toutes les informations des équipements (utile en cas de panne du démon) }}</span>
+        </div>         
+           
     </fieldset>
   </form>
 
@@ -80,14 +85,14 @@ if (!isConnect()) {
 </form>
 
 <script>
-    $('#bt_syncJeebase').on('click', function () {
-		bootbox.confirm('Ok seulement pour mettre les données à jour depuis l\'ancienne version sinon synchroniser', function (result) {
+    $('#bt_refresh').on('click', function () {
+		bootbox.confirm('{{ Êtes-vous sûr d\'effectuer cette opération }}', function (result) {
 		 if (result) {		
 			$.ajax({// fonction permettant de faire de l'ajax
 				type: "POST", // methode de transmission des données au fichier php
 				url: "plugins/jeebase/core/ajax/jeebase.ajax.php", // url du fichier php
 				data: {
-					action: "updateDataZibase",
+					action: "refreshDataZibase",
 				},
 				dataType: 'json',
 				error: function (request, status, error) {

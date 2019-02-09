@@ -1,0 +1,8 @@
+{
+    "plugins\/jeebase\/desktop\/modal\/other.configuration.php": {
+        "Identifiant Actif": "Identifiant Actif",
+        "Identifiant inactif": "Identifiant inactif",
+        "Temps RAZ (minutes)": "Temps RAZ (minutes)",
+        "Refresh": "Refresh"
+    }
+}

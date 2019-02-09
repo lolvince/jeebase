@@ -1,0 +1,15 @@
+{
+    "commands":[{
+                "name": "Etat Sensor",
+                "type": "info",
+                "subtype": "binary",
+				"isHistorized": 0,
+				"logicalId": "etat",
+				"configuration": {
+					"id": "", 
+					"protocole": ""
+				},				
+				"generic_type":"PRESENCE"
+        }
+    ]
+}

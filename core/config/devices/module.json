@@ -1,0 +1,35 @@
+{
+    "commands":[{
+                "name": "On",
+                "type": "action",
+                "subtype": "other",
+				"logicalId": "on",
+				"configuration": {
+					"id": "", 
+					"protocole": ""
+				},				
+				"generic_type":"LIGHT_ON"
+        },{
+                "name": "Off",
+                "type": "action",
+                "subtype": "other",
+				"logicalId": "off",
+				"configuration": {
+					"id": "", 
+					"protocole": ""
+				},				
+				"generic_type":"LIGHT_OFF"
+        },{
+                "name": "Etat",
+                "type": "info",
+                "subtype": "binary",
+				"isHistorized": 0,
+				"logicalId": "etat",
+				"configuration": {
+					"id": "", 
+					"protocole": ""
+				},				
+				"generic_type":"LIGHT_STATE"
+        }
+    ]
+}

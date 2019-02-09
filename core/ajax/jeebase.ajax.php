@@ -17,8 +17,12 @@
  */
 
 try {
-    require_once dirname(__FILE__) . '/../../../../core/php/core.inc.php';
+    require_once __DIR__ . '/../../../../core/php/core.inc.php';
     include_file('core', 'authentification', 'php');
+	
+	if (!class_exists('ZiBase')) {
+		require_once __DIR__ . '/../../3rdparty/zibase.php';
+	}
 
     if (!isConnect('admin')) {
         throw new Exception(__('401 - Accès non autorisé', __FILE__));
@@ -27,13 +31,13 @@ try {
 	if (init('action') == 'syncWithZibase') {
 		jeebase::syncWithZibase();
 		ajax::success();
-	} else if (init('action') == 'updateDataZibase') {
-        $zibase = jeebase::updateDataZibase();
-        ajax::success($return);
-    } else if (init('action') == 'deleteDataZibase') {
+	} elseif (init('action') == 'refreshDataZibase') {
+        jeebase::pull();
+        ajax::success();
+    } elseif (init('action') == 'deleteDataZibase') {
         $zibase = jeebase::deleteDataZibase();
         ajax::success($return);
-    } else if (init('action') == 'getSonde') {
+    } elseif (init('action') == 'getSonde') {
         $sonde = jeebase::byId(init('id'));
 		
         if (!is_object($sonde)) {
@@ -50,7 +54,17 @@ try {
                 $return['cmd'][] = $cmd_info;
             }
         ajax::success($return);
-    } 
+    } elseif (init('action') == 'includeEquipment') {
+		$zibase = new ZiBase(config::byKey('zibase_ip', 'jeebase'));
+		(init('protocol') == 6) ? $id = 0 : $id = init('id');
+		(init('mode') == "ASSOC") ? $zibase->sendCommand($id, ZbAction::ASSOC,init('protocol')): $zibase->sendCommand($id, ZbAction::UNASSOC,init('protocol'));	
+		 ajax::success('ok');
+	} elseif (init('action') == 'getUrl') {
+		$cmd = cmd::byId(init('id'));
+		if (is_object($cmd)) {
+			 ajax::success($cmd->getDirectUrlAccess());
+		}
+	}
 
     throw new Exception(__('Aucune methode correspondante à : ', __FILE__) . init('action'));
     /*     * *********Catch exeption*************** */

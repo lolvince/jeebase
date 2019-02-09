@@ -1,0 +1,33 @@
+{
+    "commands":[{
+                "name": "Consommation Totale",
+                "type": "info",
+                "subtype": "numeric",
+				"logicalId": "powerTotal",
+				"configuration": {
+					"data": "powerTotal"
+				},	
+				"unite": "KW",			
+				"generic_type":"GENERIC_INFO"
+        },{
+                "name": "Consommation Instantanée",
+                "type": "info",
+                "subtype": "numeric",
+				"logicalId": "powerInstant",
+				"configuration": {
+					"data": "powerInstant"
+				},	
+				"unite": "kW",			
+				"generic_type":"GENERIC_INFO"
+        },{
+
+                "name": "Time",
+                "type": "info",
+                "subtype": "other",
+				"logicalId": "time",
+				"configuration": {
+					"data": "time"
+				}
+        }
+    ]
+}
