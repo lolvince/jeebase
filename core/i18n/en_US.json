@@ -1,11 +1,8 @@
 {
-    "plugins\/jeebase\/desktop\/modal\/sonde.configuration.php": {
-        "Identifiant Sonde": "Identifiant Sonde",
-        "Type de sonde": "Type de sonde",
-        "Température": "Température",
-        "Luminosité": "Luminosité",
-        "Puissance": "Puissance",
-        "Pluviomètre": "Pluviomètre",
-        "Anémomètre": "Anémomètre"
+    "plugins\/jeebase\/desktop\/modal\/other.configuration.php": {
+        "Identifiant Actif": "Identifiant Actif",
+        "Identifiant inactif": "Identifiant inactif",
+        "Temps RAZ (minutes)": "Temps RAZ (minutes)",
+        "Refresh": "Refresh"
     }
 }
