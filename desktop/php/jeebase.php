@@ -57,7 +57,7 @@ $plugin = plugin::byId('jeebase');
         <input class="form-control" placeholder="{{Rechercher}}" style="margin-bottom:4px;" id="in_searchEqlogic" />
         
         <?php
-					echo "<legend>{{Modules}}</legend>";
+					echo "<legend>{{Actionneurs}}</legend>";
 					echo '<div class="eqLogicThumbnailContainer">';
 					foreach ($eqLogics as $eqLogic) {
 					if($eqLogic->getConfiguration('type') == 'module') {
@@ -200,8 +200,8 @@ $plugin = plugin::byId('jeebase');
                 	</fieldset>
                 </form>        
             </div> 
-<!--             <label class="col-md-2 control-label" ></label>
-            <a class="btn btn-warning modeEquipement" title="{{Inclure périphérique }}" data-action="ASSOC" style="margin-bottom : 5px;"><i class="fa fa-sign-in fa-rotate-90"></i> {{Mode inclusion}}</a>
+             <label class="col-md-2 control-label" ></label>
+<!--           <a class="btn btn-warning modeEquipement" title="{{Inclure périphérique }}" data-action="ASSOC" style="margin-bottom : 5px;"><i class="fa fa-sign-in fa-rotate-90"></i> {{Mode inclusion}}</a>
             <a class="btn btn-danger modeEquipement" title="{{Exclure périphérique }}" data-action="UNASSOC" style="margin-bottom : 5px;"><i class="fa fa-sign-in fa-rotate-90"></i> {{Mode Exclusion}}</a>-->
             <div id="action">
                 <div class="mode panel panel-default">
@@ -246,7 +246,6 @@ $plugin = plugin::byId('jeebase');
                                         <label class="col-lg-1 control-label">{{URL}}</label>
                                         <div class="col-lg-8">
                                         	<input type="text" class="eqLogicAttr configuration form-control" data-l1key="configuration" data-l2key="pushOn" placeholder="{{Mettez ici l'URL à appeler lors d'une mise à jour de la valeur de la commande.}}"/>
-                                            <!--<input type="text"  class="eqLogicAttr form-control" data-l1key="configuration"  data-l1key="pushOn" title="{{Mettez ici l'URL à appeler lors d'une mise à jour de la valeur de la commande.}}"/>-->
                                         </div>
                                     </div>                                
                                     <div class="form-group">

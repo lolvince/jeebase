@@ -133,7 +133,22 @@ class jeebase extends eqLogic {
 									log::add('jeebase', 'debug', 'Creation du cron');
 									$eq->setConfiguration('refresh',cron::convertDateToCron(strtotime("now") + 60 * $eq->getConfiguration('raz') +60));
 									$eq->save();
-								}							
+								}
+								if ($cmd->getLogicalId() == 'on') $events = $eq->getConfiguration('action_on'); 
+								if ($cmd->getLogicalId() == 'off') $events = $eq->getConfiguration('action_off');
+								if (!empty($events)) {
+									foreach ($events as $event) {
+										try {
+										  $options = array();
+										  if (isset($event['options'])) {
+											  $options = $event['options'];
+										  }					  
+											scenarioExpression::createAndExec('action', $event['cmd'], $options);
+										} catch (Exception $e) {
+											log::add('jeebase', 'error', __('Erreur lors de l\'éxecution de ', __FILE__) . $event['cmd'] . __('. Détails : ', __FILE__) . $e->getMessage());
+										}
+									}
+								}								
 							}
 						}
 						if (isset( $_options['noise'])) $eq->checkAndCreateCommand('noise',$_options['noise'],'info','numeric');
@@ -929,6 +944,45 @@ class jeebaseCmd extends cmd {
     public function dontRemoveCmd() {
         return true;
     }
+	
+	public function imperihomeGenerate($ISSStructure) {
+		if ( $this->getLogicalId() == 'etat' || $this->getLogicalId() == 'on' || $this->getLogicalId() == 'off') {
+			$type = 'DevSwitch';
+		} elseif($this->getLogicalId() == 'slider') {
+			$type = 'DevDimmer';
+		} else {
+			return $info_device;
+		}
+		$eqLogic = $this->getEqLogic();
+		$object = $eqLogic->getObject();
+		$info_device = array(
+			'id' => $this->getId(),
+			'name' => $eqLogic->getName(),
+			'room' => (is_object($object)) ? $object->getId() : 99999,
+			'type' => $type,
+			'params' => array(),
+		);
+		$info_device['params'] = $ISSStructure[$info_device['type']]['params'];
+		return $info_device;
+	}
+	
+	
+	public function imperihomeAction($_action, $_value) {
+		$eqLogic = $this->getEqLogic();
+		switch ($_action) {
+			case 'slider':
+			$eqLogic->getCmd('action', 'slider')->execCmd(array('slider' => $_value));
+			break;
+			case 'on':
+			$eqLogic->getCmd('action', 'on')->execCmd();
+			break;
+			case 'off':
+			$eqLogic->getCmd('action', 'off')->execCmd();
+			break;
+		}
+		return;
+	}
+	
 	
 	public function execute($_options = array()) {
 		if ($this->getType() != 'action') {
