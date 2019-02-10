@@ -20,6 +20,36 @@
     $('#md_modal').load('index.php?v=d&plugin=jeebase&modal=health').dialog('open');
 });
 
+ $('#bt_activity').on('click', function () {
+	 
+	$.ajax({// fonction permettant de faire de l'ajax
+		type: "POST", // methode de transmission des données au fichier php
+		url: "plugins/jeebase/core/ajax/jeebase.ajax.php", // url du fichier php
+		data: {
+			action: "getActivity"
+		},
+		dataType: 'json',
+		error: function (request, status, error) {
+			handleAjaxError(request, status, error);
+		},
+		success: function (data) { // si l'appel a bien fonctionné
+			if (data.state != 'ok') {
+				$('#div_alert').showAlert({message: data.result, level: 'danger'});
+				return;
+			}
+			if(data.result == 1) {
+				$('#md_modal2').dialog({title: "{{Log du plugin}}"});
+				$("#md_modal2").load('index.php?v=d&modal=log.display&log=jeebase_php').dialog('open');				
+			} else {
+				$('#div_alert').showAlert({message: 'Pour avoir le relevé d\'activité , mettre les logs du plugin en mode debug', level: 'warning'});			
+			}
+			
+		}
+	});		
+	
+	
+});
+
 $('.eqLogicAction[data-action=addEquipement]').on('click', function () {	
     bootbox.confirm("<form id='infos' class='form-horizontal'><fieldset>\
         <div class='form-group'>\
@@ -120,32 +150,56 @@ $('.addEvent').on('click', function() {
 });
 
 $('.modeEquipement').on('click', function() {
-    $('#md_modal2').dialog({title: "{{Log du plugin}}"});
-    $("#md_modal2").load('index.php?v=d&modal=log.display&log=jeebase_php').dialog('open');
-	
-	$.ajax({// fonction permettant de faire de l'ajax
-		type: "POST", // methode de transmission des données au fichier php
-		url: "plugins/jeebase/core/ajax/jeebase.ajax.php", // url du fichier php
-		data: {
-			action: "includeEquipment",
-			id: $('.eqLogicAttr[data-l1key=configuration][data-l2key=id]').val(),
-			protocol: $('.eqLogicAttr[data-l1key=configuration][data-l2key=protocole]').val(),
-			mode: $(this).attr('data-action')
-		},
-		dataType: 'json',
-		error: function (request, status, error) {
-			handleAjaxError(request, status, error);
-		},
-		success: function (data) { // si l'appel a bien fonctionné
-			if (data.state != 'ok') {
-				$('#div_alert').showAlert({message: data.result, level: 'danger'});
-				return;
+	if($(this).attr('data-action') == 'endAssoc' ) {
+		$.ajax({// fonction permettant de faire de l'ajax
+			type: "POST", // methode de transmission des données au fichier php
+			url: "plugins/jeebase/core/ajax/jeebase.ajax.php", // url du fichier php
+			data: {
+				action: "endAssoc"
+			},
+			dataType: 'json',
+			error: function (request, status, error) {
+				handleAjaxError(request, status, error);
+			},
+			success: function (data) { // si l'appel a bien fonctionné
+				if (data.state != 'ok') {
+					$('#div_alert').showAlert({message: data.result, level: 'danger'});
+					return;
+				}
+				$('#div_alert').showAlert({message: 'Opération effectuée avec succés', level: 'success'});
+				$(".modeEquipement[data-action=ASSOC]").show();
+				$(".modeEquipement[data-action=UNASSOC]").show();
+				$(".modeEquipement[data-action=endAssoc]").hide();				
+				
 			}
-			$('#div_alert').showAlert({message: data.result, level: 'success'});
-		}
-	});	
-	
-	
+		});			
+	} else {
+		$.ajax({// fonction permettant de faire de l'ajax
+			type: "POST", // methode de transmission des données au fichier php
+			url: "plugins/jeebase/core/ajax/jeebase.ajax.php", // url du fichier php
+			data: {
+				action: "includeEquipment",
+				id: $('.eqLogicAttr[data-l1key=configuration][data-l2key=id]').val(),
+				protocol: $('.eqLogicAttr[data-l1key=configuration][data-l2key=protocole]').val(),
+				mode: $(this).attr('data-action')
+			},
+			dataType: 'json',
+			error: function (request, status, error) {
+				handleAjaxError(request, status, error);
+			},
+			success: function (data) { // si l'appel a bien fonctionné
+				if (data.state != 'ok') {
+					$('#div_alert').showAlert({message: data.result, level: 'danger'});
+					return;
+				}
+				$('#md_modal2').dialog({title: "{{Log du plugin}}"});
+				$("#md_modal2").load('index.php?v=d&modal=log.display&log=jeebase_php').dialog('open');	
+				$(".modeEquipement[data-action=ASSOC]").hide();
+				$(".modeEquipement[data-action=UNASSOC]").hide();
+				$(".modeEquipement[data-action=endAssoc]").show();
+			}
+		});			
+	}
 });
 
 function addEvent(_action, _name, _type, _el) {
