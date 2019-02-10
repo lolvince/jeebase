@@ -1,6 +1,6 @@
 XX.02.2018
 
-* Dans la version betâ , inclusion/exclusion
+* Possibilité d'ajouter des équipements à partir du plugin (inclusion /exclusion)
 * Possibilité de lancer une url lorsque qu'une commande est reçu(on,off,état)
 * Possiblité de lancer des actions lorsqu'une commande est reçue par Zibase (on et off)
 * Ajout de la page santé 

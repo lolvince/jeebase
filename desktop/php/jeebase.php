@@ -50,7 +50,14 @@ $plugin = plugin::byId('jeebase');
               <i class="fa fa-medkit" style="font-size : 5em;color:#767676;"></i>
             </center>
             <span style="font-size : 1.1em;position:relative; top : 23px;word-break: break-all;white-space: pre-wrap;word-wrap: break-word;color:#767676"><center>{{Santé}}</center></span>
-          </div>                                         
+          </div> 
+          <div class="cursor" id="bt_activity" style="background-color : #ffffff; height : 120px;margin-bottom : 10px;padding : 5px;border-radius: 2px;width : 160px;margin-left : 10px;" >
+            <center>
+              <i class="fa fa-info-circle" style="font-size : 5em;color:#767676;"></i>
+            </center>
+            <span style="font-size : 1.1em;position:relative; top : 23px;word-break: break-all;white-space: pre-wrap;word-wrap: break-word;color:#767676"><center>{{Activité}}</center></span>
+          </div>           
+                                                  
             
 		</div>  
         <legend>{{Equipements}}</legend>
@@ -200,9 +207,16 @@ $plugin = plugin::byId('jeebase');
                 	</fieldset>
                 </form>        
             </div> 
-             <label class="col-md-2 control-label" ></label>
-<!--           <a class="btn btn-warning modeEquipement" title="{{Inclure périphérique }}" data-action="ASSOC" style="margin-bottom : 5px;"><i class="fa fa-sign-in fa-rotate-90"></i> {{Mode inclusion}}</a>
-            <a class="btn btn-danger modeEquipement" title="{{Exclure périphérique }}" data-action="UNASSOC" style="margin-bottom : 5px;"><i class="fa fa-sign-in fa-rotate-90"></i> {{Mode Exclusion}}</a>-->
+            <div class="alert alert-info"> {{
+              - Se référer à la documentation avant toute inclusion/exclusion<br/>
+              }} 
+            </div> 
+            <br /> 
+             <label class="col-md-2 control-label" ></label>           
+           <a class="btn btn-warning modeEquipement" title="{{ Inclure périphérique }}" data-action="ASSOC" style="margin-bottom : 5px;"><i class="fa fa-sign-in fa-rotate-90"></i> {{Mode inclusion}}</a>
+            <a class="btn btn-danger modeEquipement" title="{{ Exclure périphérique }}" data-action="UNASSOC" style="margin-bottom : 5px;"><i class="fa fa-sign-in fa-rotate-90"></i> {{Mode Exclusion}}</a>
+           <a class="btn btn-default modeEquipement" title="{{ Terminer }}" data-action="endAssoc" style="margin-bottom : 5px;"><i class="fa fa-sign-in fa-rotate-90"></i> {{Terminer}}</a>
+           
             <div id="action">
                 <div class="mode panel panel-default">
                     <div class="panel-heading">
