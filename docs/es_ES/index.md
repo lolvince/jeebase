@@ -1,7 +1,7 @@
 
 > <span style="color:red">**UPDATE Fevrier 2019**</span>
 >
-> Mise à jour importante du plugin pour se préparer à l'arrêt des serveurs . Pas d'impacte sur l'utilisation si vous avez déjà le plugin d'installer. Hormis pour ceux qui ont créé des équipements sensors avant cette mise à jour. Il faut effacer ces équipements et en créer de nouveaux type "Autres" (Lire la documentation)
+> Mise à jour importante du plugin pour se préparer à l'arrêt des serveurs . Pas d'impacte sur l'utilisation si vous avez déjà le plugin d'installer. Hormis pour ceux qui ont créé des équipements "custom" avant cette mise à jour. Il faut effacer ces équipements et en créer de nouveaux type "Autres" (Lire la documentation)
 
 
 
@@ -20,7 +20,7 @@ Utilisation
 
 > <span style="color:red">**IMPORTANT**</span>
 >
-> <span style="color:red">Pour que le plugin fonctionne correctement il faut que les modules aient des ID unique quelque soit le prtocole. Sinon cela peut interférer sur la bonne réception des information</span>
+> <span style="color:red">Pour que le plugin fonctionne correctement il faut que les modules aient des ID unique quelque soit le protocole. Sinon cela peut interférer sur la bonne réception des information</span>
 
 
 
@@ -94,6 +94,8 @@ Beaucoup plus de commandes que les actionneurs.
 > <span style="color:blue">**NOTE**</span>
 >
 >  La table des commandes se remplie au fur et à mesure que le plugin reçoit les information
+>
+> En cas de changement de pile , l'id peut changer. Il faut activer le mode debug et regarder le relevé d'activité. Changer l'id si besoin dans l'équipement . Ne pas oublier de remettre les logs par défaut si plus de nécessité.
 
 Les Détecteurs (sensors)
 ===
@@ -168,6 +170,70 @@ Ensuite aller dans la configuration du plugin
 
 Et remplir le champs concernant la batterie. ici j'ai mis 10 , une valeur inférieur au niveau warning (15 précédemment)
 
+Ajouter un équipement
+===
+
+> <span style="color:red">**IMPORTANT**</span>
+>
+> <span style="color:red">Pour rappel , l'ID doit être unique quelque soit le protocole. Sinon cela peut interférer sur la bonne réception des information</span>
+
+
+Depuis la zibase
+---
+
+- Suivre la procédure habituelle et une fois terminée ,synchroniser les équipements dans la configuration générale du plugin
+
+Depuis le plugin
+---
+> <span style="color:red">**IMPORTANT**</span>
+>
+> <span style="color:red">Bien suivre les étapes pour la réussite de l'opération. Pour rappel l'id doit être unique dans le plugin</span>
+
+###Inclusion###
+
+* Créer un équipement
+* Choisir l'id et le protocole
+
+> <span style="color:red">**IMPORTANT**</span>
+>
+>Pour le Zwave il ne faut pas d'ID car sera déterminé par le controleur
+>
+>Pour les périphériques somfy , il faut choisir les identifiants C1 à C16 et/ou D1 à D16
+>
+>Pour les périphériques X2D, il est conseillé d’utiliser les groupes A1 à A16 et/ou B1 à B16
+
+* Enregistrer la configuration
+
+* Déroulement de l'inclusion 
+
+**Si besoin , Appuyer sur le bouton d’apprentissage du récepteur. (voir procédure selon protocole)**
+
+**Cliquer ensuite rapidement sur le bouton inclusion de l'équipement**
+
+* Récupérer les informations
+
+Hors Zwave: Votre module doit être inclus . Vous pouvez l'utiliser dans jeedom.
+
+Zwave : Il faut récupérer l'id que vous allez voir dans le relevé d'activité et l'ajouter à l'équipement. Certains modules permettent de récupérer la température , l'humidité , la luminosité. Idem lors de la confirmation les ids sont notifiés. Il faut en plus créer des équipements(sondes en générale) avec l'ID récupéré
+
+* Terminer le processus
+
+> <span style="color:red">**IMPORTANT**</span>
+>
+> <span style="color:red">Aprés la fin de/des inclusions , il est nécessaire de cliquer sur le bouton "terminer" pour retrouver le niveau de log d'avant le début de l'inclusion</span>
+
+###Exclusion (Zwave seulement)###
+
+* Aller sur l'équipement à exclure et cliquer sur bouton "Exclusion". La zibase se met en mode exclusion
+
+* Effectuer les actions spécifiques au module.
+
+* Le relevé d'activité confirme la bonne réussite de l'opération.
+
+> <span style="color:blue">**NOTE**</span>
+>
+> Si vous n'avaz pas de module Zwave et voulez l'exclure , il faut créer un équipement , ne pas mettre d'id mais le protocole "Zwave" . Enregistrer puis cliquer sur exclusion.
+
 
 Troubleshooting
 ===
@@ -185,6 +251,8 @@ Je ne connais pas l'ID de mon module
 ---
 
 - Utiliser le mode debug (se référer aux chapitres sur les logs) puis activer/stimuler le pour vérifier les informations dans les logs jeebase_php
+
+
 
 Le forum
 ---
