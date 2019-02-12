@@ -54,15 +54,7 @@ try {
                 $return['cmd'][] = $cmd_info;
             }
         ajax::success($return);
-    } elseif (init('action') == 'includeEquipment') {
-		if (config::byKey('log::level::jeebase')[100] != 1) {
-			$level = config::byKey('log::level::jeebase');
-			config::save('level', $level,'jeebase');
-			$level[100] = 1;
-			config::save('log::level::jeebase', $level);
-			$plugin = plugin::byId('jeebase');
-			$plugin->deamon_start(init('forceRestart', 1));
-		}		
+    } elseif (init('action') == 'includeEquipment') {	
 		$zibase = new ZiBase(config::byKey('zibase_ip', 'jeebase'));
 		(init('protocol') == 6) ? $id = 0 : $id = init('id');
 		(init('mode') == "ASSOC") ? $zibase->sendCommand($id, ZbAction::ASSOC,init('protocol')): $zibase->sendCommand($id, ZbAction::UNASSOC,init('protocol'));	
@@ -78,13 +70,7 @@ try {
 		} else {
 			ajax::success(0);
 		}
-	} elseif (init('action') == 'endAssoc') {
-		$level = config::byKey('level','jeebase');
-		config::save('level', $level,'jeebase');
-		$plugin = plugin::byId('jeebase');
-		$plugin->deamon_start(init('forceRestart', 1));		
-		ajax::success();
-	}
+	} 
 
     throw new Exception(__('Aucune methode correspondante à : ', __FILE__) . init('action'));
     /*     * *********Catch exeption*************** */

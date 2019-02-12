@@ -222,16 +222,37 @@ $plugin = plugin::byId('jeebase');
                 	</fieldset>
                 </form>        
             </div> 
-            <div class="alert alert-info"> {{
-              - Se référer à la documentation avant toute inclusion/exclusion<br/>
-              }} 
-            </div> 
-            <br /> 
-             <label class="col-md-2 control-label" ></label>           
-           <a class="btn btn-warning modeEquipement" title="{{ Inclure périphérique }}" data-action="ASSOC" style="margin-bottom : 5px;"><i class="fa fa-sign-in fa-rotate-90"></i> {{Mode inclusion}}</a>
-            <a class="btn btn-danger modeEquipement" title="{{ Exclure périphérique }}" data-action="UNASSOC" style="margin-bottom : 5px;"><i class="fa fa-sign-in fa-rotate-90"></i> {{Mode Exclusion}}</a>
-           <a class="btn btn-default modeEquipement" title="{{ Terminer }}" data-action="endAssoc" style="margin-bottom : 5px;"><i class="fa fa-sign-in fa-rotate-90"></i> {{Terminer}}</a>
-           
+            
+             <div class="form-group">
+            	<form class="form-horizontal">
+                	<fieldset>
+                         <label class="col-md-2 control-label" >{{Inclure un nouveau module/exclure}}</label>
+                        <div class="col-md-1">
+                          <input type="checkbox" class="checkInclude checkbox-inline" data-label-text="{{Activer}}"  unchecked/>
+                		</div>                    
+                    
+                    	           
+                	</fieldset>
+                </form>        
+            </div>             
+            
+
+            
+            <div class="includeEquipement">
+                <div class="alert alert-danger"> {{
+                  - L'inclusion fonctionne comme avec la zibase
+                  - Il ne faut pas inclure un module déjà inclus ou un module ne nécessitant pas d'inclusion (sondes oregon, prise intertechno ...) <br/>
+                  - Respecter les consignes concernant votre module <br/>
+                  - Se référer à la documentation avant toute inclusion/exclusion<br/>
+                  - Attendre que la zibase ne soit plus en mode inclusion/exclusion avant d'en relancer une nouvelle
+                  }} 
+                </div> 
+                <br /> 
+                 <label class="col-md-2 control-label" ></label>           
+               <a class="btn btn-warning modeEquipement" title="{{ Inclure périphérique }}" data-action="ASSOC" style="margin-bottom : 5px;"><i class="fa fa-sign-in fa-rotate-90"></i> {{Mode inclusion}}</a>
+                <a class="btn btn-danger modeEquipement" title="{{ Exclure périphérique }}" data-action="UNASSOC" style="margin-bottom : 5px;"><i class="fa fa-sign-in fa-rotate-90"></i> {{Mode Exclusion}}</a>
+			</div>
+
             <div id="action">
                 <div class="mode panel panel-default">
                     <div class="panel-heading">

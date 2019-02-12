@@ -150,56 +150,31 @@ $('.addEvent').on('click', function() {
 });
 
 $('.modeEquipement').on('click', function() {
-	if($(this).attr('data-action') == 'endAssoc' ) {
-		$.ajax({// fonction permettant de faire de l'ajax
-			type: "POST", // methode de transmission des données au fichier php
-			url: "plugins/jeebase/core/ajax/jeebase.ajax.php", // url du fichier php
-			data: {
-				action: "endAssoc"
-			},
-			dataType: 'json',
-			error: function (request, status, error) {
-				handleAjaxError(request, status, error);
-			},
-			success: function (data) { // si l'appel a bien fonctionné
-				if (data.state != 'ok') {
-					$('#div_alert').showAlert({message: data.result, level: 'danger'});
-					return;
-				}
-				$('#div_alert').showAlert({message: 'Opération effectuée avec succés', level: 'success'});
-				$(".modeEquipement[data-action=ASSOC]").show();
-				$(".modeEquipement[data-action=UNASSOC]").show();
-				$(".modeEquipement[data-action=endAssoc]").hide();				
-				
+	$.ajax({// fonction permettant de faire de l'ajax
+		type: "POST", // methode de transmission des données au fichier php
+		url: "plugins/jeebase/core/ajax/jeebase.ajax.php", // url du fichier php
+		data: {
+			action: "includeEquipment",
+			id: $('.eqLogicAttr[data-l1key=configuration][data-l2key=id]').val(),
+			protocol: $('.eqLogicAttr[data-l1key=configuration][data-l2key=protocole]').val(),
+			mode: $(this).attr('data-action')
+		},
+		dataType: 'json',
+		error: function (request, status, error) {
+			handleAjaxError(request, status, error);
+		},
+		success: function (data) { // si l'appel a bien fonctionné
+			if (data.state != 'ok') {
+				$('#div_alert').showAlert({message: data.result, level: 'danger'});
+				return;
 			}
-		});			
-	} else {
-		$.ajax({// fonction permettant de faire de l'ajax
-			type: "POST", // methode de transmission des données au fichier php
-			url: "plugins/jeebase/core/ajax/jeebase.ajax.php", // url du fichier php
-			data: {
-				action: "includeEquipment",
-				id: $('.eqLogicAttr[data-l1key=configuration][data-l2key=id]').val(),
-				protocol: $('.eqLogicAttr[data-l1key=configuration][data-l2key=protocole]').val(),
-				mode: $(this).attr('data-action')
-			},
-			dataType: 'json',
-			error: function (request, status, error) {
-				handleAjaxError(request, status, error);
-			},
-			success: function (data) { // si l'appel a bien fonctionné
-				if (data.state != 'ok') {
-					$('#div_alert').showAlert({message: data.result, level: 'danger'});
-					return;
-				}
-				$('#md_modal2').dialog({title: "{{Log du plugin}}"});
-				$("#md_modal2").load('index.php?v=d&modal=log.display&log=jeebase_php').dialog('open');	
-				$(".modeEquipement[data-action=ASSOC]").hide();
-				$(".modeEquipement[data-action=UNASSOC]").hide();
-				$(".modeEquipement[data-action=endAssoc]").show();
-			}
-		});			
-	}
+			$('#md_modal2').dialog({title: "{{Log du plugin}}"});
+			$("#md_modal2").load('index.php?v=d&modal=log.display&log=jeebase_php').dialog('open');	
+			$(".modeEquipement[data-action=ASSOC]").hide();
+			$(".modeEquipement[data-action=UNASSOC]").hide();
+			$(".modeEquipement[data-action=endAssoc]").show();
+		}
+	});			
 });
 
 function addEvent(_action, _name, _type, _el) {
@@ -244,34 +219,6 @@ function addEvent(_action, _name, _type, _el) {
 }
 
 
-//$('.IncludeState').on('click', function () {
-//	$('#div_alert').showAlert({message: '{{ne pas fermer la fenêtre.}}', level: 'danger'});
-//	$('#md_modal2').load('index.php?v=d&plugin=jeebase&modal=include');		
-//	$('#md_modal2').dialog('open');	
-//	$('div#md_modal2').on('dialogclose', function(event) {
-//		$.ajax({// fonction permettant de faire de l'ajax
-//			type: "POST", // methode de transmission des données au fichier php
-//			url: "plugins/jeebase/core/ajax/jeebase.ajax.php", // url du fichier php
-//			data: {
-//				action: "deregislistener",
-//			},
-//			dataType: 'json',
-//			error: function (request, status, error) {
-//				handleAjaxError(request, status, error);
-//			},
-//			success: function (data) { // si l'appel a bien fonctionné
-//				if (data.state != 'ok') {
-//					$('#div_alert').showAlert({message: data.result, level: 'danger'});
-//					return;
-//				}
-//				$('#div_alert').showAlert({message: '{{Update terminé}}', level: 'success'});
-//			}
-//		});		
-//	   
-//	});	  	 
-//});
- 
- 
 
 
 $('.eqLogicAction[data-action=updateDataZibase]').on('click', function () {	
@@ -441,18 +388,28 @@ function saveEqLogic(_eqLogic) {
 	return _eqLogic;
 }
 
+
+
+
 function printEqLogic(_eqLogic)  {
 	$('#div_action_on').empty();
 	$('#div_action_off').empty();	
+	$('.includeEquipement').hide();	
 	if (!isset(_eqLogic)) {
 		var _eqLogic = {configuration: {}};
 	}
+	$(".checkInclude").click(function() {
+		// this will contain a reference to the checkbox   
+		if ($(this).is(':checked')) {
+			$('.includeEquipement').show();
+		} else {
+			$('.includeEquipement').hide();
+		}
+	});		
 	
 	if (!isset(_eqLogic.configuration)) {
 	   _eqLogic.configuration = {};
 	}
-	
-	
 	
     if (isset(_eqLogic.configuration) && isset(_eqLogic.configuration.type) && _eqLogic.configuration.type != '') {
         $('.item-conf').load('index.php?v=d&plugin=jeebase&modal=' + _eqLogic.configuration.type + '.configuration', function () {

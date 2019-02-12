@@ -102,7 +102,7 @@ class jeebase extends eqLogic {
 				$eqLogic->checkAndUpdateCmd("luminosite", $_options['uvl']);
 			} elseif ($eqLogic->getConfiguration('type_sonde') == 'power') { 
 				$eqLogic->checkAndUpdateCmd("powerTotal", $_options['kwh']);
-				$eqLogic->checkAndUpdateCmd("powerInstant", $_options['kw']);
+				$eqLogic->checkAndUpdateCmd("powerInstant", $_options['w']);
 			} elseif ($eqLogic->getConfiguration('type_sonde') == 'rain') { 
 				$eqLogic->checkAndUpdateCmd("PluieInstant", $_options['cra']);
 				$eqLogic->checkAndUpdateCmd("PluieTotale", $_options['tra']);
