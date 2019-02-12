@@ -83,7 +83,7 @@ function getData($message) {
 		if(preg_match_all( '#<kwh>(.*?)</kwh>#', $m[0][0] ,$kwh )) {
 			$data['kwh'] = $kwh[1][0];
 		};
-		if(preg_match_all( '#<kw>(.*?)</kw>#', $m[0][0] ,$w )) {
+		if(preg_match_all( '#<w>(.*?)</w>#', $m[0][0] ,$w )) {
 			$data['w'] = $w[1][0];
 		};
 		if(preg_match_all( '#<awi>(.*?)</awi>#', $m[0][0] ,$awi)) {
