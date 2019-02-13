@@ -191,7 +191,10 @@ Depuis le plugin
 
 ###Inclusion###
 
+* Mettre les logs du plugin en mode debug,Redémarrer le démon pour que cela soit effectif
+
 * Créer un équipement
+
 * Choisir l'id et le protocole
 
 > <span style="color:red">**IMPORTANT**</span>
@@ -220,15 +223,17 @@ Zwave : Il faut récupérer l'id que vous allez voir dans le relevé d'activité
 
 > <span style="color:red">**IMPORTANT**</span>
 >
-> <span style="color:red">Aprés la fin de/des inclusions , il est nécessaire de cliquer sur le bouton "terminer" pour retrouver le niveau de log d'avant le début de l'inclusion</span>
+> <span style="color:red">Aprés la fin de/des inclusions , ne pas oublier de mettre les logs du plugin sur défaut selon votre besoin et au cas ou Redémarrer le démon </span>
 
 ###Exclusion (Zwave seulement)###
+
+* Mettre les logs du plugin en mode debug . Redémarrer le démon pour que cela soit effectif
 
 * Aller sur l'équipement à exclure et cliquer sur bouton "Exclusion". La zibase se met en mode exclusion
 
 * Effectuer les actions spécifiques au module.
 
-* Le relevé d'activité confirme la bonne réussite de l'opération.
+* Le relevé d'activité confirme la bonne réussite de l'opération.Ne pas oublier de mettre les logs du plugin sur défaut selon votre besoin et au cas ou Redémarrer le démon
 
 > <span style="color:blue">**NOTE**</span>
 >
