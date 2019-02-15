@@ -80,9 +80,15 @@ function getData($message) {
 		if(preg_match_all( '#<uvl>(.*?)</uvl>#', $m[0][0] ,$uvl )) {
 			$data['uvl'] = $uvl[1][0];
 		};
+		
 		if(preg_match_all( '#<kwh>(.*?)</kwh>#', $m[0][0] ,$kwh )) {
 			$data['kwh'] = $kwh[1][0];
 		};
+
+		if(preg_match_all( '#<sta>(.*?)</sta>#', $m[0][0] ,$sta)) {
+			$data['sta'] = $sta[1][0];
+		};
+		
 		if(preg_match_all( '#<w>(.*?)</w>#', $m[0][0] ,$w )) {
 			$data['w'] = $w[1][0];
 		};

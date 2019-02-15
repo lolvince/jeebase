@@ -349,6 +349,8 @@
 		$request->param4 = 0;
 		$this->sendRequest($request,false);
  	}	
+	
+	
  	
  	/**
  	 * Récupère la valeur d'une variable Vx de la Zibase

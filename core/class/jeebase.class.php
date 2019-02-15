@@ -92,9 +92,10 @@ class jeebase extends eqLogic {
     public function setInfoToJeedom($_options) {
 		$eqLogic = jeebase::byLogicalId( $_options['id'],  'jeebase') ;	
 		if ( is_object($eqLogic) ) {
-			if (isset( $_options['flag1']) && $_options['flag1'] == "Alarm") {
+			if (isset($_options['flag1']) && $_options['flag1'] == "Alarm") {
 				$eqLogic->checkAndUpdateCmd('etat',1);
 			}
+			
 			if ($eqLogic->getConfiguration('type_sonde') == 'temperature') { 
 				$eqLogic->checkAndUpdateCmd("temperature", $_options['tem']);
 				$eqLogic->checkAndUpdateCmd("humidity", $_options['hum']); 
@@ -399,35 +400,7 @@ public function syncWithZibase($_options) {
 		$modules = $parsed_json['body']['actuators'];
 		$sensors = $parsed_json['body']['sensors'];
 		$sondes = $parsed_json['body']['probes'];
-		$scenarios = $parsed_json['body']['scenarios'];
-		
-		foreach ($scenarios as $scenario) {
-			$id = $scenario['id'];
-			$eqLogic = jeebase::byLogicalId( 'scenario_' . $id,  'jeebase');
-			if ( !is_object($eqLogic) ) {
-				$eqLogic = new eqLogic();
-				$eqLogic->setEqType_name('jeebase');
-				$eqLogic->setLogicalId('scenario_' . $id);
-				$eqLogic->setIsEnable(1);
-				$eqLogic->setIsVisible(1);				
-			}
-			$eqLogic->setName($scenario['name']);
-			$eqLogic->setConfiguration('type','scenario');
-			$eqLogic->setConfiguration('id', $scenario['id']);
-			$eqLogic->save();
-			
-			$jeebaseCmd = $eqLogic->getCmd(null, 'launch');
-			if (!is_object($jeebaseCmd)) {
-				$jeebaseCmd = new jeebaseCmd();
-				$jeebaseCmd->setLogicalId('launch');
-				$jeebaseCmd->setName(__('Lancer', __FILE__));
-				$jeebaseCmd->setEqLogic_id($eqLogic->id);
-			}		
-			
-			$jeebaseCmd->setType('action');
-			$jeebaseCmd->setSubType('other');
-			$jeebaseCmd->save();				
-		}		
+				
 		
 		foreach ($modules as $module) {
 			if ($module['protocol'] == 6) {
@@ -876,7 +849,23 @@ public function syncWithZibase($_options) {
 				$jeebaseCmd->setType('action');
 				$jeebaseCmd->setSubType('other');
 				$jeebaseCmd->save();
-			}			
+			}	
+//			if ($this->getConfiguration('x2d_pilot') == 1) { 
+//				$cmds = array('Off','Confort','Eco','Horsgel', 'Auto');
+//				$jeebaseCmd = $this->getCmd(null, 'somfy');
+//				if ( !is_object($jeebaseCmd) ) {
+//					$jeebaseCmd = new jeebaseCmd();
+//					$jeebaseCmd->setName(__('My', __FILE__));
+//					$jeebaseCmd->setLogicalId('somfy');
+//					$jeebaseCmd->setEqLogic_id($this->getId());					
+//				}			
+//				$jeebaseCmd->setType('action');
+//				$jeebaseCmd->setSubType('other');
+//				$jeebaseCmd->save();
+//			}			
+			
+			
+					
 		 }
 		 
 		if($this->getConfiguration("type") == "sonde") {
@@ -923,7 +912,6 @@ public function syncWithZibase($_options) {
 		
 	}
 	 
-	 
 	
 	public function postUpdate() {
 		
@@ -939,10 +927,7 @@ public function syncWithZibase($_options) {
 			
 		}
 		$this->save(true);		
-		
-		
 		if($this->getConfiguration("type") == "other" ) {
-
 			$jeebaseCmd = $this->getCmd(null, 'on');
 			if (is_object($jeebaseCmd)) {
 				$jeebaseCmd->setConfiguration('id',$this->getConfiguration("on"));
@@ -955,7 +940,6 @@ public function syncWithZibase($_options) {
 				$jeebaseCmd->save();
 				
 			}			
-
 		}
 	}
 	
@@ -1056,17 +1040,7 @@ class jeebaseCmd extends cmd {
 			return;			
 		}
 		
-		$zibase = new ZiBase(config::byKey('zibase_ip', 'jeebase'));
-		if($eqLogic->getConfiguration("type") == "scenario") {
-			switch ($this->getLogicalId()) {
-				case "launch":
-					$zibase->runScenario(intval($eqLogic->getConfiguration('id')));	
-					break;
-				
-			}
-			return;			
-			
-		}		
+		$zibase = new ZiBase(config::byKey('zibase_ip', 'jeebase'));	
 		if ($this->getLogicalId() == 'on') {
 			log::add('jeebase','debug', 'message :' .  $this->getConfiguration('id') . ' ZbAction::ON ' . ' ' . $this->getConfiguration('protocole'));
 			$zibase->sendCommand($this->getConfiguration('id'), ZbAction::ON, $this->getConfiguration('protocole'));

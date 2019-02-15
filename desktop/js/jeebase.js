@@ -82,7 +82,8 @@ $('.eqLogicAction[data-action=addEquipement]').on('click', function () {
 			error: function (error) {
 				$('#div_alert').showAlert({message: error.message, level: 'danger'});
 			},
-			success: function (_data) {
+			success: function (data) {
+				modifyWithoutSave = false;
 				var vars = getUrlVars();
 				var url = 'index.php?';
 				for (var i in vars) {
@@ -90,8 +91,12 @@ $('.eqLogicAction[data-action=addEquipement]').on('click', function () {
 						url += i + '=' + vars[i].replace('#', '') + '&';
 					}
 				}
+				url += 'id=' + data.id + '&saveSuccessFull=1';
+				if (document.location.toString().match('#')) {
+					url += '#' + document.location.toString().split('#')[1];
+				} 
+				loadPage(url);
 				modifyWithoutSave = false;
-				window.location.href = url;
 			}
 		});			  
     });
@@ -172,7 +177,6 @@ $('.modeEquipement').on('click', function() {
 			$("#md_modal2").load('index.php?v=d&modal=log.display&log=jeebase_php').dialog('open');	
 			$(".modeEquipement[data-action=ASSOC]").hide();
 			$(".modeEquipement[data-action=UNASSOC]").hide();
-			$(".modeEquipement[data-action=endAssoc]").show();
 		}
 	});			
 });
@@ -283,6 +287,7 @@ function addCmdToTable(_cmd) {
      if (!isset(_cmd.configuration)) {
         _cmd.configuration = {};
     }
+	
 	
 	if (_cmd.type == 'info' &&  _cmd.subType != 'binary') {
 		$.ajax({// fonction permettant de faire de l'ajax
@@ -461,6 +466,11 @@ function printEqLogic(_eqLogic)  {
 		   $('#table_Z1base,#div_Z1bas3').show();
 		   $('#table_cmd,#action').hide();
 		   break;
+	    case "scenario": 
+		   $('#table_Z1base,#div_Z1bas3,#action').hide();
+		   $('#table_cmd').show();	
+		   break;		  
+		  
 	}	
 
     $.ajax({// fonction permettant de faire de l'ajax
