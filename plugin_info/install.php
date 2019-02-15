@@ -27,6 +27,10 @@ function jeebase_update() {
     }
 	foreach (jeebase::byType('jeebase', true) as $jeebase) {
 		try {
+			if($jeebase->getConfiguration("type") == "scenario") {
+				$jeebase->remove();
+				continue;
+			}
 			$jeebaseCmd = $jeebase->getCmd(null, 'batterie');
 			if ( is_object($jeebaseCmd) ) {
 				$jeebaseCmd->remove();

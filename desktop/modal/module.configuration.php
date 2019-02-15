@@ -41,4 +41,10 @@ if (!isConnect('admin')) {
         <div class="col-md-1" >
             </span><input type="checkbox" class="eqLogicAttr checkbox-inline" data-l1key="configuration"  data-l2key="somfy"/>
         </div>
-    </div>     
+    </div> 
+<!--    <div class="form-group ">
+       <label class="col-md-2 control-label">{{Fil pilote X2D}}</label>
+        <div class="col-md-1" >
+            </span><input type="checkbox" class="eqLogicAttr checkbox-inline" data-l1key="configuration"  data-l2key="x2d_pilot"/>
+        </div>
+    </div>     -->    

@@ -122,22 +122,6 @@ $plugin = plugin::byId('jeebase');
 							}
 					}
 					echo '</div>';	
-					
-					echo "<legend>{{Scenarios}}</legend>";
-					echo '<div class="eqLogicThumbnailContainer">';
-					foreach ($eqLogics as $eqLogic) {
-					if($eqLogic->getConfiguration('type') == 'scenario') {
-                            $opacity = ($eqLogic->getIsEnable()) ? '' : jeedom::getConfiguration('eqLogic:style:noactive');
-                            echo '<div class="eqLogicDisplayCard cursor" data-eqLogic_id="' . $eqLogic->getId() . '" style="display:inline-block;text-align: center; background-color : #ffffff; height : 200px;margin-bottom : 10px;padding : 5px;border-radius: 2px;width : 160px;margin-left : 10px;' . $opacity . '" >';
-                            echo '<img src="' . $plugin->getPathImgIcon() . '" height="105" width="95" />';
-                            echo "<br>";
-                            echo '<span class="name" style="font-size : 1.1em;position:relative; top : 15px;word-break: break-all;white-space: pre-wrap;word-wrap: break-word;">' . $eqLogic->getHumanName(true, true) . '</span>';
-                            echo '</div>';
-						}
-					}
-					echo '</div>';					
-														
-					
 			?>
             
             
