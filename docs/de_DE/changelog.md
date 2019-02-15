@@ -2,6 +2,14 @@
 >
 > Mise à jour importante du plugin pour se préparer à l'arrêt des serveurs . Pas d'impacte sur l'utilisation si vous avez déjà le plugin d'installer. Hormis pour ceux qui ont créé des équipements "custom" avant cette mise à jour. Il faut effacer ces équipements et en créer de nouveaux type "Autres" (Lire la documentation)
 
+15.02.2019
+===
+
+* Suppression des scénarios car peuvent entraîner des erreurs.
+* Correction concernant la récupération des informations type "Autres".
+
+
+
 12.02.2019
 ===
 
