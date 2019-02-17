@@ -824,7 +824,14 @@ public function syncWithZibase($_options) {
 		 }
 		 if($this->getConfiguration("type") == "module") {
 			$data = array();
-			$data = array("id"=> $this->getConfiguration("id"),"protocole"=> $this->getConfiguration("protocole"));	
+			if ($this->getConfiguration("protocole") == 6) {
+				$id = substr($this->getConfiguration("id"), 1);
+			} else {
+				$id = $this->getConfiguration("id");
+			}				
+			
+			
+			$data = array("id"=> $id,"protocole"=> $this->getConfiguration("protocole"));	
 			$this->loadCmdFromConf($this->getConfiguration('type'),$data);		 
 			if ($this->getConfiguration('dim') == 1) { 
 				$jeebaseCmd = $this->getCmd(null, 'slider');
