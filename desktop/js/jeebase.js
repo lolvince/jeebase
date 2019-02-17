@@ -470,7 +470,6 @@ function printEqLogic(_eqLogic)  {
 		   $('#table_Z1base,#div_Z1bas3,#action').hide();
 		   $('#table_cmd').show();	
 		   break;		  
-		  
 	}	
 
     $.ajax({// fonction permettant de faire de l'ajax

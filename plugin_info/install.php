@@ -39,7 +39,6 @@ function jeebase_update() {
 		} catch (Exception $e) {
 		}
 	}
-	log::add('jeebase', 'error', __('|| !!! Attention !!! Bien lire la documentation et le changelog !!! || ', __FILE__));	
 }
 
 function jeebase_remove() {
