@@ -9,6 +9,7 @@ if (!isConnect('admin')) {
         <div class="col-md-2">
             <input type="text"  class="eqLogicAttr form-control" data-l1key="configuration" data-l2key="id" />
         </div>
+         <span>(Pour les modules Zwave , mettre le Z devant. Exemple:ZA6)</span>
     </div>
      <div class="form-group ">
        <label class="col-md-2 control-label">{{Type de protocole}}</label>
