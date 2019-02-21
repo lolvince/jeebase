@@ -841,6 +841,7 @@ public function syncWithZibase($_options) {
 					$jeebaseCmd->setLogicalId('slider');
 					$jeebaseCmd->setEqLogic_id($this->getId());					
 				}
+				$jeebaseCmd->setConfiguration("id",$id);
 				$jeebaseCmd->setType('action');
 				$jeebaseCmd->setSubType('slider');
 				$jeebaseCmd->save();
@@ -965,69 +966,6 @@ class jeebaseCmd extends cmd {
         return true;
     }
 	
-	public function imperihomeGenerate($ISSStructure) {
-		log::add('jeebase','debug', 'imperihomeGenerate ');
-		$eqLogic = $this->getEqLogic();
-		$object = $eqLogic->getObject();
-		if( $eqLogic->getConfiguration('type') == 'sensor') {
-			$type = 'DevMotion';
-		} elseif ( $this->getLogicalId() == 'etat' || $this->getLogicalId() == 'on' || $this->getLogicalId() == 'off') {
-			$type = 'DevSwitch';
-		} elseif($this->getLogicalId() == 'slider') {
-			$type = 'DevDimmer';
-		} elseif($this->getLogicalId() == 'humidity') {
-			$type = 'DevHygrometry';
-		} elseif($this->getLogicalId() == 'temperature') {
-			$type = 'DevTemperature';
-		} elseif($this->getLogicalId() == 'luminosite') {
-			$type = 'DevLuminosity';
-		} elseif($this->getLogicalId() == 'powerTotal' || $this->getLogicalId() == 'powerInstant') {
-			$type = 'DevElectricity';
-		} elseif($this->getLogicalId() == 'PluieTotale' || $this->getLogicalId() == 'powerInstant') {
-			$type = 'DevRain';
-		} elseif($this->getLogicalId() == 'vitesse') {
-			$type = 'DevRain';
-		}
-		else {
-			return;
-		}
-		$info_device = array(
-			'id' => $this->getId(),
-			'name' => $eqLogic->getName(),
-			'room' => (is_object($object)) ? $object->getId() : 99999,
-			'type' => $type,
-			'params' => array(),
-		);
-		$info_device['params'] = $ISSStructure[$info_device['type']]['params'];
-		foreach ($eqLogic->getCmd() as $cmd) {
-			if ($cmd->getLogicalId() == 'bat') {
-				continue;
-			}
-			$info_device['params'][0]['value'] .= $cmd->getName() . ',';
-		}		
-		$info_device['params'][0]['value'] = trim($info_device['params'][0]['value'], ',');
-		return $info_device;
-	}
-	
-	
-	public function imperihomeAction($_action, $_value) {
-		log::add('jeebase','debug', 'imperihomeAction ');
-		$eqLogic = $this->getEqLogic();
-		$cmd = $this->getCmd(null,  $this->getLogicalId());	
-		if ( is_object($cmd) ) {
-			if($this->getLogicalId() == "slider") {
-				$cmd->execCmd(array('slider' => $_value));
-			} else {
-				$cmd->execCmd();
-			}
-		}		
-		return;
-	}
-	
-	public function imperihomeCmd() {
-		log::add('jeebase','debug', 'imperihomeCmd ');
-		return true;
-	}	
 	
 	public function execute($_options = array()) {
 		if ($this->getType() != 'action') {

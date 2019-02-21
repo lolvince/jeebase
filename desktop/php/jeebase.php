@@ -6,7 +6,6 @@ sendVarToJS('eqType', 'jeebase');
 $eqLogics = eqLogic::byType('jeebase');
 $plugin = plugin::byId('jeebase');
 
-
 ?>
 
 <div class="row row-overflow">
