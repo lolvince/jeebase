@@ -111,6 +111,7 @@ class jeebase extends eqLogic {
 				$eqLogic->checkAndUpdateCmd("vitesse", $_options['kwh']);
 				$eqLogic->checkAndUpdateCmd("orientation", $_options['drt']);
 			}	
+			log::add('jeebase', 'debug',' Info time ' . $eqLogic->getName() . ' ' . date('d/m/y H:i:s'));
 			$eqLogic->checkAndUpdateCmd("time", date('d/m/y H:i:s'));
 			(isset( $_options['bat']) && $_options['bat'] == "Low") ?   $eqLogic->batteryStatus(config::byKey('battery', 'jeebase'),date('Y-m-d H:i:s')) : $eqLogic->batteryStatus(100,date('Y-m-d H:i:s'));
 			if (isset( $_options['bat'])) $eqLogic->checkAndCreateCommand('bat',$_options['bat'],'info','other');
@@ -842,6 +843,7 @@ public function syncWithZibase($_options) {
 					$jeebaseCmd->setEqLogic_id($this->getId());					
 				}
 				$jeebaseCmd->setConfiguration("id",$id);
+				$jeebaseCmd->setConfiguration("protocole",$this->getConfiguration("protocole"));
 				$jeebaseCmd->setType('action');
 				$jeebaseCmd->setSubType('slider');
 				$jeebaseCmd->save();
