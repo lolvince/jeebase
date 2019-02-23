@@ -181,6 +181,7 @@ $('.modeEquipement').on('click', function() {
 	});			
 });
 
+
 function addEvent(_action, _name, _type, _el) {
 	
     if (!isset(_action)) {
@@ -282,7 +283,8 @@ $('.eqLogicAction[data-action=deleteDataZibase]').on('click', function () {
  
 function addCmdToTable(_cmd) {
     if (!isset(_cmd)) {
-        var _cmd = {};
+        var _cmd = {};	
+		
     }
      if (!isset(_cmd.configuration)) {
         _cmd.configuration = {};
