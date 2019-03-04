@@ -968,6 +968,72 @@ class jeebaseCmd extends cmd {
         return true;
     }
 	
+
+	public function imperihomeGenerate($ISSStructure) {
+		$eqLogic = $this->getEqLogic();
+		$object = $eqLogic->getObject();
+		if( $eqLogic->getConfiguration('type') == 'sensor') {
+			$type = 'DevMotion';
+		} elseif ( $this->getLogicalId() == 'etat') {
+			$type = 'DevSwitch';
+		} elseif($this->getLogicalId() == 'slider') {
+			$type = 'DevDimmer';
+		} elseif($this->getLogicalId() == 'humidity') {
+			$type = 'DevHygrometry';
+		} elseif($this->getLogicalId() == 'temperature') {
+			$type = 'DevTemperature';
+		} elseif($this->getLogicalId() == 'luminosite') {
+			$type = 'DevLuminosity';
+		} elseif($this->getLogicalId() == 'powerTotal' || $this->getLogicalId() == 'powerInstant') {
+			$type = 'DevElectricity';
+		} elseif($this->getLogicalId() == 'PluieTotale' || $this->getLogicalId() == 'powerInstant') {
+			$type = 'DevRain';
+		} elseif($this->getLogicalId() == 'vitesse') {
+			$type = 'DevRain';
+		}
+		else {
+			return;
+		}
+		$info_device = array(
+			'id' => $this->getId(),
+			'name' => $eqLogic->getName(),
+			'room' => (is_object($object)) ? $object->getId() : 99999,
+			'type' => $type,
+			'params' => array(),
+		);
+		if ($this->getType() == "info") {
+				$info_device['params'] = $ISSStructure[$info_device['type']]['params'];
+				$info_device['params'][0]['value'] = $this->execCmd();
+	
+			}
+			return $info_device;
+		}
+	
+	
+	public function imperihomeAction($_action, $_value) {
+		$eqLogic = $this->getEqLogic();
+		if ($this->getLogicalId() == 'etat') {
+		    if ($_value == '0') {
+				$eqLogic->getCmd(null, 'off')->execCmd();
+		    } else {
+				$eqLogic->getCmd(null, 'on')->execCmd();
+		    }
+		}
+		
+		if($this->getLogicalId() == "slider") {
+			$cmd->execCmd(array('slider' => $_value));
+		} else {
+			$cmd->execCmd();
+		}
+		return;
+	}
+	
+	public function imperihomeCmd() {
+		return true;
+	}
+	
+	
+	
 	
 	public function execute($_options = array()) {
 		if ($this->getType() != 'action') {

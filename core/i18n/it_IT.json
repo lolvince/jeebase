@@ -1,6 +1,6 @@
 {
-    "plugins\/jeebase\/desktop\/modal\/module.configuration.php": {
-        "Identifiant Module": "Identifiant Module",
+    "plugins\/jeebase\/desktop\/modal\/sensor.configuration.php": {
+        "Identifiant Détecteur": "Identifiant Détecteur",
         "Type de protocole": "Type de protocole",
         "DEFAULT BROADCAST (X10, CHACON)": "DEFAULT BROADCAST (X10, CHACON)",
         "VISONIC433": "VISONIC433",
@@ -14,9 +14,6 @@
         "XDD868 alrm ": "XDD868 alrm ",
         "XDD868 inter\/shutter*": "XDD868 inter\/shutter*",
         "XDD868 Pilot Wire": "XDD868 Pilot Wire",
-        "XDD868 Boiler\/AC ": "XDD868 Boiler\/AC ",
-        "Variateur": "Variateur",
-        "Somfy My": "Somfy My",
-        "Fil pilote X2D": "Fil pilote X2D"
+        "XDD868 Boiler\/AC ": "XDD868 Boiler\/AC "
     }
 }
