@@ -53,18 +53,6 @@ if (!isConnect()) {
             </div>
         </div>   
         <div class="form-group">
-            <label class="col-lg-4 control-label">{{Url}}</label>
-            <div class="col-lg-2">
-                <input class="configKey form-control" data-l1key="zibase_url" placeholder="https://zibase.net" />
-            </div>
-        </div> 
-        <div class="form-group">
-            <label class="col-lg-4 control-label">{{Synchroniser}}</label>
-            <div class="col-lg-2">
-            <a class="btn btn-default" id="bt_syncWithZibase"><i class='fa fa-refresh'></i> {{Synchroniser mes équipements}}</a>
-            </div>
-        </div> 
-        <div class="form-group">
             <label class="col-lg-4 control-label">{{Niveau Batterie}}</label>
             <div class="col-lg-2">
                 <input class="configKey form-control" data-l1key="battery" placeholder="Lire doc" />
@@ -73,11 +61,10 @@ if (!isConnect()) {
         <div class="form-group">
             <label class="col-lg-4 control-label">{{Rafraîchir}}</label>
             <div class="col-lg-2">
-            <a class="btn btn-warning" id="bt_refresh"><i class='fa fa-refresh'></i> {{ MAJ}}</a>
+            <a class="btn btn-warning" id="bt_refresh"><i class='fa fa-refresh'></i> {{MAJ}}</a>
             </div>
             <span>{{ Permet de mettre à jour toutes les informations des équipements (utile en cas de panne du démon) }}</span>
         </div>         
-           
     </fieldset>
   </form>
 
