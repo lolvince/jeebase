@@ -15,7 +15,7 @@ $zibase = new ZiBase($arguments['a']);
  $zibase->registerListener($arguments['b']);
  $socket = socket_create(AF_INET, SOCK_DGRAM, 0);
 
-socket_bind($socket, "0.0.0.0" , 49999);
+ socket_bind($socket, "0.0.0.0" , 49999);
 
 while (true) {
         socket_recvfrom($socket, $data, 512, 0, $remote_ip, $remote_port);

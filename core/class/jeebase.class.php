@@ -968,7 +968,6 @@ class jeebaseCmd extends cmd {
         return true;
     }
 	
-
 	public function imperihomeGenerate($ISSStructure) {
 		$eqLogic = $this->getEqLogic();
 		$object = $eqLogic->getObject();
@@ -1005,10 +1004,9 @@ class jeebaseCmd extends cmd {
 				$info_device['params'] = $ISSStructure[$info_device['type']]['params'];
 				$info_device['params'][0]['value'] = $this->execCmd();
 	
-			}
-			return $info_device;
 		}
-	
+		return $info_device;
+	}
 	
 	public function imperihomeAction($_action, $_value) {
 		$eqLogic = $this->getEqLogic();
@@ -1031,9 +1029,6 @@ class jeebaseCmd extends cmd {
 	public function imperihomeCmd() {
 		return true;
 	}
-	
-	
-	
 	
 	public function execute($_options = array()) {
 		if ($this->getType() != 'action') {
@@ -1066,10 +1061,7 @@ class jeebaseCmd extends cmd {
 			 $zibase->sendCommand($eqLogic->getConfiguration('id'), ZbAction::DIM_BRIGHT, $eqLogic->getConfiguration('protocole'), 50);
 			 $eqLogic->checkAndUpdateCmd('etat',1);
 		}
-		
-				
     }
-
 }
 
 ?>
