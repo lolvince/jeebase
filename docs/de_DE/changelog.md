@@ -2,6 +2,12 @@
 >
 > Mise à jour importante du plugin pour se préparer à l'arrêt des serveurs . Pas d'impacte sur l'utilisation si vous avez déjà le plugin d'installer. Hormis pour ceux qui ont créé des équipements "custom" avant cette mise à jour. Il faut effacer ces équipements et en créer de nouveaux type "Autres" (Lire la documentation)
 
+18.08.2019
+===
+
+- Suppression configuration du serveur
+- Compatibilité V4 , php 7.3
+
 
 24.02.2019
 ===

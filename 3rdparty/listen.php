@@ -8,51 +8,44 @@ if (!class_exists('ZiBase')) {
 require_once __DIR__ . '/../../../core/php/core.inc.php';
 
 $arguments = getopt("a:b:c:");
-
 $zibase = new ZiBase($arguments['a']);
-
- # Récupération en temps réel des messages reçus par la ZiBase
- $zibase->registerListener($arguments['b']);
- $socket = socket_create(AF_INET, SOCK_DGRAM, 0);
+# Récupération en temps réel des messages reçus par la ZiBase
+$zibase->registerListener($arguments['b']);
+$socket = socket_create(AF_INET, SOCK_DGRAM, 0);
 
  socket_bind($socket, "0.0.0.0" , 49999);
 
 while (true) {
-        socket_recvfrom($socket, $data, 512, 0, $remote_ip, $remote_port);
-        $zbData = new ZbResponse($data);
-		if(config::byKey('log::level::jeebase')['100'] == 1) {
-			echo  date('Y-m-d H:i:s') . ' : ' . $zbData->message . PHP_EOL;
-		}
+	socket_recvfrom($socket, $data, 512, 0, $remote_ip, $remote_port);
+	$zbData = new ZbResponse($data);
+	if(config::byKey('log::level::jeebase')['100'] == 1) {
+		echo  date('Y-m-d H:i:s') . ' : ' . $zbData->message . PHP_EOL;
+	}
 
-		if( preg_match_all('#Received radio ID \(.*<rf>(.*?)</rf>.*CMD\/INTER</dev>.*<id>(.*?)(_OFF)?</id>.*#',$zbData->message,$results,PREG_SET_ORDER)) { 
-			$data = getData($zbData->message);
-			$etat = (isset($results[0][3])) ? '0' : '1';
-			$data['id'] = $results[0][2];
-			$data['etat'] = $etat;
-			jeebase::setStateToJeedom($data);
-				
-			
-		}
-		//Received radio ID (<rf>433Mhz Oregon</rf> Noise=<noise>2074</noise> Level=<lev>1.4</lev>/5 <dev>Temp-Hygro</dev> Ch=<ch>2</ch> T=<tem>+22.2</tem>C (+71.9F) Humidity=<hum>63</hum>%  Batt=<bat>Ok</bat>): <id>OS439179778</id>
+	if( preg_match_all('#Received radio ID \(.*<rf>(.*?)</rf>.*CMD\/INTER</dev>.*<id>(.*?)(_OFF)?</id>.*#',$zbData->message,$results,PREG_SET_ORDER)) { 
+		$data = getData($zbData->message);
+		$etat = (isset($results[0][3])) ? '0' : '1';
+		$data['id'] = $results[0][2];
+		$data['etat'] = $etat;
+		jeebase::setStateToJeedom($data);
 
-		elseif ( preg_match_all('#Received radio ID.*#',$zbData->message,$results,PREG_SET_ORDER)) { 
-			//print_r($results);
-			    $data = getData($zbData->message);
-				$exp = explode(": ", $zbData->message);
-				if(preg_match_all( '#<id>(.*?)(_OFF|_ON)?</id>#', $exp[1] ,$id )) {
-					$data['id'] = $id[1][0];
-				};				
-				jeebase::setInfoToJeedom($data);
-			//Sent radio ID (1 Burst(s), Protocols='Domia' ): O8_ON
-		} elseif(preg_match_all('#Sent radio ID \(.*Protocols=\'(.*?)\'.*: (([^_]+)(_OFF|_ON)?)#',$zbData->message,$results,PREG_SET_ORDER)) {
-					$data = getData($zbData->message);
-					$data['id'] = $results[0][3];
-					$etat = ($results[0][4] == '_OFF' ) ? '0' : '1';
-					$data['etat'] = $etat;	
-					jeebase::setStateToJeedom($data);				
 
-		}
- }
+	}elseif( preg_match_all('#Received radio ID.*#',$zbData->message,$results,PREG_SET_ORDER)) { 
+		$data = getData($zbData->message);
+		$exp = explode(": ", $zbData->message);
+		if(preg_match_all( '#<id>(.*?)(_OFF|_ON)?</id>#', $exp[1] ,$id )) {
+			$data['id'] = $id[1][0];
+		};				
+		jeebase::setInfoToJeedom($data);
+	}elseif(preg_match_all('#Sent radio ID \(.*Protocols=\'(.*?)\'.*: (([^_]+)(_OFF|_ON)?)#',$zbData->message,$results,PREG_SET_ORDER)) {
+		$data = getData($zbData->message);
+		$data['id'] = $results[0][3];
+		$etat = ($results[0][4] == '_OFF' ) ? '0' : '1';
+		$data['etat'] = $etat;	
+		jeebase::setStateToJeedom($data);				
+
+	}
+}
  
 function getData($message) {
 	if (preg_match_all( '#\([^\]]*\)#', $message, $m )) {
@@ -113,9 +106,4 @@ function getData($message) {
 		return($data);
 	}
 }
-
-
-
-
-
 ?>
