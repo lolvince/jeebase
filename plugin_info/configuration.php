@@ -61,7 +61,7 @@ if (!isConnect()) {
         <div class="form-group">
             <label class="col-lg-4 control-label">{{Rafraîchir}}</label>
             <div class="col-lg-2">
-            <a class="btn btn-warning" id="bt_refresh"><i class='fa fa-refresh'></i> {{MAJ}}</a>
+            <a class="btn btn-warning" id="bt_refresh"><i class='fas fa-sync'></i> {{MAJ}}</a>
             </div>
             <span>{{ Permet de mettre à jour toutes les informations des équipements (utile en cas de panne du démon) }}</span>
         </div>         
