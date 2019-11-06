@@ -7,7 +7,8 @@
 				"configuration": {
 					"id": "", 
 					"protocole": ""
-				},				
+				},	
+				"value":"Etat",
 				"generic_type":"LIGHT_ON"
         },{
                 "name": "Off",
@@ -17,7 +18,8 @@
 				"configuration": {
 					"id": "", 
 					"protocole": ""
-				},				
+				},
+				"value":"Etat",
 				"generic_type":"LIGHT_OFF"
         },{
                 "name": "Etat",

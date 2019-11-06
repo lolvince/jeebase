@@ -226,6 +226,7 @@ function addEvent(_action, _name, _type, _el) {
 
 
 
+
 $('.eqLogicAction[data-action=updateDataZibase]').on('click', function () {	
      bootbox.confirm('Etes-vous sûr de vouloir mettre à jour toutes les donnèes?', function (result) {
 		 if (result) {
@@ -282,105 +283,64 @@ $('.eqLogicAction[data-action=deleteDataZibase]').on('click', function () {
 
  
 function addCmdToTable(_cmd) {
-    if (!isset(_cmd)) {
-        var _cmd = {};	
-		
+  if (!isset(_cmd)) {
+    var _cmd = {configuration: {}};
+  }
+  var tr = '<tr class="cmd" data-cmd_id="' + init(_cmd.id) + '">';
+  tr += '<td>';
+  tr += '<a class="cmdAction btn btn-default btn-sm" data-l1key="chooseIcon"><i class="fa fa-flag"></i> {{Icône}}</a>';
+  tr += '<span class="cmdAttr" data-l1key="display" data-l2key="icon" style="margin-left:10px;"></span>';
+  tr += '<input class="cmdAttr form-control input-sm" data-l1key="name" style="margin-left:10px; margin-bottom:2px; width:185px; float:right">';
+  tr += '<select class="cmdAttr form-control input-sm" data-l1key="value" style="display : none;" title="{{La valeur de la commande vaut par défaut la commande}}">';
+  tr += '<option value="">Aucune</option>';
+  tr += '</select>';
+  tr += '</td>';
+  tr += '<td>';
+  tr += '<input class="cmdAttr form-control input-sm" data-l1key="id" style="display : none;">';
+  tr += '<span class="type" type="' + init(_cmd.type) + '">' + jeedom.cmd.availableType() + '</span>';
+  tr += '<span class="subType" subType="' + init(_cmd.subType) + '"></span>';
+  tr += '</td>';
+  tr += '<td><input class="cmdAttr form-control input-sm" data-l1key="configuration" data-l2key="class" ></td>';
+  tr += '<td><input class="cmdAttr form-control input-sm" data-l1key="configuration" data-l2key="instance" value="1"></td>';
+  tr += '<td><input class="cmdAttr form-control input-sm" data-l1key="configuration" data-l2key="index" ></td>';
+  tr += '<td>';
+  if (init(_cmd.type) == 'action'){
+    tr += '<input class="cmdAttr form-control input-sm" data-l1key="configuration" data-l2key="value" placeholder="{{Commande}}" >';
+  }
+  tr += '<input class="cmdAttr form-control input-sm" data-l1key="configuration" data-l2key="returnStateValue" placeholder="{{Valeur retour d\'état}}" style="width:48%;display:inline-block;">';
+  tr += '<input class="cmdAttr form-control input-sm" data-l1key="configuration" data-l2key="returnStateTime" placeholder="{{Durée avant retour d\'état (min)}}" style="width:48%;display:inline-block;margin-left:2px;">';
+  tr += '</td>';
+  tr += '<td>';
+  tr += '<input class="tooltips cmdAttr form-control input-sm" data-l1key="configuration" data-l2key="minValue" placeholder="{{Min}}" title="{{Min}}" style="width:30%;display:inline-block;">';
+  tr += ' <input class="tooltips cmdAttr form-control input-sm" data-l1key="configuration" data-l2key="maxValue" placeholder="{{Max}}" title="{{Max}}" style="width:30%;display:inline-block;">';
+  tr += '<input class="cmdAttr form-control input-sm" data-l1key="unite" placeholder="Unité" title="{{Unité}}" style="width:30%;display:inline-block;margin-left:2px;">';
+  tr += '<span><label class="checkbox-inline"><input type="checkbox" class="cmdAttr checkbox-inline" data-l1key="isVisible" checked/>{{Afficher}}</label></span> ';
+  tr += '<span><label class="checkbox-inline"><input type="checkbox" class="cmdAttr checkbox-inline" data-l1key="isHistorized" checked/>{{Historiser}}</label></span> ';
+  tr += '<span><label class="checkbox-inline"><input type="checkbox" class="cmdAttr" data-l1key="display" data-l2key="invertBinary"/>{{Inverser}}</label></span> ';
+  tr += '</td>';
+  tr += '<td style="width:125px">';
+  if (is_numeric(_cmd.id)) {
+    tr += '<a class="btn btn-default btn-xs cmdAction" data-action="configure"><i class="fas fa-cogs"></i></a> ';
+    tr += '<a class="btn btn-default btn-xs cmdAction" data-action="test"><i class="fa fa-rss"></i> {{Tester}}</a>';
+  }
+  tr += ' <i class="fas fa-minus-circle cmdAction cursor" data-action="remove"></i></td>';
+  tr += '</tr>';
+  $('#table_cmd tbody').append(tr);
+  var tr = $('#table_cmd tbody tr').last();
+  jeedom.eqLogic.builSelectCmd({
+    id: $('.eqLogicAttr[data-l1key=id]').value(),
+    filter: {type: 'info'},
+    error: function (error) {
+      $('#div_alert').showAlert({message: error.message, level: 'danger'});
+    },
+    success: function (result) {
+		console.log('result')
+		console.log(result)
+      tr.find('.cmdAttr[data-l1key=value]').append(result);
+      tr.setValues(_cmd, '.cmdAttr');
+      jeedom.cmd.changeType(tr, init(_cmd.subType));
     }
-     if (!isset(_cmd.configuration)) {
-        _cmd.configuration = {};
-    }
-	
-	
-	if (_cmd.type == 'info' &&  _cmd.subType != 'binary') {
-		$.ajax({// fonction permettant de faire de l'ajax
-			type: "POST", // methode de transmission des données au fichier php
-			url: "plugins/jeebase/core/ajax/jeebase.ajax.php", // url du fichier php
-			
-			data: {
-				action: "getUrl",
-				id: init(_cmd.id) 
-			},
-			async:false,
-			dataType: 'json',
-			error: function (request, status, error) {
-				handleAjaxError(request, status, error);
-			},
-			success: function (data) { // si l'appel a bien fonctionné
-				if (data.state != 'ok') {
-					$('#div_alert').showAlert({message: data.result, level: 'danger'});
-					return;
-				}
-				var tr = '<tr class="cmd" data-cmd_id="' + init(_cmd.id) + '">';
-					tr += '<td>';
-					tr += '<span class="cmdAttr" data-l1key="id" ></span>';
-					tr += '</td>';
-					tr += '<td>' + _cmd.logicalId + '</td>'; 
-					tr += '<td>';
-					tr += '<span><input type="checkbox" class="cmdAttr" data-l1key="isHistorized" /> {{Historiser}}<br/></span>';
-					tr += '<span><input type="checkbox" class="cmdAttr" data-l1key="isVisible" /> {{Afficher}}<br/></span>';
-					tr += '</td>';
-					tr += '<td>';
-					if (is_numeric(_cmd.id)) {
-						tr += '<a href="' + data.result + '" target="_blank"><i class="fas fa-external-link-alt"></i> URL</a>'
-						tr += '<a class="btn btn-default btn-xs cmdAction expertModeVisible" data-action="configure"><i class="fa fa-cogs"></i></a> ';
-						tr += '<a class="btn btn-default btn-xs cmdAction" data-action="test"><i class="fa fa-rss"></i> {{Tester}}</a>';
-					}
-					tr += '</td>';
-					tr += '</tr>';
-					$('#table_Z1bas3 tbody').append(tr);
-					$('#table_Z1bas3 tbody tr:last').setValues(_cmd, '.cmdAttr');
-			}
-		});			
-
-    } else  {
-		$.ajax({// fonction permettant de faire de l'ajax
-			type: "POST", // methode de transmission des données au fichier php
-			url: "plugins/jeebase/core/ajax/jeebase.ajax.php", // url du fichier php
-			
-			data: {
-				action: "getUrl",
-				id: init(_cmd.id) 
-			},
-			async:false,
-			dataType: 'json',
-			error: function (request, status, error) {
-				handleAjaxError(request, status, error);
-			},
-			success: function (data) { // si l'appel a bien fonctionné
-				if (data.state != 'ok') {
-					$('#div_alert').showAlert({message: data.result, level: 'danger'});
-					return;
-				}
-				var tr = '<tr class="cmd" data-cmd_id="' + init(_cmd.id) + '">';
-				tr += '<td class="name">';
-				tr += '<input class="cmdAttr form-control input-sm" data-l1key="id" style="display : none;">';
-				tr += '<input class="cmdAttr form-control input-sm" data-l1key="name">';
-				tr += '<select class="cmdAttr form-control tooltips input-sm" data-l1key="value" style="display : none;margin-top : 5px;margin-right : 10px;" title="{{La valeur de la commande vaut par defaut la commande}}">';
-				tr += '<option value="">Etat</option>';
-				tr += '</select>';	
-				tr += '</td>';
-				tr += '<td class="type" type="' + init(_cmd.type) + '">' + jeedom.cmd.availableType();
-				tr += '<span class="subType" subType="' + init(_cmd.subType) + '"></span></td>';
-				tr += '<td>';
-				tr += '<span><input type="checkbox" class="cmdAttr " data-l1key="isVisible" checked/> {{Afficher}}<br/></span>';
-				tr += '<span class="expertModeVisible"><input type="checkbox" class="cmdAttr" data-l1key="display" data-l2key="invertBinary" /> {{Inverser}}<br/></span>';	
-				tr += '<span><input type="checkbox" class="cmdAttr " data-l1key="isHistorized" /> {{Historiser}}<br/></span>';	
-				tr += '</td>';
-				tr += '<td>';
-				if (is_numeric(_cmd.id)) {
-					tr += '<a href="' + data.result + '" target="_blank"><i class="fas fa-external-link-alt"></i></a>'
-					tr += '<a class="btn btn-default btn-xs cmdAction expertModeVisible" data-action="configure"><i class="fa fa-cogs"></i></a> ';
-					tr += '<a class="btn btn-default btn-xs cmdAction" data-action="test"><i class="fa fa-rss"></i> {{Tester}}</a>';
-				}
-				tr += '<i class="fa fa-minus-circle pull-right cmdAction cursor" data-action="remove"></i></td>';
-				tr += '</tr>';
-				$('#table_cmd tbody').append(tr);
-				$('#table_cmd tbody tr:last').setValues(_cmd, '.cmdAttr');
-				jeedom.cmd.changeType($('#table_cmd tbody tr:last'), init(_cmd.subType));
-			}
-		});			
-	}	
-            
+  });
 }
 
 function saveEqLogic(_eqLogic) {
@@ -451,62 +411,22 @@ function printEqLogic(_eqLogic)  {
             });
         });
     }
-	
-			
-	switch (_eqLogic.configuration.type) {
+  
+  	switch (_eqLogic.configuration.type) {
 	   case "module":
 	   case "other": 
-		   $('#table_Z1base,#div_Z1bas3').hide();
-		   $('#table_cmd,#action').show();
+		   $('#action').show();
 		   $('.collapse').collapse();	   
 		   break;
 		case "sensor":
-		   $('#table_Z1base,#div_Z1bas3,#action').hide();
-		   $('#table_cmd').show();		
+		   $('#action').hide();	
 			break;
 	    case "sonde": 
-		   $('#table_Z1base,#div_Z1bas3').show();
-		   $('#table_cmd,#action').hide();
-		   break;
-	    case "scenario": 
-		   $('#table_Z1base,#div_Z1bas3,#action').hide();
-		   $('#table_cmd').show();	
+		   $('#action').hide();
 		   break;		  
-	}	
-
-    $.ajax({// fonction permettant de faire de l'ajax
-        type: "POST", // methode de transmission des données au fichier php
-        url: "plugins/jeebase/core/ajax/jeebase.ajax.php", // url du fichier php
-        data: {
-            action: "getSonde",
-            id: _eqLogic.id
-        },
-        dataType: 'json',
-        error: function(request, status, error) {
-            handleAjaxError(request, status, error);
-        },
-        success: function(data) { // si l'appel a bien fonctionné
-
-            if (data.state != 'ok') {
-                $('#div_alert').showAlert({message: data.result, level: 'danger'});
-                return;
-            }
-            $('#table_Z1base tbody').empty();
-            $('#div_Z1base').empty();
-            for (var i in data.result.cmd) {
-                var tr = '<tr>';
-                tr += '<td>' + data.result.cmd[i].name + '</td>';
-                tr += '<td>' + data.result.cmd[i].value;
-                if (data.result.cmd[i].unite != null) {
-                    tr += ' ' + data.result.cmd[i].unite;
-                }
-                tr += '</td>';  			
-				tr += '</tr>';
-                $('#table_Z1base tbody').append(tr);
-            }
-
-        }
-    });
+	}
+	
+			
 }
 
 
