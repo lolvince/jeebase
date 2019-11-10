@@ -308,9 +308,6 @@ $plugin = plugin::byId('jeebase');
 						<tr>
 							<th style="width: 300px;">{{Nom}}</th>
 							<th style="width: 130px;">{{Type}}</th>
-							<th style="width: 65px;">{{Classe}}</th>
-							<th style="width: 65px;">{{Instance}}</th>
-							<th style="width: 65px;">{{Index}}</th>
 							<th>{{Commande}}</th>
 							<th style="width: 250px;">{{Paramètres}}</th>
 							<th></th>

@@ -40,7 +40,7 @@ if (!isConnect()) {
                 <input class="configKey form-control" data-l1key="zibase_ip" />
             </div>
         </div>
-        <div class="form-group">
+<!--        <div class="form-group">
             <label class="col-lg-4 control-label">{{Id de la zibase}}</label>
             <div class="col-lg-2">
                 <input class="configKey form-control" data-l1key="zibase_id" />
@@ -51,7 +51,7 @@ if (!isConnect()) {
             <div class="col-lg-2">
                 <input class="configKey form-control" data-l1key="zibase_token" />
             </div>
-        </div>   
+        </div>  --> 
         <div class="form-group">
             <label class="col-lg-4 control-label">{{Niveau Batterie}}</label>
             <div class="col-lg-2">
