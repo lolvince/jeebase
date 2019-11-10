@@ -306,31 +306,11 @@ $plugin = plugin::byId('jeebase');
 				<table id="table_cmd" class="table table-bordered table-condensed">
 					<thead>
 						<tr>
-							<th >{{Nom}}</th>
-							<th >{{Type}}</th>
-							<th>Options</th>
-							<th>Actions</th>
-						</tr>
-					</thead>
-					<tbody>
-
-					</tbody>
-				</table>        
-				<div id="div_Z1base"></div>
-				<table id="table_Z1base" class="table table-bordered table-condensed">
-					<thead>
-						<tr>
-							<th>{{nom}}</th><th>{{Valeur}}</th>
-						</tr>
-					</thead>
-					<tbody>
-					</tbody>
-				</table>
-				<div id="div_Z1bas3"></div>
-				<table id="table_Z1bas3" class="table table-bordered table-condensed">
-					<thead>
-						<tr>
-							<th>{{id}}</th><th>{{Nom}}</th><th>{{Options}}</th><th>{{Actions}}</th>
+							<th style="width: 300px;">{{Nom}}</th>
+							<th style="width: 130px;">{{Type}}</th>
+							<th>{{Commande}}</th>
+							<th style="width: 250px;">{{Paramètres}}</th>
+							<th></th>
 						</tr>
 					</thead>
 					<tbody>

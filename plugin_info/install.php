@@ -31,11 +31,24 @@ function jeebase_update() {
 				$jeebase->remove();
 				continue;
 			}
-			$jeebaseCmd = $jeebase->getCmd(null, 'batterie');
-			if ( is_object($jeebaseCmd) ) {
-				$jeebaseCmd->remove();
-			}				
+			$dels = array('batterie','time');
+			foreach($dels as $del) {
+				$jeebaseCmd = $jeebase->getCmd(null, $del);
+				if ( is_object($jeebaseCmd) ) {
+					$jeebaseCmd->remove();
+				}				
+			}
+			$cms = array('bat','frequence');
+			foreach ($jeebase->getCmd('info') as $cmd) {
+				if (in_array($cmd->getLogicalId(),$cms)){
+					echo $cmd->getName();
+					$cmd->setType('info');
+					$cmd->setSubType('string');			
+					$cmd->save();						
+				}
+			}
 			$jeebase->save();
+			
 		} catch (Exception $e) {
 		}
 	}
