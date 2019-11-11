@@ -79,6 +79,49 @@ Les Commandes
 > <span style="color:blue">**NOTE**</span>
 >
 >  La table des commandes se remplie au fur et à mesure que le plugin reçoit les information
+>
+> En fonction des types et sous-types, certaines options peuvent être
+> absentes.
+
+-   le nom affiché sur le dashboard
+
+-   icône : dans le cas d’une action permet de choisir une icône à
+    afficher sur le dashboard au lieu du texte
+
+-   valeur de la commande : dans le cas d’une commande type action, sa
+    valeur peut être liée à une commande de type info, c’est ici que
+    cela se configure. Exemple pour une lampe l’intensité est liée à son
+    état, cela permet au widget d’avoir l’état réel de la lampe.
+
+-   le type et le sous-type.
+
+-   "Valeur de retour d’état" et "Durée avant retour d’état" : permet
+    d’indiquer à Jeedom qu’après un changement sur l’information sa
+    valeur doit revenir à Y, X min après le changement. Exemple : dans
+    le cas d’un détecteur de présence qui n’émet que lors d’une
+    détection de présence, il est utile de mettre par exemple 0 en
+    valeur et 4 en durée, pour que 4 min après une détection de
+    mouvement (et si ensuite, il n’y en a pas eu de nouvelles) Jeedom
+    remette la valeur de l’information à 0 (plus de mouvement détecté).
+
+-   Historiser : permet d’historiser la donnée.
+
+-   Afficher : permet d’afficher la donnée sur le dashboard.
+
+-   Inverser : permet d’inverser l’état pour les types binaires.
+
+-   Unité : unité de la donnée (peut être vide).
+
+-   Min/Max : bornes de la donnée (peuvent être vides).
+
+-   Configuration avancée (petites roues crantées) : permet d’afficher
+    la configuration avancée de la commande (méthode
+    d’historisation, widget…​).
+
+-   Tester : permet de tester la commande.
+
+-   Supprimer (signe -) : permet de supprimer la commande.Ci-dessous vous retrouvez la liste des commandes :
+
 
 Les sondes
 ===
@@ -102,7 +145,9 @@ Les Détecteurs (sensors)
 
 > <span style="color:red">**IMPORTANT**</span>
 >
-> Certains détecteurs(selon protocole mais zwave OK) ne remontent pas leur état. Pour cela reportez-vous aux équipement autre
+> Certains détecteurs(selon protocole mais zwave OK) n’émettent que lors d’une détection de présence. Utiliser alors Valeur de retour d’état/durée
+>
+> D'autres émettent 2 id différents .==> reportez-vous aux équipement autre
 
 Les équipements "Autres"
 ===
