@@ -9,7 +9,5 @@
 	"hasOwnDeamon" : true,
 	"changelog" : "https://zyg0m4t1k.github.io/jeebase/#language#/changelog",
 	"documentation" : "https://zyg0m4t1k.github.io/jeebase/#language#/",
-	"compatibility" : ["miniplus","smart","rpi","docker","diy","v4"]
-	
-	
+	"compatibility" : ["miniplus","smart","rpi","docker","diy","v4"]	
 }
