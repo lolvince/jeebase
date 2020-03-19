@@ -418,12 +418,17 @@ class jeebase extends eqLogic {
 				$jeebaseCmd = new jeebaseCmd();
 				$jeebaseCmd->setName(__($command['name'], __FILE__));
 				$jeebaseCmd->setLogicalId($command['logicalId']);
-				$jeebaseCmd->setEqLogic_id($this->getId());					
+				$jeebaseCmd->setEqLogic_id($this->getId());
+				$jeebaseCmd->setType($command['type']);
+				$jeebaseCmd->setSubtype($command['subtype']);
 			}
 			if($data) {
 				$command['configuration'] = $data;
 			}
-			utils::a2o($jeebaseCmd, $command);
+			if($jeebaseCmd->getGeneric_type() == '') {
+				$jeebaseCmd->setGeneric_type($command['generic_type']);
+			}
+
 			$jeebaseCmd->save();
 			if (isset($command['value'])) {
 				$link_cmds[$jeebaseCmd->getId()] = $command['value'];
@@ -437,7 +442,6 @@ class jeebase extends eqLogic {
 						if (is_object($cmd)) {
 							log::add('jeebase','debug', 'is_object');
 							$cmd->setValue($eqLogic_cmd->getId());
-							$cmd->setConfiguration('tutu','tutu');
 							$cmd->save();
 							log::add('jeebase','debug', 'cmd save ' . $cmd->getName());
 						}
