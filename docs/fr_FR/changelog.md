@@ -1,3 +1,8 @@
+07.10.2020
+===
+
+- Corrige le lancement des commandes des équipements nouvellement inclus...
+
 19.03.2020
 ===
 
