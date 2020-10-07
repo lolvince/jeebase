@@ -423,8 +423,12 @@ class jeebase extends eqLogic {
 				$jeebaseCmd->setSubtype($command['subtype']);
 			}
 			if($data) {
-				$command['configuration'] = $data;
-			}
+               foreach ($data as $key => $value) {
+                 $jeebaseCmd->setConfiguration($data,$value);
+               }
+			}			
+			
+			
 			if($jeebaseCmd->getGeneric_type() == '') {
 				$jeebaseCmd->setGeneric_type($command['generic_type']);
 			}
