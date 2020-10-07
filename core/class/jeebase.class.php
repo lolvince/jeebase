@@ -474,9 +474,9 @@ class jeebase extends eqLogic {
 			
 			
 			$data = array("id"=> $id,"protocole"=> $this->getConfiguration("protocole"));	
-			$this->loadCmdFromConf($this->getConfiguration('type'),$data);		 
+			$this->loadCmdFromConf($this->getConfiguration('type'),$data);
+			$jeebaseCmd = $this->getCmd(null, 'slider');
 			if ($this->getConfiguration('dim') == 1) { 
-				$jeebaseCmd = $this->getCmd(null, 'slider');
 				if ( !is_object($jeebaseCmd) ) {
 					$jeebaseCmd = new jeebaseCmd();
 					$jeebaseCmd->setName(__('Slider', __FILE__));
@@ -488,9 +488,13 @@ class jeebase extends eqLogic {
 				$jeebaseCmd->setType('action');
 				$jeebaseCmd->setSubType('slider');
 				$jeebaseCmd->save();
+			} else {
+				if (is_object($jeebaseCmd) ) {
+					$jeebaseCmd->remove();
+				}
 			}
+			$jeebaseCmd = $this->getCmd(null, 'somfy');
 			if ($this->getConfiguration('somfy') == 1) { 
-				$jeebaseCmd = $this->getCmd(null, 'somfy');
 				if ( !is_object($jeebaseCmd) ) {
 					$jeebaseCmd = new jeebaseCmd();
 					$jeebaseCmd->setName(__('My', __FILE__));
@@ -500,7 +504,14 @@ class jeebase extends eqLogic {
 				$jeebaseCmd->setType('action');
 				$jeebaseCmd->setSubType('other');
 				$jeebaseCmd->save();
-			}	
+			} else {
+				if (is_object($jeebaseCmd) ) {
+					$jeebaseCmd->remove();
+				}
+			}
+			 
+			 
+			 
 //			if ($this->getConfiguration('x2d_pilot') == 1) { 
 //				$cmds = array('Off','Confort','Eco','Horsgel', 'Auto');
 //				$jeebaseCmd = $this->getCmd(null, 'somfy');
