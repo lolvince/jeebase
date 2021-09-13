@@ -30,21 +30,21 @@ while (true) {
  	//var_dump(bin2hex($zbData->param3));
   	//var_dump($zbData->param4);
  	//var_dump(bin2hex($zbData->param4));
-    //////
+    	//////
 	
 	//Rafraichi les infos Zibases
 	jeebase::UpdateZibaseInfoToJeedom($zbData->zibaseId ,$remote_ip);
 	
 	if ( substr($zbData->reserved1, 0, 7) == "SLAMSIG" && $zbData->param1 == 0 && $zbData->param2 == 0 && $zbData->param3 == 1 && $zbData->param4 == 0 ) {
-        echo  date('Y-m-d H:i:s') . ' : ' . $zbData->zibaseId . '(' . $remote_ip . ') => Fin de Boot Zibase, demande de ratachement !';
-        $zibase->registerListener($arguments['b']);
-    }elseif( substr($zbData->reserved1, 0, 7) == "SLAMSIG" && $zbData->param1 == 0 && $zbData->param2 == 0 && $zbData->param3 == 0 && $zbData->param4 == 0 ){
-    	echo  date('Y-m-d H:i:s') . ' : ' . $zbData->zibaseId . '(' . $remote_ip . ') => Boot Zibase';
-    }else{
-     	if( config::byKey('log::level::jeebase')['100'] == 1) {
+		echo  date('Y-m-d H:i:s') . ' : ' . $zbData->zibaseId . '(' . $remote_ip . ') => Fin de Boot Zibase, demande de ratachement !';
+		$zibase->registerListener($arguments['b']);
+	}elseif( substr($zbData->reserved1, 0, 7) == "SLAMSIG" && $zbData->param1 == 0 && $zbData->param2 == 0 && $zbData->param3 == 0 && $zbData->param4 == 0 ){
+		echo  date('Y-m-d H:i:s') . ' : ' . $zbData->zibaseId . '(' . $remote_ip . ') => Boot Zibase';
+	}else{
+		if( config::byKey('log::level::jeebase')['100'] == 1) {
 			echo  date('Y-m-d H:i:s') . ' : ' . $zbData->zibaseId . '(' . $remote_ip . ')' . ' => '. $zbData->message . PHP_EOL;
 		}
-    }
+	}
 
 	if( preg_match_all('#Received radio ID \(.*<rf>(.*?)</rf>.*CMD\/INTER</dev>.*<id>(.*?)(_OFF)?</id>.*#',$zbData->message,$results,PREG_SET_ORDER)) { 
 		echo 'receive type 1 :' . PHP_EOL;
