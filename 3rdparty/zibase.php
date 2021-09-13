@@ -183,6 +183,7 @@
  	public $header = null;
  	public $command = 0;
  	public $reserved1 = null;
+    //public $msgreserved1 = null;
  	public $zibaseId = null;
  	public $reserved2 = null;
  	public $param1 = 0;
@@ -203,15 +204,16 @@
 	    $this->header = substr($buffer, 0, 4);	    
 	    $this->command = $data["command"];
 	    $this->reserved1 = substr($buffer, 6, 16);
-	    $this->zibaseId = substr($buffer, 22, 16);
-	    $this->reserved2 = substr($buffer, 38, 12);
+      	//$this->msgreserved1 = substr($buffer, 6, 7);
+	    $this->zibaseId = substr($buffer, 22, 12);
+	    $this->reserved2 = substr($buffer, 34, 16);
 	    $this->param1 = $data["param1"];
 	    $this->param2 = $data["param2"];
 	    $this->param3 = $data["param3"];
 	    $this->param4 = $data["param4"];
 	    $this->myCount = $data["myCount"];
 	    $this->yourCount = $data["yourCount"];
-	    $this->message = substr($buffer, 70);	    
+	    $this->message = substr($buffer, 70);	
  	}	
  }
  
@@ -231,6 +233,7 @@
  	 */
  	public function __construct($ipAddr) {
  		$this->ip = $ipAddr;
+		
  	}
  	
   /**
@@ -248,11 +251,30 @@
   }
    	
  	/**
+ 	 * Envoie la requête sur le Broadcastr du réseau
+ 	 * @param ZbRequest requête au format Zibase
+ 	 * @return ZbResponse réponse de la zibase
+ 	 */
+ 	private function sendRequestBcast($request, $withResponse = false) { 
+		$mask='255.255.255.0';
+		$wcmask=long2ip( ~ip2long($mask) );
+		$subnet=long2ip( ip2long($this->ip) & ip2long($mask) );
+		$bcast=long2ip( ip2long($this->ip) | ip2long($wcmask) );
+ 		$buffer = $request->toBinaryArray();
+ 		$socket = socket_create(AF_INET, SOCK_DGRAM, SOL_UDP);
+ 		$ack = "";
+ 		$response = null;
+		socket_set_option($socket, SOL_SOCKET, SO_BROADCAST, 1);
+ 		socket_sendto($socket, $buffer, strlen($buffer), 0, $bcast, $this->port);
+ 		socket_close($socket);
+ 		return $response;
+ 	}
+	 	/**
  	 * Envoie la requête à la Zibase sur le réseau
  	 * @param ZbRequest requête au format Zibase
  	 * @return ZbResponse réponse de la zibase
  	 */
- 	private function sendRequest($request, $withResponse = true) { 	
+ 	 private function sendRequest($request, $withResponse = true) { 	
  		$buffer = $request->toBinaryArray();
  		$socket = socket_create(AF_INET, SOCK_DGRAM, SOL_UDP);
  		$ack = "";
@@ -267,7 +289,6 @@
  		socket_close($socket);
  		return $response;
  	}
- 	
  	/**
  	 * Lance la commande RF de l'actionneur spécifié par son adresse et son protocol 
  	 * @param string $address Adresse au format X10 de l'actionneur (ex: B5)
@@ -332,7 +353,7 @@
 		$request->param2 = $port;
 		$request->param3 = 0;
 		$request->param4 = 0;
-		$this->sendRequest($request,false);
+		$this->sendRequestBcast($request,false);
  	}
 	
  	/**
@@ -830,4 +851,3 @@
  }
  
 ?>
-
